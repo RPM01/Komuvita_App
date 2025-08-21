@@ -152,14 +152,16 @@ class AdmHomeController extends GetxController {
       if(response.statusCode == 200)
       {
         debugPrint("Noticias3");
-        debugPrint(json["datos"][0]["pl_comentarios"][0]["pv_descripcion"].toString());
+        //debugPrint(json["datos"][0]["pl_comentarios"][0]["pv_descripcion"].toString());
 
         if(json["resultado"]["pn_tiene_datos"] == 1)
         {
+          debugPrint("Noticias con datos");
           return List<Map<String, dynamic>>.from(json["datos"]);
         }
         else
         {
+          debugPrint("Noticias Sin datos");
           debugPrint("Noticias Error");
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
           errorMensaje = json["resultado"]["pv_error_descripcion"].toString();
@@ -174,20 +176,21 @@ class AdmHomeController extends GetxController {
       debugPrint("ErrorTest");
       debugPrint(e.toString());
       debugPrint(errorMensaje);
-      showDialog(
-        context: Get.context!,
-        builder: (BuildContext dialogContext) {
-          Future.delayed(Duration(seconds: 1), () {
-            Navigator.of(dialogContext).pop(); // Dismiss the dialog
-          });
-          return AlertDialog(
-            title: Text(e.toString()),
-            content: Text(errorMensaje),
-          );
-        },
-      );
-    }
-    throw Exception("Error en conexión");
+        showDialog(
+          context: Get.context!,
+          builder: (BuildContext dialogContext) {
+            Future.delayed(Duration(seconds: 1), () {
+              Navigator.of(dialogContext).pop(); // Dismiss the dialog
+            });
+            return AlertDialog(
+              title: Text(e.toString()),
+              content: Text(errorMensaje),
+            );
+          },
+        );
+          }
+    return [];
+    //throw Exception("Error en conexión");
   }
 
   Future<List<Map<String, dynamic>>>listadoRentas5()async
@@ -1092,6 +1095,83 @@ class AdmHomeController extends GetxController {
     }
   }
 
+  Future<List<DacumentosH5>> documentosListados6B() async {
+
+    debugPrint("**********H6***********");
+    const String errorMensaje = "Falla de conexión";
+
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String? empresa = prefs.getString("Empresa");
+
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+    //GestionTickets1();
+
+    try {
+      var header = {
+        'Content-Type': 'application/json',
+      };
+
+      var url = Uri.parse("https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
+
+      Map<String, dynamic> body = {
+        "autenticacion": {
+          "pv_token": token
+        },
+        "parametros": {
+          "pn_empresa": int.parse(empresa!),
+          "pv_cliente": prefs.getString("correo"),
+          "pn_propiedad": "-1",
+          "pn_documento_tipo": "-1",
+          "pv_criterio": "",
+        }
+      };
+
+      http.Response response = await http.post(
+        url,
+        body: jsonEncode(body),
+        headers: header,
+      );
+
+      final json = jsonDecode(response.body);
+
+      debugPrint("Documentos");
+      debugPrint(body.toString());
+      debugPrint(response.body.toString());
+
+      if (response.statusCode == 200) {
+        debugPrint("Regreso correcto!!!!!");
+
+        if (json["resultado"]["pn_tiene_datos"] == 1) {
+          return (json["datos"] as List)
+              .map((item) => DacumentosH5.fromJson(item))
+              .toList();
+        } else {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        }
+      } else {
+        throw Exception("Error HTTP: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      showDialog(
+        context: Get.context!,
+        builder: (context) {
+          return SimpleDialog(
+            title: const Text(errorMensaje),
+            contentPadding: const EdgeInsets.all(20),
+            children: [Text(e.toString())],
+          );
+        },
+      );
+      rethrow; // Keep the error in the Future
+    }
+  }
 
 
   //Listas que no se usan

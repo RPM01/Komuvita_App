@@ -707,10 +707,10 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                    Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                     children: [
-                                                      _buildAction(Icons.menu, "Ver detalle", subtitleFontSize),
-                                                      _buildAction(Icons.print, "Imprimir", subtitleFontSize),
-                                                      _buildAction(Icons.account_balance_wallet_rounded, "Pagos", subtitleFontSize),
-                                                      _buildAction(Icons.money_sharp, "Aplicar Pagos", subtitleFontSize),
+                                                      _buildAction(Icons.menu, "Ver detalle", subtitleFontSize,1),
+                                                      _buildAction(Icons.print, "Imprimir", subtitleFontSize,2),
+                                                      _buildAction(Icons.account_balance_wallet_rounded, "Pagos", subtitleFontSize,3),
+                                                      _buildAction(Icons.money_sharp, "Aplicar Pagos", subtitleFontSize,4),
                                                     ],
                                                   ),
                                                 ],
@@ -1528,7 +1528,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                     children: [
-                                                      _buildAction(Icons.money_sharp, "Aplicar Pagos", constraints.maxWidth * 0.03,),
+                                                      IconButton(onPressed: (){}, icon: Icon(Icons.money_sharp,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.03),),
                                                     ],
                                                   ),
                                                 ],
@@ -3648,10 +3648,10 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
     );
   }
 
-  Widget _buildAction(IconData icon, String label, double fontSize) {
+  Widget _buildAction(IconData icon, String label, double fontSize, double iconID) {
     return Column(
       children: [
-        Icon(icon, color: const Color.fromRGBO(6, 78, 116, 1), size: fontSize * 1.2),
+        IconButton(onPressed: (){}, icon: Icon(icon, color: const Color.fromRGBO(6, 78, 116, 1), size: fontSize * 1.2),),
         Text(label,
             style: TextStyle(
               fontWeight: FontWeight.bold,

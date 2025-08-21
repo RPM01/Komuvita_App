@@ -80,8 +80,9 @@ class LoginController extends GetxController {
       debugPrint("Android: $deviceID");
     }
     else if (Platform.isIOS) {
-      var build = await deviceInfoPlugin.androidInfo;
-      deviceID = build.id;
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      deviceID = iosInfo.toString();
       deviceName = "Iphone";
       debugPrint("Iphone: $deviceID");
     }
