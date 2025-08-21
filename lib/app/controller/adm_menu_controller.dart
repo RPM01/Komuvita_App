@@ -1,0 +1,39 @@
+import 'package:administra/app/views/adm_notification/adm_notification_screen.dart';
+import 'package:administra/app/views/adm_password_creation/adm_password_creation_screen.dart';
+import 'package:get/get.dart';
+import '../views/adm_privacy_policy/adm_privacy_policy_screen.dart';
+import '../views/adm_terms_service/adm_terms_service_screen.dart';
+import 'package:administra/adm_theme/theme_controller.dart';
+
+class AdmMenuController extends GetxController {
+  final ThemeController themeController = Get.put(ThemeController());
+  List helpAndSupport = [
+    //'Inicio',
+    'Estado de cuenta',
+    'Noticias y Avisos',
+    'Rentas y Ventas',
+    'Objetos Perdidos',
+    'Reservar Amenidad',
+    'Comunicación con Administrador',
+    'Visitas',
+    'Paquetes pendientes',
+    'Notificaciones',
+    'Cambio de contraseña',
+    'Cerrar Sesion',
+
+  ];
+  List screens = const [
+  //  AdmPrivacyPolicyScreen(),
+    AdmTermsAndServiceScreen(),
+    AdmPrivacyPolicyScreen(),
+    AdmTermsAndServiceScreen(),
+    AdmPrivacyPolicyScreen(),
+    AdmTermsAndServiceScreen(),
+    AdmPrivacyPolicyScreen(),
+    AdmTermsAndServiceScreen(),
+    AdmPrivacyPolicyScreen(),
+    AdmNotificationScreen(),
+    AdmPasswordCreationScreen(),
+   // AdmTermsAndServiceScreen(),
+  ];
+}

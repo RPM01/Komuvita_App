@@ -1,0 +1,64 @@
+{
+    "category_adms_list": [
+        {
+            "id": 1,
+            "name": "Ene24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        }, 
+        {
+            "id": 2,
+            "name": "Feb24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        },
+        {
+            "id": 3,
+            "name": "Mar24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        },
+        {
+            "id": 4,
+            "name": "Abr24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        },
+        {
+            "id": 5,
+            "name": "May24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        },
+        {
+            "id": 6,
+            "name": "Jun24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        },
+        {
+            "id": 7,
+            "name": "Jul24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+        },
+        {
+            "id": 8,
+            "name": "Ago24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        },
+        {
+            "id": 9,
+            "name": "Sep24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        },
+        {
+            "id": 10,
+            "name": "Oct24.pdf",
+            "image": "https://i.ibb.co/K24DF4H/pdf.png"
+
+        }
+    ]
+
+}

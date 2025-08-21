@@ -1,0 +1,25 @@
+{
+  "adm_message_list": [
+    {
+      "message": "",
+      "isSender": true,
+      "image": "https://i.ibb.co/yy0wz3w/1.jpg"
+    },
+    {
+      "message": "Hola, quiero rentar este apartamento.",
+      "isSender": true
+    },
+    {
+      "message": "Hola, por supuesto, estoy aquí para ayudarte con todas tus dudas, cualquier cosa no dude en preguntarme \uD83D\uDE0A",
+      "isSender": false
+    },
+    {
+      "message": "Quisiera saber los requisitos para la renta",
+      "isSender": true
+    },
+    {
+      "message": "Claro, le enviaremos un documento con los requisitos \uD83D\uDE01",
+      "isSender": false
+    }
+  ]
+}

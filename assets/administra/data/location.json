@@ -1,0 +1,71 @@
+{
+  "locations": [
+
+    {
+      "id": 2,
+      "name": "Location 1",
+      "latitude": 21.1996852,
+      "longitude": 72.7828019,
+      "distance": "5 km"
+    },
+
+    {
+      "id": 3,
+      "name": "Location 3",
+      "latitude": 21.2266,
+      "longitude": 72.8312,
+      "distance": "5 km"
+    },
+    {
+      "id": 4,
+      "name": "Location 1",
+      "latitude": 21.1871,
+      "longitude":  72.7910,
+      "distance": "5 km"
+    },
+
+    {
+      "id": 2,
+      "name": "Location 2",
+      "latitude": 21.2266,
+      "longitude": 72.8312,
+      "distance": "8 km"
+    },
+    {
+      "id": 2,
+      "name": "Location 2",
+      "latitude": 21.1836,
+      "longitude": 72.8305,
+      "distance": "8 km"
+    },
+    {
+      "id": 3,
+      "name": "Location 3",
+      "latitude": 21.1593,
+      "longitude": 72.7712,
+      "distance": "7 km"
+    },
+    {
+      "id": 1,
+      "name": "Location 1",
+      "latitude": 21.1959,
+      "longitude": 72.7933,
+      "distance": "7 km"
+    },
+    {
+      "id": 3,
+      "name": "Location 3",
+      "latitude": 21.1959,
+      "longitude": 72.7933,
+      "distance": "6 km"
+    },
+
+    {
+      "id": 5,
+      "name": "Location 3",
+      "latitude": 21.1431,
+      "longitude": 72.8431,
+      "distance": "2 km"
+    }
+  ]
+}

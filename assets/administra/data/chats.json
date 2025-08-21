@@ -1,0 +1,86 @@
+{
+  "chat_list": [
+    {
+      "id": 1,
+      "image": "https://i.ibb.co/vhhtBvN/1.png",
+      "title": "Mariana Gómez Morales",
+      "des": "La bomba del baño no funciona correctamente, necesito que la revisen lo antes posible",
+      "count": "1",
+      "time": "09.41"
+
+    },
+    {
+      "id": 2,
+      "image": "https://i.ibb.co/dKkJ2T5/2.png",
+      "title": "Carlos Rodríguez Vargas",
+      "des": "El foco del pasillo frente a mi apartamento está quemado, solicito que lo cambien.",
+      "count": "3",
+      "time": "08.25"
+
+    },
+    {
+      "id": 3,
+      "image": "https://i.ibb.co/T8h9Wd4/3.png",
+      "title": "Ana Lucía Pérez Ramírez",
+      "des": "El portón eléctrico no abre con mi control, ¿pueden revisarlo?",
+      "count": "",
+      "time": "Yesterday"
+
+    },
+    {
+      "id": 4,
+      "image": "https://i.ibb.co/nrKLNmR/4.png",
+      "title": "Juan Manuel López Ortega",
+      "des": "La presión del agua caliente en mi apartamento es muy baja. ¿Podrían verificar el sistema?",
+      "count": "2",
+      "time": "Dec 21, 2024"
+
+    },
+    {
+      "id": 5,
+      "image": "https://i.ibb.co/X7DwTJy/5.png",
+      "title": "Sofía Castillo Méndez",
+      "des": "Hay una fuga de agua en el techo de mi baño. Por favor, envíen a alguien a repararla.",
+      "count": "",
+      "time": "Dec 21, 2024"
+
+    },
+    {
+      "id": 6,
+      "image": "https://i.ibb.co/2vPfLWy/6.png",
+      "title": "Diego Fernández Rojas",
+      "des": "El timbre de mi apartamento no suena. Solicito que lo reparen.",
+      "count": "",
+      "time": "Dec 20, 2024"
+
+    },
+    {
+      "id": 7,
+      "image": "https://i.ibb.co/X5Dfh2S/7.png",
+      "title": "Valeria Cruz Hernández",
+      "des": "El aire acondicionado en el gimnasio del edificio no funciona. ¿Pueden revisarlo?",
+      "count": "",
+      "time": "09.41"
+
+    },
+    {
+      "id": 8,
+      "image": "https://i.ibb.co/B2pKGvb/8.png",
+      "title": "Alejandro Torres Delgado",
+      "des": "El ascensor estuvo detenido por varios minutos ayer. ¿Pueden verificar si necesita mantenimiento?",
+      "count": "",
+      "time": "Dec 20, 2024"
+
+    },
+
+    {
+      "id": 9,
+      "image": "https://i.ibb.co/0MGh8zW/9.png",
+      "title": "Camila Ruiz Velázquez",
+      "des": "Hay una gotera en la ventana de mi sala cuando llueve. Por favor, solucionen este problema.",
+      "count": "",
+      "time": "Dec 19, 2024"
+
+    }
+  ]
+}

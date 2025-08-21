@@ -1,0 +1,55 @@
+{
+  "notification_list": [
+
+    {
+      "date": "Hoy",
+      "messages": [
+        {
+
+          "icon": "https://i.ibb.co/t3jWNfk/security.png",
+          "title": "Alerta de seguridad \uD83D\uDD12",
+          "description": "Hemos notado alguna actividad inusual en su cuenta. Revise sus inicios de sesión recientes y actualice su contraseña si es necesario.",
+          "time": "09:41 AM"
+        },
+        {
+          "icon": "https://i.ibb.co/WWPHvRx/update.png",
+          "title": "Actualización del sistema disponible \uD83D\uDD04",
+          "description": "Hay una nueva versión de la aplicación disponible en la tienda.",
+          "time": "08:46 AM"
+        }
+      ]
+    },
+    {
+      "date": "Ayer",
+      "messages": [
+        {
+          "icon": "https://i.ibb.co/wLzC0nB/Lock.png",
+          "title": "Restablecimiento de contraseña exitoso ✅",
+          "description": "Su contraseña se ha restablecido correctamente. Si no solicitó este cambio, comuníquese con el soporte de inmediato.",
+          "time": "20:30 PM"
+        },
+        {
+
+          "icon": "https://i.ibb.co/qWTWfvn/Exclude.png",
+          "title": "Nueva característica emocionante \uD83C\uDD95",
+          "description": "Acabamos de lanzar una nueva función que mejorará su experiencia de usuario. ¡Compruébalo ahora!",
+          "time": "16:29 PM"
+        },
+        {
+
+          "icon": "https://i.ibb.co/HNw4mHX/Calendar.png",
+          "title": "Recordatorio de evento \uD83D\uDCC5",
+          "description": "No te olvides del evento especial mañana a las 3 p.m en Edificio 1. ¡Estamos ansiosos por verte allí!",
+          "time": "20:00 PM"
+        }
+
+
+      ]
+    }
+
+
+
+
+
+  ]
+}

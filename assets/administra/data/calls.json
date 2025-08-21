@@ -1,0 +1,84 @@
+{
+  "call_list": [
+    {
+      "id": 1,
+      "image": "https://i.ibb.co/7Y7WRSP/Ellipse-2.png",
+      "title": "Happy Tails Animal Rescue",
+      "prefixImage": "https://i.ibb.co/bB5pg4D/Vector.png",
+      "suffixImage": "https://i.ibb.co/0J1yXZ4/Video.png",
+      "time": "Today, 09:41 AM",
+      "selected": true
+
+    },
+    {
+      "id": 2,
+      "image": "https://i.ibb.co/19b3thH/Type-Default-Component-Avatar.png",
+      "title": "Metro Paws Animal Sanctuary",
+      "prefixImage": "https://i.ibb.co/bB5pg4D/Vector.png",
+      "suffixImage": "https://i.ibb.co/sg3519s/Call.png",
+      "time": "Yesterday, 14:28 PM",
+      "selected": false
+
+    },
+    {
+      "id": 3,
+      "image": "https://i.ibb.co/LdyRw1d/Type-Default-Component-Avatar-1.png",
+      "title": "Purr Haven Shelter",
+      "prefixImage": "https://i.ibb.co/bB5pg4D/Vector.png",
+      "suffixImage": "https://i.ibb.co/sg3519s/Call.png",
+      "time": "Dec 21, 10:44 AM",
+      "selected": false
+
+    },
+    {
+      "id": 4,
+      "image": "https://i.ibb.co/kybyRk2/Ellipse.png",
+      "title": "Big Apple Pet Rescues",
+      "prefixImage": "https://i.ibb.co/bB5pg4D/Vector.png",
+      "suffixImage": "https://i.ibb.co/0J1yXZ4/Video.png",
+      "time": "Dec 20, 13:39 PM",
+      "selected": true
+
+    },
+    {
+      "id": 5,
+      "image": "https://i.ibb.co/pRcCtTb/Type-Default-Component-Avatar-2.png",
+      "title": "City Critters Adoption Center",
+      "prefixImage": "https://i.ibb.co/bB5pg4D/Vector.png",
+      "suffixImage": "https://i.ibb.co/0J1yXZ4/Video.png",
+      "time": "Dec 20, 12:20 PM",
+      "selected": true
+    },
+    {
+      "id": 6,
+      "image": "https://i.ibb.co/CB92mKN/Type-Default-Component-Avatar-3.png",
+      "title": "Urban Paws Haven",
+      "prefixImage": "https://i.ibb.co/bB5pg4D/Vector.png",
+      "suffixImage": "https://i.ibb.co/sg3519s/Call.png",
+      "time": "Dec 19, 09:56 AM",
+      "selected": false
+
+    },
+    {
+      "id": 7,
+      "image": "https://i.ibb.co/wYN3Fkr/Ellipse-1.png",
+      "title": "Manhattan Critter Care",
+      "prefixImage": "https://i.ibb.co/bB5pg4D/Vector.png",
+      "suffixImage": "https://i.ibb.co/0J1yXZ4/Video.png",
+      "time": "Dec 18, 08:50 AM",
+      "selected": true
+
+    },
+    {
+      "id": 8,
+      "image": "https://i.ibb.co/bdxk3CJ/Type-Default-Component-Avatar-4.png",
+      "title": "Central Bark Shelter",
+      "prefixImage": "https://i.ibb.co/bB5pg4D/Vector.png",
+      "suffixImage": "https://i.ibb.co/sg3519s/Call.png",
+      "time": "Dec 17, 14:08 PM",
+      "selected": false
+
+    }
+
+  ]
+}

@@ -1,0 +1,740 @@
+{
+    "adm_list": [
+        {
+            "id": 1,
+            "name": "Condominio Oasis",
+            "image": [
+                "https://i.ibb.co/yy0wz3w/1.jpg",
+                "https://i.ibb.co/HXFwjbs/2.jpg",
+                "https://i.ibb.co/dfPTyF8/3.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 8",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 1
+        },
+        {
+            "id": 1,
+            "name": "Aurum",
+            "image": [
+                "https://i.ibb.co/frkQNyt/4.jpg",
+                "https://i.ibb.co/xYNtMZY/5.jpg",
+                "https://i.ibb.co/Cz45SqB/6.jpg"
+            ],
+            "distance": "1,8 km",
+            "category": "Edificio 9",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 2,
+            "rooms": 3
+        },
+        {
+            "id": 1,
+            "name": "Condominio Oasis",
+            "image": [
+                "https://i.ibb.co/Y7Wdgqk/7.jpg",
+                "https://i.ibb.co/6sg4WXY/8.jpg",
+                "https://i.ibb.co/W05Z9J3/9.jpg"
+            ],
+            "distance": "2.3 km",
+            "category": "Edificio 3",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 3
+        },
+        {
+            "id": 1,
+            "name": "Cumbres",
+            "image": [
+                "https://i.ibb.co/DptBSGg/10.jpg",
+                "https://i.ibb.co/s52CPp6/11.jpg",
+                "https://i.ibb.co/gyKSHmB/12.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 6",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 2
+        },
+        {
+            "id": 1,
+            "name": "Jardines de la Sierra",
+            "image": [
+                "https://i.ibb.co/JHSbNPS/13.jpg",
+                "https://i.ibb.co/QJ317B5/14.jpg",
+                "https://i.ibb.co/d60y1RT/15.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 7",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 1
+        },
+        {
+            "id": 1,
+            "name": "Vista Hermosa",
+            "image": [
+                "https://i.ibb.co/hY0hx2Z/16.jpg",
+                "https://i.ibb.co/jw6B2N0/17.jpg",
+                "https://i.ibb.co/zfXvPX7/18.jpg"
+            ],
+            "distance": "3.1 km",
+            "category": "Edificio 7",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 5
+        },
+        {
+            "id": 2,
+            "name": "Eclipse Residencial",
+            "image": [
+                "https://i.ibb.co/NnstxPB/19.jpg",
+                "https://i.ibb.co/dM0SsP7/20.jpg",
+                "https://i.ibb.co/wNc3cP3/21.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 5",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 2
+        },
+        {
+            "id": 2,
+            "name": "Eclipse Residencial",
+            "image": [
+                "https://i.ibb.co/SNY4P4d/22.jpg",
+                "https://i.ibb.co/fGFWYzQ/23.jpg",
+                "https://i.ibb.co/FqGnhV1/24.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 2",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 4,
+            "rooms": 4
+        },
+        {
+            "id": 2,
+            "name": "Altavista Tower",
+            "image": [
+                "https://i.ibb.co/8MdWfy8/25.jpg",
+                "https://i.ibb.co/FYh9stw/26.jpg",
+                "https://i.ibb.co/bJg0XmN/27.jpg"
+            ],
+            "distance": "1,9 km",
+            "category": "Edificio 1",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 2,
+            "rooms": 3
+        },
+        {
+            "id": 2,
+            "name": "Vista Hermosa",
+            "image": [
+                "https://i.ibb.co/HXFwjbs/2.jpg",
+                "https://i.ibb.co/dfPTyF8/3.jpg",
+                "https://i.ibb.co/frkQNyt/4.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 7",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 3
+        },
+        {
+            "id": 2,
+            "name": "Nogales de Cayal\u00e1",
+            "image": [
+                "https://i.ibb.co/xYNtMZY/5.jpg",
+                "https://i.ibb.co/Cz45SqB/6.jpg",
+                "https://i.ibb.co/Y7Wdgqk/7.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 3",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 1
+        },
+        {
+            "id": 2,
+            "name": "Loma Verde",
+            "image": [
+                "https://i.ibb.co/6sg4WXY/8.jpg",
+                "https://i.ibb.co/W05Z9J3/9.jpg",
+                "https://i.ibb.co/DptBSGg/10.jpg"
+            ],
+            "distance": "1,9 km",
+            "category": "Edificio 10",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 4
+        },
+        {
+            "id": 3,
+            "name": "Cumbres",
+            "image": [
+                "https://i.ibb.co/s52CPp6/11.jpg",
+                "https://i.ibb.co/gyKSHmB/12.jpg",
+                "https://i.ibb.co/JHSbNPS/13.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 7",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 4
+        },
+        {
+            "id": 3,
+            "name": "Riviera Blanca",
+            "image": [
+                "https://i.ibb.co/QJ317B5/14.jpg",
+                "https://i.ibb.co/d60y1RT/15.jpg",
+                "https://i.ibb.co/hY0hx2Z/16.jpg"
+            ],
+            "distance": "1,8 km",
+            "category": "Edificio 2",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 2,
+            "rooms": 2
+        },
+        {
+            "id": 3,
+            "name": "Palmas Altas",
+            "image": [
+                "https://i.ibb.co/jw6B2N0/17.jpg",
+                "https://i.ibb.co/zfXvPX7/18.jpg",
+                "https://i.ibb.co/NnstxPB/19.jpg"
+            ],
+            "distance": "2.3 km",
+            "category": "Edificio 8",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 1,
+            "rooms": 3
+        },
+        {
+            "id": 3,
+            "name": "Altavista Tower",
+            "image": [
+                "https://i.ibb.co/dM0SsP7/20.jpg",
+                "https://i.ibb.co/wNc3cP3/21.jpg",
+                "https://i.ibb.co/SNY4P4d/22.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 2",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 2
+        },
+        {
+            "id": 3,
+            "name": "Vistas del Lago",
+            "image": [
+                "https://i.ibb.co/fGFWYzQ/23.jpg",
+                "https://i.ibb.co/FqGnhV1/24.jpg",
+                "https://i.ibb.co/8MdWfy8/25.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 3",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 3
+        },
+        {
+            "id": 3,
+            "name": "Torre Central",
+            "image": [
+                "https://i.ibb.co/FYh9stw/26.jpg",
+                "https://i.ibb.co/bJg0XmN/27.jpg",
+                "https://i.ibb.co/HXFwjbs/2.jpg"
+            ],
+            "distance": "3.1 km",
+            "category": "Edificio 4",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 1
+        },
+        {
+            "id": 4,
+            "name": "Torres del Parque",
+            "image": [
+                "https://i.ibb.co/dfPTyF8/3.jpg",
+                "https://i.ibb.co/frkQNyt/4.jpg",
+                "https://i.ibb.co/xYNtMZY/5.jpg"
+            ],
+            "distance": "2.3 km",
+            "category": "Edificio 9",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 3
+        },
+        {
+            "id": 4,
+            "name": "Cumbres",
+            "image": [
+               "https://i.ibb.co/Cz45SqB/6.jpg",
+                "https://i.ibb.co/Y7Wdgqk/7.jpg",
+                "https://i.ibb.co/6sg4WXY/8.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 10",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 3
+        },
+        {
+            "id": 4,
+            "name": "Terrazas de Oro",
+            "image": [
+                "https://i.ibb.co/W05Z9J3/9.jpg",
+                "https://i.ibb.co/DptBSGg/10.jpg",
+                "https://i.ibb.co/s52CPp6/11.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 9",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 3
+        },
+        {
+            "id": 4,
+            "name": "Santuario Urbano",
+            "image": [
+                "https://i.ibb.co/gyKSHmB/12.jpg",
+                "https://i.ibb.co/JHSbNPS/13.jpg",
+                "https://i.ibb.co/QJ317B5/14.jpg"
+            ],
+            "distance": "3.1 km",
+            "category": "Edificio 2",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 1,
+            "rooms": 3
+        },
+        {
+            "id": 5,
+            "name": "Torres del Parque",
+            "image": [
+                "https://i.ibb.co/d60y1RT/15.jpg",
+                "https://i.ibb.co/hY0hx2Z/16.jpg",
+                "https://i.ibb.co/jw6B2N0/17.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 6",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 2,
+            "rooms": 1
+        },
+        {
+            "id": 5,
+            "name": "Riviera Blanca",
+            "image": [
+                "https://i.ibb.co/zfXvPX7/18.jpg",
+                "https://i.ibb.co/NnstxPB/19.jpg",
+                "https://i.ibb.co/dM0SsP7/20.jpg"
+            ],
+            "distance": "1,9 km",
+            "category": "Edificio 3",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 3
+        },
+        {
+            "id": 5,
+            "name": "Altavista Tower",
+            "image": [
+                "https://i.ibb.co/wNc3cP3/21.jpg",
+                "https://i.ibb.co/SNY4P4d/22.jpg",
+                "https://i.ibb.co/fGFWYzQ/23.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 5",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 2
+        },
+        {
+            "id": 5,
+            "name": "Condominio Oasis",
+            "image": [
+               "https://i.ibb.co/FqGnhV1/24.jpg",
+                "https://i.ibb.co/8MdWfy8/25.jpg",
+                "https://i.ibb.co/FYh9stw/26.jpg"
+            ],
+            "distance": "1,8 km",
+            "category": "Edificio 5",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 4,
+            "rooms": 5
+        },
+        {
+            "id": 6,
+            "name": "Riviera Blanca",
+            "image": [
+                "https://i.ibb.co/frkQNyt/4.jpg",
+                "https://i.ibb.co/xYNtMZY/5.jpg",
+                "https://i.ibb.co/Cz45SqB/6.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 4",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 3
+        },
+        {
+            "id": 6,
+            "name": "Condominio Oasis",
+            "image": [
+                "https://i.ibb.co/Y7Wdgqk/7.jpg",
+                "https://i.ibb.co/6sg4WXY/8.jpg",
+                "https://i.ibb.co/W05Z9J3/9.jpg"
+            ],
+            "distance": "1,8 km",
+            "category": "Edificio 6",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 4
+        },
+        {
+            "id": 6,
+            "name": "Santuario Urbano",
+            "image": [
+                "https://i.ibb.co/DptBSGg/10.jpg",
+                "https://i.ibb.co/s52CPp6/11.jpg",
+                "https://i.ibb.co/gyKSHmB/12.jpg"
+            ],
+            "distance": "2.3 km",
+            "category": "Edificio 2",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 5
+        },
+        {
+            "id": 6,
+            "name": "Nogales de Cayal\u00e1",
+            "image": [
+                "https://i.ibb.co/JHSbNPS/13.jpg",
+                "https://i.ibb.co/QJ317B5/14.jpg",
+                "https://i.ibb.co/d60y1RT/15.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 9",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 4,
+            "rooms": 4
+        },
+        {
+            "id": 7,
+            "name": "Eclipse Residencial",
+            "image": [
+                "https://i.ibb.co/hY0hx2Z/16.jpg",
+                "https://i.ibb.co/jw6B2N0/17.jpg",
+                "https://i.ibb.co/zfXvPX7/18.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 4",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 4
+        },
+        {
+            "id": 7,
+            "name": "Santuario Urbano",
+            "image": [
+                "https://i.ibb.co/NnstxPB/19.jpg",
+                "https://i.ibb.co/dM0SsP7/20.jpg",
+                "https://i.ibb.co/wNc3cP3/21.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 7",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 4,
+            "rooms": 3
+        },
+        {
+            "id": 7,
+            "name": "Cumbres",
+            "image": [
+                "https://i.ibb.co/SNY4P4d/22.jpg",
+                "https://i.ibb.co/fGFWYzQ/23.jpg",
+                "https://i.ibb.co/FqGnhV1/24.jpg"
+            ],
+            "distance": "1,9 km",
+            "category": "Edificio 1",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 1
+        },
+        {
+            "id": 7,
+            "name": "Paseo Real",
+            "image": [
+                "https://i.ibb.co/8MdWfy8/25.jpg",
+                "https://i.ibb.co/FYh9stw/26.jpg",
+                "https://i.ibb.co/bJg0XmN/27.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 9",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 2,
+            "rooms": 2
+        },
+        {
+            "id": 8,
+            "name": "Riviera Blanca",
+            "image": [
+                "https://i.ibb.co/s52CPp6/11.jpg",
+                "https://i.ibb.co/gyKSHmB/12.jpg",
+                "https://i.ibb.co/JHSbNPS/13.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 2",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 1
+        },
+        {
+            "id": 8,
+            "name": "Nogales de Cayal\u00e1",
+            "image": [
+               "https://i.ibb.co/QJ317B5/14.jpg",
+                "https://i.ibb.co/d60y1RT/15.jpg",
+                "https://i.ibb.co/hY0hx2Z/16.jpg"
+            ],
+            "distance": "1,8 km",
+            "category": "Edificio 3",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 2
+        },
+        {
+            "id": 8,
+            "name": "Riviera Blanca",
+            "image": [
+                "https://i.ibb.co/FqGnhV1/24.jpg",
+                "https://i.ibb.co/8MdWfy8/25.jpg",
+                "https://i.ibb.co/FYh9stw/26.jpg"
+            ],
+            "distance": "2.3 km",
+            "category": "Edificio 7",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 0,
+            "rooms": 1
+        },
+        {
+            "id": 8,
+            "name": "Terrazas de Oro",
+            "image": [
+                "https://i.ibb.co/wNc3cP3/21.jpg",
+                "https://i.ibb.co/SNY4P4d/22.jpg",
+                "https://i.ibb.co/fGFWYzQ/23.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 3",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 3
+        },
+        {
+            "id": 9,
+            "name": "Riviera Blanca",
+            "image": [
+                "https://i.ibb.co/zfXvPX7/18.jpg",
+                "https://i.ibb.co/NnstxPB/19.jpg",
+                "https://i.ibb.co/dM0SsP7/20.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 5",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 4,
+            "rooms": 2
+        },
+        {
+            "id": 9,
+            "name": "Nogales de Cayal\u00e1",
+            "image": [
+                "https://i.ibb.co/d60y1RT/15.jpg",
+                "https://i.ibb.co/hY0hx2Z/16.jpg",
+                "https://i.ibb.co/jw6B2N0/17.jpg"
+            ],
+            "distance": "1,8 km",
+            "category": "Edificio 4",
+            "size": "Grande",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 5,
+            "rooms": 4
+        },
+        {
+            "id": 9,
+            "name": "Aurum",
+            "image": [
+                "https://i.ibb.co/gyKSHmB/12.jpg",
+                "https://i.ibb.co/JHSbNPS/13.jpg",
+                "https://i.ibb.co/QJ317B5/14.jpg"
+            ],
+            "distance": "2.3 km",
+            "category": "Edificio 4",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 4,
+            "rooms": 3
+        },
+        {
+            "id": 9,
+            "name": "Kiintea",
+            "image": [
+                "https://i.ibb.co/W05Z9J3/9.jpg",
+                "https://i.ibb.co/DptBSGg/10.jpg",
+                "https://i.ibb.co/s52CPp6/11.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 8",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 2,
+            "rooms": 2
+        },
+        {
+            "id": 10,
+            "name": "Torre Central",
+            "image": [
+                "https://i.ibb.co/xYNtMZY/5.jpg",
+                "https://i.ibb.co/Cz45SqB/6.jpg",
+                "https://i.ibb.co/Y7Wdgqk/7.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 7",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 2
+        },
+        {
+            "id": 10,
+            "name": "Torres del Parque",
+            "image": [
+                "https://i.ibb.co/HXFwjbs/2.jpg",
+                "https://i.ibb.co/dfPTyF8/3.jpg",
+                "https://i.ibb.co/frkQNyt/4.jpg"
+            ],
+            "distance": "1,5 km",
+            "category": "Edificio 5",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 3,
+            "rooms": 5
+        },
+        {
+            "id": 10,
+            "name": "Jardines de la Sierra",
+            "image": [
+                "https://i.ibb.co/yy0wz3w/1.jpg",
+                "https://i.ibb.co/JHSbNPS/13.jpg",
+                "https://i.ibb.co/QJ317B5/14.jpg"
+            ],
+            "distance": "1,9 km",
+            "category": "Edificio 5",
+            "size": "Mediano",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 2,
+            "rooms": 3
+        },
+        {
+            "id": 10,
+            "name": "Vistas del Lago",
+            "image": [
+                "https://i.ibb.co/bJg0XmN/27.jpg",
+                "https://i.ibb.co/W05Z9J3/9.jpg",
+                "https://i.ibb.co/DptBSGg/10.jpg"
+            ],
+            "distance": "1,2 km",
+            "category": "Edificio 5",
+            "size": "Peque\u00f1o",
+            "about": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "personality": "Descubre Kiintea, un edificio exclusivo en la Zona 15 en Vista Hermosa II de la ciudad de Guatemala. Apartamentos de 1, 2 y 3 habitaciones con diseños únicos y una ubicación privilegiada. Disfruta de estar cerca de colegios, universidades, y accesos a las principales zonas de la Ciudad. Vive en comodidad y estilo en Kiintea.",
+            "amenities": 1,
+            "rooms": 3
+        }
+    ]
+}

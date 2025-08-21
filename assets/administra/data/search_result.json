@@ -1,0 +1,122 @@
+{
+  "search_results_list": [
+    {
+      "id": 1,
+      "name": "Mochi",
+      "image": [
+        "https://i.ibb.co/wsrHD7h/Size-Small-Component-Images-Card.png",
+        "https://i.ibb.co/wsrHD7h/Size-Small-Component-Images-Card.png",
+        "https://i.ibb.co/sj3RpWV/dog.png"
+      ],
+      "distance": "1,2 km",
+      "category": "Abyssinian",
+      "gender": "Male",
+      "age": "Adult",
+      "size": "Medium",
+      "about": "Mochi is a stunning Abyssinian cat with a warm, golden coat that shimmers in the sunlight. This playful and curious feline is just 2 years old, making her the perfect blend of youthful energy and feline charm.",
+      "personality": "Mochi is not just a cat; she's a bundle of joy waiting to bring happiness into your home. With her affectionate nature, she enjoys cuddling up on lazy afternoons and is always ready to engage in interactive play. Mochi loves to explore her surroundings and has a special fondness for climbing and perching on high spots to observe the world around her.",
+      "ideal": "Mochi is seeking a loving home where she can be the center of attention. An adopter who appreciates her playful antics and can provide a stimulating environment will be the perfect match for this charming Abyssinian. Whether it's chasing toys or basking in the sun, Mochi is ready to be your new furry companion.",
+      "adoption": "To inquire about adopting Mochi, please contact the Happy Tails Animal Rescue at (555) 123-4567. The adoption process includes a meet-and-greet to ensure a perfect fit. Mochi is spayed, up-to-date on vaccinations, and comes with a clean bill of health."
+
+    },
+    {
+      "id": 2,
+      "name": "Casper",
+      "image": [
+        "https://i.ibb.co/yV6dgkf/Size-Medium-Component-Images-Card-2.png",
+        "https://i.ibb.co/wsrHD7h/Size-Small-Component-Images-Card.png",
+        "https://i.ibb.co/sj3RpWV/dog.png"
+      ],
+      "distance": "1,5 km",
+      "category": "Chihuahua",
+      "gender": "FeMale",
+      "age": "Adult",
+      "size": "Medium",
+      "about": "Casper is a stunning Abyssinian cat with a warm, golden coat that shimmers in the sunlight. This playful and curious feline is just 2 years old, making her the perfect blend of youthful energy and feline charm.",
+      "personality": "Casper is not just a cat; she's a bundle of joy waiting to bring happiness into your home. With her affectionate nature, she enjoys cuddling up on lazy afternoons and is always ready to engage in interactive play. Mochi loves to explore her surroundings and has a special fondness for climbing and perching on high spots to observe the world around her.",
+      "ideal": "Casper is seeking a loving home where she can be the center of attention. An adopter who appreciates her playful antics and can provide a stimulating environment will be the perfect match for this charming Abyssinian. Whether it's chasing toys or basking in the sun, Mochi is ready to be your new furry companion.",
+      "adoption": "To inquire about adopting Mochi, please contact the Happy Tails Animal Rescue at (555) 123-4567. The adoption process includes a meet-and-greet to ensure a perfect fit. Mochi is spayed, up-to-date on vaccinations, and comes with a clean bill of health."
+
+
+
+    },
+    {
+      "id": 3,
+      "name": "Willow",
+      "image": [
+        "https://i.ibb.co/MSccyjn/Size-Medium-Component-Images-Card-1.png",
+        "https://i.ibb.co/wsrHD7h/Size-Small-Component-Images-Card.png",
+        "https://i.ibb.co/sj3RpWV/dog.png"
+      ],
+      "distance": "1,9 km",
+      "category": "Maine Coon",
+      "gender": "Male",
+      "age": "Adult",
+      "size": "Medium",
+      "about": "Willow is a stunning Abyssinian cat with a warm, golden coat that shimmers in the sunlight. This playful and curious feline is just 2 years old, making her the perfect blend of youthful energy and feline charm.",
+      "personality": "Willow is not just a cat; she's a bundle of joy waiting to bring happiness into your home. With her affectionate nature, she enjoys cuddling up on lazy afternoons and is always ready to engage in interactive play. Mochi loves to explore her surroundings and has a special fondness for climbing and perching on high spots to observe the world around her.",
+      "ideal": "Willow is seeking a loving home where she can be the center of attention. An adopter who appreciates her playful antics and can provide a stimulating environment will be the perfect match for this charming Abyssinian. Whether it's chasing toys or basking in the sun, Mochi is ready to be your new furry companion.",
+      "adoption": "To inquire about adopting Mochi, please contact the Happy Tails Animal Rescue at (555) 123-4567. The adoption process includes a meet-and-greet to ensure a perfect fit. Mochi is spayed, up-to-date on vaccinations, and comes with a clean bill of health."
+
+    },
+    {
+      "id": 4,
+      "name": "Ziggy",
+      "image": [
+        "https://i.ibb.co/b6shcSG/Size-Medium-Component-Images-Card.png",
+        "https://i.ibb.co/wsrHD7h/Size-Small-Component-Images-Card.png",
+        "https://i.ibb.co/sj3RpWV/dog.png"
+      ],
+      "distance": "1,2 km",
+      "category": "Abyssinian",
+      "gender": "FeMale",
+      "age": "Adult",
+      "size": "Medium",
+      "about": "Ziggy is a stunning Abyssinian cat with a warm, golden coat that shimmers in the sunlight. This playful and curious feline is just 2 years old, making her the perfect blend of youthful energy and feline charm.",
+      "personality": "Ziggy is not just a cat; she's a bundle of joy waiting to bring happiness into your home. With her affectionate nature, she enjoys cuddling up on lazy afternoons and is always ready to engage in interactive play. Mochi loves to explore her surroundings and has a special fondness for climbing and perching on high spots to observe the world around her.",
+      "ideal": "Ziggy is seeking a loving home where she can be the center of attention. An adopter who appreciates her playful antics and can provide a stimulating environment will be the perfect match for this charming Abyssinian. Whether it's chasing toys or basking in the sun, Mochi is ready to be your new furry companion.",
+      "adoption": "To inquire about adopting Mochi, please contact the Happy Tails Animal Rescue at (555) 123-4567. The adoption process includes a meet-and-greet to ensure a perfect fit. Mochi is spayed, up-to-date on vaccinations, and comes with a clean bill of health."
+
+
+
+    },
+    {
+      "id": 5,
+      "name": "Marmalade",
+      "image": [
+        "https://i.ibb.co/cNQHzPC/Image-1.png",
+        "https://i.ibb.co/wsrHD7h/Size-Small-Component-Images-Card.png",
+        "https://i.ibb.co/sj3RpWV/dog.png"
+      ],
+      "distance": "1,5 km",
+      "category": "Chihuahua",
+      "gender": "Male",
+      "age": "Adult",
+      "size": "Medium",
+      "about": "Marmalade is a stunning Abyssinian cat with a warm, golden coat that shimmers in the sunlight. This playful and curious feline is just 2 years old, making her the perfect blend of youthful energy and feline charm.",
+      "personality": "Marmalade is not just a cat; she's a bundle of joy waiting to bring happiness into your home. With her affectionate nature, she enjoys cuddling up on lazy afternoons and is always ready to engage in interactive play. Mochi loves to explore her surroundings and has a special fondness for climbing and perching on high spots to observe the world around her.",
+      "ideal": "Marmalade is seeking a loving home where she can be the center of attention. An adopter who appreciates her playful antics and can provide a stimulating environment will be the perfect match for this charming Abyssinian. Whether it's chasing toys or basking in the sun, Mochi is ready to be your new furry companion.",
+      "adoption": "To inquire about adopting Mochi, please contact the Happy Tails Animal Rescue at (555) 123-4567. The adoption process includes a meet-and-greet to ensure a perfect fit. Mochi is spayed, up-to-date on vaccinations, and comes with a clean bill of health."
+
+    },
+    {
+      "id": 6,
+      "name": "Cleo",
+      "image": [
+        "https://i.ibb.co/7G3D33r/Image.png",
+        "https://i.ibb.co/wsrHD7h/Size-Small-Component-Images-Card.png",
+        "https://i.ibb.co/sj3RpWV/dog.png"
+      ],
+      "distance": "1,9 km",
+      "category": "Maine Coon",
+      "gender": "FeMale",
+      "age": "Adult",
+      "size": "Medium",
+      "about": "Cleo is a stunning Abyssinian cat with a warm, golden coat that shimmers in the sunlight. This playful and curious feline is just 2 years old, making her the perfect blend of youthful energy and feline charm.",
+      "personality": "Cleo is not just a cat; she's a bundle of joy waiting to bring happiness into your home. With her affectionate nature, she enjoys cuddling up on lazy afternoons and is always ready to engage in interactive play. Mochi loves to explore her surroundings and has a special fondness for climbing and perching on high spots to observe the world around her.",
+      "ideal": "Cleo is seeking a loving home where she can be the center of attention. An adopter who appreciates her playful antics and can provide a stimulating environment will be the perfect match for this charming Abyssinian. Whether it's chasing toys or basking in the sun, Mochi is ready to be your new furry companion.",
+      "adoption": "To inquire about adopting Mochi, please contact the Happy Tails Animal Rescue at (555) 123-4567. The adoption process includes a meet-and-greet to ensure a perfect fit. Mochi is spayed, up-to-date on vaccinations, and comes with a clean bill of health."
+
+    }
+  ]
+}
