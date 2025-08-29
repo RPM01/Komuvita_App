@@ -71,12 +71,6 @@ class RegisterController extends GetxController {
     if (value1 == null || value1.isEmpty) {
       return requiredText;
     }
-    if (value1.length < 8) {
-      return passwordLength;
-    }
-    if (!regex2.hasMatch(value1)) {
-      return passwordValidation;
-    }
     return null;
   }
 

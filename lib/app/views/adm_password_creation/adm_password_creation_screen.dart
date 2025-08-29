@@ -188,7 +188,6 @@ class _AdmPasswordCreationScreenState extends State<AdmPasswordCreationScreen> {
                               ),
                             ),
                             10.height,
-
                             CustomTextField(
                               focusNode: controller.confirmPasswordFocusNode,
                               onChanged: (value) {
@@ -231,23 +230,52 @@ class _AdmPasswordCreationScreenState extends State<AdmPasswordCreationScreen> {
                               validator: controller.validateRepeatPassword,
 
                             ),
+                            Center(
+                              child: TextButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title:Text("Lamentamos que desee remover su cuenta de Komuvita. Nuestro administrador se pondrá en contacto con usted para continuar con el proceso"),
+                                      ),
+                                    );
+                                },
+                                child: Text(
+                                  "Eliminar mi cuenta",
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: Get.isDarkMode
+                                        ? admWhiteColor
+                                        : admColorPrimary,
+                                  ),
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),
                     ),
                   ),
-            ))));
-
-
-
-
+              )
+            )
+        )
+    );
   }
-
-
 }
 
 
+void msgxToast(String msxg){
 
+  Fluttertoast.showToast(
+    msg: msxg,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.CENTER,
+    timeInSecForIosWeb: 1,
+    backgroundColor: Colors.blue,
+    textColor: Colors.white,
+    fontSize: 20,
+  );
+}
 
 
 

@@ -35,7 +35,7 @@ class _AdmRegisterScreenState extends State<AdmRegisterScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
         bottomNavigationBar:Obx(() =>  MyButton(
-          text: signUp,
+          text: "signUp",
           color: controller.isButtonEnabled.value
               ? admColorPrimary
               : admColorDarkPrimary.withOpacity(0.20),
@@ -45,14 +45,19 @@ class _AdmRegisterScreenState extends State<AdmRegisterScreen> {
               ? showDialog(
             context: context,
             builder: (BuildContext context) {
+
               Future.delayed(
                   const Duration(seconds: 2),
                     () {
-                  Get.back();
-                  Get.toNamed(MyRoute.aboutYourselfScreen); // Navigate
+                  //Get.back();
+                 //Get.offNamed(MyRoute.loginScreen);
+                  //Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+
+                  //Get.toNamed(MyRoute.aboutYourselfScreen); // Navigate
                 },
 
               );
+
               return AlertDialog(
                 backgroundColor:
                 Get.isDarkMode ? admDarkBorderColor : admWhiteColor,
@@ -61,13 +66,7 @@ class _AdmRegisterScreenState extends State<AdmRegisterScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircularProgressIndicator(
-                        backgroundColor: admColorPrimary,
-                        valueColor: AlwaysStoppedAnimation(
-                            admWhiteColor.withOpacity(0.7)),
-                        strokeWidth: 6,
-                        strokeAlign: BorderSide.strokeAlignCenter,
-                      ),
+                      Text("Gracias por activar su cuenta en Komuvita, recibirá un correo por parte del administrador una vez finalizada la evaluación de creación"),
                       20.height,
                       Text(
                         signUpHere,
@@ -78,6 +77,21 @@ class _AdmRegisterScreenState extends State<AdmRegisterScreen> {
                     ],
                   ),
                 ),
+                actions: <Widget>[
+                  Center(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                        textStyle: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      child:  Text('Aceptar',style: TextStyle(fontSize: 20),),
+                      onPressed: () {
+                        Get.back();
+                        Get.back();
+                      },
+                    ),
+                  )
+                ],
               );
             },)
               : controller.formKey.currentState?.validate()
@@ -263,7 +277,15 @@ class _AdmRegisterScreenState extends State<AdmRegisterScreen> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    Get.offNamed(MyRoute.loginScreen);
+                                    debugPrint("Se preciono inicio");
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title:Text("Gracias por activar su cuenta en Komuvita, recibirá un correo por parte del administrador una vez finalizada la evaluación de creación"),
+                                      ),
+                                    );
+                                    Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+                                    //Get.offNamed(MyRoute.loginScreen);
                                   },
                                   child: Text(
                                     signIn,
@@ -274,6 +296,7 @@ class _AdmRegisterScreenState extends State<AdmRegisterScreen> {
                                 ),
                               ],
                             ),
+
                             //20.height,
                             //Row(children: <Widget>[
                             //  Expanded(

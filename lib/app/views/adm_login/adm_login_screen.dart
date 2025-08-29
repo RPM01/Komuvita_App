@@ -271,7 +271,6 @@ class _AdmLoginScreenState extends State<AdmLoginScreen> {
                                     ),
                                     10.height,
 
-                                    /// Remember me row
                                     Row(
                                       children: [
                                         SizedBox(

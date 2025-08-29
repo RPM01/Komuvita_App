@@ -57,5 +57,15 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>sms</string>
+      <string>tel</string>
+    </array>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We need permission to save photos and videos to your library for your convenience.</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need permission to access your photo library to view and select your photos and videos.</string>
 </dict>
 </plist>

@@ -52,7 +52,10 @@ class ForgotPasswordController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/administracion/usuarios/restablecer_clave");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/administracion/usuarios/restablecer_clave"
+          "http://api.komuvita.com/administracion/usuarios/restablecer_clave"
+      );
       Map body = {
         "autenticacion":
         {

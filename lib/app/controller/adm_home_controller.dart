@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,14 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+
+List<Map<String, dynamic>> CargoLecturaClienteCrearListadoList = [];
+String mensajeErrorClienteCrearCargoListado = "";
+String verificacionClienteCrearCargoListado ="";
+
+List<String> formaPago = [];
+List<String> formapagoDescirpcion = [];
+List<String> formapagoTarjeta = [];
 
 
 class AdmHomeController extends GetxController {
@@ -55,7 +64,10 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/importantes/datos_importantes_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/importantes/datos_importantes_listado"
+          "http://api.komuvita.com/portal/importantes/datos_importantes_listado"
+      );
       Map body = {
             "autenticacion":
             {
@@ -79,14 +91,20 @@ class AdmHomeController extends GetxController {
       debugPrint(json["datos"][0]["pv_detalle"].toString());
       if(response.statusCode == 200)
       {
-        if(json["resultado"]["pn_error"] == 0)
-        {
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+
           return List<Map<String, dynamic>>.from(json["datos"]);
         }
         else
         {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           throw Exception(json["resultado"]["pv_error_descripcion"].toString());
         }
       }
@@ -127,7 +145,10 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/noticias/noticias_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/noticias/noticias_listado"
+          "http://api.komuvita.com/portal/noticias/noticias_listado"
+        );
       Map body = {
         "autenticacion":
         {
@@ -151,46 +172,49 @@ class AdmHomeController extends GetxController {
 
       if(response.statusCode == 200)
       {
-        debugPrint("Noticias3");
-        //debugPrint(json["datos"][0]["pl_comentarios"][0]["pv_descripcion"].toString());
 
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          debugPrint("Noticias con datos");
-          return List<Map<String, dynamic>>.from(json["datos"]);
-        }
-        else
-        {
-          debugPrint("Noticias Sin datos");
-          debugPrint("Noticias Error");
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          errorMensaje = json["resultado"]["pv_error_descripcion"].toString();
-          // msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-         // throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+
+          debugPrint("Noticias3");
+          //debugPrint(json["datos"][0]["pl_comentarios"][0]["pv_descripcion"].toString());
+
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            debugPrint("Noticias con datos");
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint("Noticias Sin datos");
+            debugPrint("Noticias Error");
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            errorMensaje = json["resultado"]["pv_error_descripcion"].toString();
+            // //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            // throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
     catch(e)
     {
       //Get.back();
-      debugPrint("ErrorTest");
       debugPrint(e.toString());
-      debugPrint(errorMensaje);
-        showDialog(
+      showDialog(
           context: Get.context!,
-          builder: (BuildContext dialogContext) {
-            Future.delayed(Duration(seconds: 1), () {
-              Navigator.of(dialogContext).pop(); // Dismiss the dialog
-            });
-            return AlertDialog(
-              title: Text(e.toString()),
-              content: Text(errorMensaje),
+          builder: (context)
+          {
+            return SimpleDialog(
+              title: Text(errorMensaje),
+              contentPadding: EdgeInsets.all(20),
+              children: [Text(e.toString())],
             );
-          },
-        );
           }
-    return [];
-    //throw Exception("Error en conexión");
+      );
+    }
+    throw Exception("Error en llamado");
   }
 
   Future<List<Map<String, dynamic>>>listadoRentas5()async
@@ -209,7 +233,10 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado"
+          "http://api.komuvita.com/portal/rentasventas/rentas_listado"
+      );
       Map body = {
         "autenticacion":
         {
@@ -231,15 +258,21 @@ class AdmHomeController extends GetxController {
 
       if(response.statusCode == 200)
       {
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          return List<Map<String, dynamic>>.from(json["datos"]);
-        }
-        else
-        {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -278,7 +311,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
+          "http://api.komuvita.com/portal/rentasventas/rentas_listado");
       Map body = {
         "autenticacion":
         {
@@ -300,16 +335,25 @@ class AdmHomeController extends GetxController {
 
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto!!!!!");
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto!!!!!");
 
-        if (json["resultado"]["pn_tiene_datos"] == 1) {
-          return (json["datos"] as List)
-              .map((item) => RentaVentaD5.fromJson(item))
-              .toList();
-        } else {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return (json["datos"] as List)
+                .map((item) => RentaVentaD5.fromJson(item))
+                .toList();
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -349,7 +393,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+          "http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
       Map body = {
         "autenticacion":
         {
@@ -370,16 +416,22 @@ class AdmHomeController extends GetxController {
       debugPrint("Objetos Perdidos");
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto");
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          return List<Map<String, dynamic>>.from(json["datos"]);
-        }
-        else
-        {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto");
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -418,7 +470,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+          "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
       Map body = {
         "autenticacion":
         {
@@ -442,16 +496,22 @@ class AdmHomeController extends GetxController {
 
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto");
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          return List<Map<String, dynamic>>.from(json["datos"]);
-        }
-        else
-        {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto");
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -471,7 +531,7 @@ class AdmHomeController extends GetxController {
           }
       );
     }
-    throw Exception("Error en conexión");
+    throw Exception("Error en llamado");
   }
 
   Future<List<ReservasF5>>amenidadesReservadas5B()async
@@ -490,7 +550,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+          "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
       Map body = {
         "autenticacion":
         {
@@ -516,22 +578,31 @@ class AdmHomeController extends GetxController {
       {
         debugPrint("Regreso correcto!!!!!");
 
-        if (json["resultado"]["pn_tiene_datos"] == 1) {
-          return (json["datos"] as List)
-              .map((item) => ReservasF5.fromJson(item))
-              .toList();
-        } else {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return (json["datos"] as List)
+                .map((item) => ReservasF5.fromJson(item))
+                .toList();
+          } else {
+            // debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            // //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
     catch(e)
     {
       //Get.back();
-      debugPrint("Error Amenidades Reservadasdos");
       debugPrint(e.toString());
+      debugPrint("Amenidades reservadas 2");
       showDialog(
           context: Get.context!,
           builder: (context)
@@ -544,9 +615,8 @@ class AdmHomeController extends GetxController {
           }
       );
     }
-    throw Exception("Error en conexión");
+    throw Exception("Error en llamado");
   }
-
 
   Future<List<Map<String, dynamic>>>GestionTickets5()async
   {
@@ -564,7 +634,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+          "http://api.komuvita.com/portal/tickets/gestiones_listado");
       Map body = {
         "autenticacion":
         {
@@ -592,16 +664,22 @@ class AdmHomeController extends GetxController {
       if(response.statusCode == 200)
       {
         //GestionTickets1();
-        debugPrint("Regreso correcto");
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          return List<Map<String, dynamic>>.from(json["datos"]);
-        }
-        else
-        {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto");
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -624,82 +702,101 @@ class AdmHomeController extends GetxController {
     throw Exception("Error en conexión");
   }
 
-  Future<List<TickestG5>>GestionTickets5B()async
-  {
+
+
+  Future<List<TickestG5>> GestionTickets5B() async {
     debugPrint("**********G5***********");
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
     String? empresa = prefs.getString("Empresa");
+
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
     debugPrint("Tickets!!!");
-    try
-    {
+
+    try {
       var header = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+      var url = Uri.parse(
+        "http://api.komuvita.com/portal/tickets/gestiones_listado",
+      );
+
       Map body = {
-        "autenticacion":
-        {
-          "pv_token": token
+        "autenticacion": {
+          "pv_token": token,
         },
-        "parametros":
-        {
+        "parametros": {
           "pn_empresa": int.parse(empresa!),
           "pn_periodo": "-1",
           "pv_cliente": prefs.getString("correo"),
           "pv_propiedad": "-1",
           "pn_gestion_tipo": "-1",
           "pn_estado": pn_estadoTickets,
-          "pv_criterio": ""
+          "pv_criterio": "",
         }
       };
 
-      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      http.Response response = await http.post(
+        url,
+        body: jsonEncode(body),
+        headers: header,
+      );
+
       final json = jsonDecode(response.body);
       debugPrint("Tickets69");
-      int totalWithGestion = (json['datos'] as List).where((item) => item['pn_gestion'] != null).length;
+
+      if (json["datos"] == null || json["datos"] is! List) {
+        debugPrint("⚠️ 'datos' is null or not a list");
+        return [];
+      }
+      List datosList = json["datos"];
+      int totalWithGestion =
+          datosList.where((item) => item['pn_gestion'] != null).length;
       debugPrint(totalWithGestion.toString());
+
       debugPrint(body.toString());
       debugPrint(response.body.toString());
       devLog.log("Tickets69");
       devLog.log(response.body.toString());
-      if(response.statusCode == 200)
-      {
-        //GestionTickets1();
-        debugPrint("Regreso correcto!!!!!");
-        if (json["resultado"]["pn_tiene_datos"] == 1) {
-          return (json["datos"] as List)
-              .map((item) => TickestG5.fromJson(item))
-              .toList();
-        } else {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+
+      if (response.statusCode == 200) {
+        if (json["resultado"]["pn_error"] == 0) {
+          if (datosList.isEmpty) {
+            debugPrint("⚠️ 'datos' is empty");
+            return [];
+          }
+
+          debugPrint("Regreso correcto!!!!!");
+
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return datosList.map((item) => TickestG5.fromJson(item)).toList();
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
-    }
-    catch(e)
-    {
-      //Get.back();
-      debugPrint(e.toString());
+    } catch (e) {
+      debugPrint("❌ Exception: $e");
       showDialog(
-          context: Get.context!,
-          builder: (context)
-          {
-            return SimpleDialog(
-              title: Text(errorMensaje),
-              contentPadding: EdgeInsets.all(20),
-              children: [Text(e.toString())],
-            );
-          }
+        context: Get.context!,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text(errorMensaje),
+            contentPadding: EdgeInsets.all(20),
+            children: [Text(e.toString())],
+          );
+        },
       );
     }
+
     throw Exception("Error en conexión");
   }
+
 
   Future<List<TickestG5>>GestionTickets5BMes()async
   {
@@ -717,7 +814,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+          "http://api.komuvita.com/portal/tickets/gestiones_listado");
       Map body = {
         "autenticacion":
         {
@@ -750,15 +849,24 @@ class AdmHomeController extends GetxController {
       devLog.log(response.body.toString());
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto!!!!!");
-        if (json["resultado"]["pn_tiene_datos"] == 1) {
-          return (json["datos"] as List)
-              .map((item) => TickestG5.fromJson(item))
-              .toList();
-        } else {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto!!!!!");
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return (json["datos"] as List)
+                .map((item) => TickestG5.fromJson(item))
+                .toList();
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -799,7 +907,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
+          "http://api.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -821,16 +931,22 @@ class AdmHomeController extends GetxController {
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto");
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          return List<Map<String, dynamic>>.from(json["datos"]);
-        }
-        else
-        {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto");
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -870,7 +986,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/visitas/visita_pendiente_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/visitas/visita_pendiente_listado");
+          "http://api.komuvita.com/portal/visitas/visita_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -893,16 +1011,124 @@ class AdmHomeController extends GetxController {
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto!!!!!");
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          return List<Map<String, dynamic>>.from(json["datos"]);
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto!!!!!");
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
-        else
+      }
+    }
+    catch(e)
+    {
+      //Get.back();
+      debugPrint(e.toString());
+      showDialog(
+          context: Get.context!,
+          builder: (context)
+          {
+            return SimpleDialog(
+              title: Text(errorMensaje),
+              contentPadding: EdgeInsets.all(20),
+              children: [Text(e.toString())],
+            );
+          }
+      );
+    }
+    throw Exception("Error en conexión");
+  }
+
+
+  Future<List<Map<String, dynamic>>>listaPagosH2()async
+  {
+    debugPrint("**********H2***********");
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String? empresa = prefs.getString("Empresa");
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+    //GestionTickets1();
+
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/cuentas/forma_pago_listado");
+          "http://api.komuvita.com/portal/cuentas/forma_pago_listado");
+      Map body = {
+        "autenticacion":
         {
+          "pv_token": token
+        },
+        "parametros":
+        {
+          "pn_empresa": int.parse(empresa!),
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+      //debugPrint("Objetos Perdidos");
+      debugPrint("ListadoPagos");
+      debugPrint("Test");
+      debugPrint(body.toString());
+      debugPrint(response.body.toString());
+      if(response.statusCode == 200)
+      {
+        debugPrint("Regreso correcto!!!!!");
+        if (json["resultado"]["pn_error"] == 0) {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            debugPrint(json["datos"].toString());
+            List<Map<String, dynamic>> datos =
+                List<Map<String, dynamic>>.from(json["datos"]);
+
+            List<String> formasPago = List<String>.from(
+                datos.map((e) => e["pv_forma_pago"].toString()).toList());
+
+            List<String> descripciones = List<String>.from(
+                datos.map((e) => e["pv_descripcion"].toString()).toList());
+
+            List<String> tarjeta = List<String>.from(
+                datos.map((e) => e["pb_es_tarjeta"].toString()).toList());
+
+            formaPago = formasPago;
+            formapagoDescirpcion = descripciones;
+            formapagoTarjeta = tarjeta;
+
+            //debugPrint(formaPago.toString());
+            //debugPrint(formapagoDescirpcion.toString());
+            //debugPrint(formapagoTarjeta.toString());
+
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -942,7 +1168,9 @@ class AdmHomeController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
+          "http://api.komuvita.com/portal/cuentas/documentos_listado");
       Map body = {
         "autenticacion":
         {
@@ -966,16 +1194,22 @@ class AdmHomeController extends GetxController {
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto!!!!!");
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          return List<Map<String, dynamic>>.from(json["datos"]);
-        }
-        else
-        {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto!!!!!");
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -1037,7 +1271,9 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json',
       };
 
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
+          "http://api.komuvita.com/portal/cuentas/documentos_listado");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -1064,21 +1300,29 @@ class AdmHomeController extends GetxController {
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
-      if (response.statusCode == 200) {
-        debugPrint("Regreso correcto!!!!!");
+      if (response.statusCode == 200)
+      {
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          // ✅ Check if datos exists and is not null
+          if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+            // Return an empty list instead of throwing
+            debugPrint("⚠️ 'datos' is null or empty in response");
+            return [];
+          }
+          debugPrint("Regreso correcto!!!!!");
 
-        if (json["resultado"]["pn_tiene_datos"] == 1) {
-          return (json["datos"] as List)
-              .map((item) => DacumentosH5.fromJson(item))
-              .toList();
-        } else {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return (json["datos"] as List)
+                .map((item) => DacumentosH5.fromJson(item))
+                .toList();
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
-      } else {
-        throw Exception("Error HTTP: ${response.statusCode}");
       }
+
     } catch (e) {
       debugPrint(e.toString());
       showDialog(
@@ -1091,86 +1335,8 @@ class AdmHomeController extends GetxController {
           );
         },
       );
-      rethrow; // Keep the error in the Future
     }
-  }
-
-  Future<List<DacumentosH5>> documentosListados6B() async {
-
-    debugPrint("**********H6***********");
-    const String errorMensaje = "Falla de conexión";
-
-    final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
-
-    debugPrint(token);
-    debugPrint("Empresa");
-    debugPrint(empresa);
-
-    //GestionTickets1();
-
-    try {
-      var header = {
-        'Content-Type': 'application/json',
-      };
-
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
-
-      Map<String, dynamic> body = {
-        "autenticacion": {
-          "pv_token": token
-        },
-        "parametros": {
-          "pn_empresa": int.parse(empresa!),
-          "pv_cliente": prefs.getString("correo"),
-          "pn_propiedad": "-1",
-          "pn_documento_tipo": "-1",
-          "pv_criterio": "",
-        }
-      };
-
-      http.Response response = await http.post(
-        url,
-        body: jsonEncode(body),
-        headers: header,
-      );
-
-      final json = jsonDecode(response.body);
-
-      debugPrint("Documentos");
-      debugPrint(body.toString());
-      debugPrint(response.body.toString());
-
-      if (response.statusCode == 200) {
-        debugPrint("Regreso correcto!!!!!");
-
-        if (json["resultado"]["pn_tiene_datos"] == 1) {
-          return (json["datos"] as List)
-              .map((item) => DacumentosH5.fromJson(item))
-              .toList();
-        } else {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
-        }
-      } else {
-        throw Exception("Error HTTP: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      showDialog(
-        context: Get.context!,
-        builder: (context) {
-          return SimpleDialog(
-            title: const Text(errorMensaje),
-            contentPadding: const EdgeInsets.all(20),
-            children: [Text(e.toString())],
-          );
-        },
-      );
-      rethrow; // Keep the error in the Future
-    }
+    throw Exception("Error en conexión");
   }
 
 
@@ -1207,6 +1373,197 @@ class AdmHomeController extends GetxController {
 
     return listOfBasedAdms;
   }
+}
+
+
+class ServicioListadoCargoClienteCargar{
+
+  String numeroDocumento="";
+  String montoPago="";
+  String formaPago="";
+  String fechaPago="";
+  String numeroAutorizacion="";
+  String imagen = "";
+
+
+  ServicioListadoCargoClienteCargar(this.numeroDocumento, this.montoPago,this.formaPago,this.fechaPago,this.numeroAutorizacion,this.imagen);
+
+  Future<bool> loadListCargo() async {
+
+    debugPrint("**********H6***********");
+    const String errorMensaje = "Falla de conexión";
+    bool status = false;
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String? empresa = prefs.getString("Empresa");
+
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+
+    if(imagen == "" || imagen.isEmpty)
+    {
+      debugPrint("Aqui debe de ir Null");
+      try{
+        var headers = {
+          'Content-Type': 'application/json'
+        };
+        Map<String,dynamic> data =
+        {
+          "autenticacion": {
+            "pv_token": token
+          },
+          "parametros": {
+            "pn_empresa": int.parse(empresa!),
+            "pn_documento": numeroDocumento,
+            "pn_forma_pago": formaPago,
+            "pf_fecha_pago":fechaPago,
+            "pm_monto":montoPago,
+            "pn_autorizacion": numeroAutorizacion,
+            "pv_comprobanteb64":null
+          }
+        };
+
+        var dio = Dio();
+        var response = await dio.request(
+          //"https://apidesa.komuvita.com/portal/cuentas/documento_aplicar_pago",
+          "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
+          options: Options(
+            method: 'POST',
+            headers: headers,
+          ),
+          data: data,
+        );
+        debugPrint(response.statusCode.toString());
+        debugPrint(data.toString());
+        if (response.statusCode == 200 && response.data['datos'] != []) {
+
+          String lista = json.encode(response.data);
+          // debugPrint(data.toString());
+          devLog.log(data.toString());
+          debugPrint(lista);
+          debugPrint("!!#####!!!!""######");
+          CargoLecturaClienteCrearListadoList = List<Map<String, dynamic>>.from(response.data['datos']!);
+
+           devLog.log(CargoLecturaClienteCrearListadoList.toString());
+          debugPrint(response.statusMessage);
+
+          verificacionClienteCrearCargoListado = response.data["resultado"]["pn_error"].toString();
+          mensajeErrorClienteCrearCargoListado = response.data["resultado"]["pv_error_descripcion"].toString();
+          debugPrint(verificacionClienteCrearCargoListado);
+
+          debugPrint("!!#####!!!!""######");
+          debugPrint("Funciono sin imagen !!!");
+
+          if(verificacionClienteCrearCargoListado == "0")
+          {
+            status =  true;
+            debugPrint(status.toString());
+          }
+          else
+          {
+            status = false;
+            debugPrint(status.toString());
+          }        debugPrint(status.toString());
+        }
+        else {
+          debugPrint("SIN INGORMACION");
+          debugPrint(response.statusMessage);
+          debugPrint("???*");
+          status =  false;
+        }
+      }
+      catch (ex, stacktrace){
+        status =  false;
+        debugPrint("???/+/");
+        debugPrint("Request failed: $ex");
+        debugPrint("Stacktrace: $stacktrace");
+      }
+    }
+    else
+    {
+      try{var headers = {
+        'Content-Type': 'application/json'
+      };
+      Map<String,dynamic> data =
+      {
+        "autenticacion": {
+          "pv_token": token
+        },
+        "parametros": {
+          "pn_empresa": int.parse(empresa!),
+          "pn_documento": numeroDocumento,
+          "pn_forma_pago": formaPago,
+          "pf_fecha_pago":fechaPago,
+          "pm_monto":montoPago,
+          "pn_autorizacion": numeroAutorizacion,
+          "pv_comprobanteb64":imagen
+        }
+      };
+
+        var dio = Dio();
+      var response = await dio.request(
+        //"https://apidesa.komuvita.com/portal/cuentas/documento_aplicar_pago",
+        "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
+
+          options: Options(
+            method: 'POST',
+            headers: headers,
+          ),
+          data: data,
+        );
+        debugPrint(response.statusCode.toString());
+        debugPrint(data.toString());
+        if (response.statusCode == 200 && response.data['datos'] != []) {
+
+          String lista = json.encode(response.data);
+          // debugPrint(data.toString());
+          devLog.log(data.toString());
+          debugPrint(lista);
+          debugPrint("!!!!!");
+          CargoLecturaClienteCrearListadoList = List<Map<String, dynamic>>.from(response.data['datos']!);
+
+           devLog.log(CargoLecturaClienteCrearListadoList.toString());
+          debugPrint(response.statusMessage);
+
+          verificacionClienteCrearCargoListado = response.data["resultado"]["pn_error"].toString();
+          mensajeErrorClienteCrearCargoListado = response.data["resultado"]["pv_error_descripcion"].toString();
+          debugPrint(verificacionClienteCrearCargoListado);
+
+          debugPrint("!!!!?!");
+          debugPrint("Funciono!!!");
+
+          if(verificacionClienteCrearCargoListado == "0")
+          {
+            status =  true;
+            debugPrint(status.toString());
+          }
+          else
+          {
+            status = false;
+            debugPrint(status.toString());
+          }        debugPrint(status.toString());
+        }
+        else {
+          debugPrint("SIN INGORMACION");
+          debugPrint(response.statusMessage);
+          debugPrint("???*");
+          status =  false;
+        }
+      }
+      catch (ex, stacktrace){
+        status =  false;
+        debugPrint("???/+/");
+        debugPrint("Request failed: $ex");
+        debugPrint("Stacktrace: $stacktrace");
+      }
+    }
+    debugPrint(status.toString());
+    return status;
+  }
+
+
 }
 
 void msgxToast(String msxg){

@@ -75,7 +75,10 @@ class PasswordCreationController extends GetxController {
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/administracion/usuarios/cambiar_clave");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/administracion/usuarios/cambiar_clave"
+          "http://api.komuvita.com/administracion/usuarios/cambiar_clave"
+      );
       Map body = {
         "autenticacion":
         {
