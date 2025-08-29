@@ -4804,7 +4804,7 @@ void showImageDialog(BuildContext context, String base64Image) {
                   Uint8List bytes = base64Decode(base64Image);
 
                   final result = await ImageGallerySaverPlus.saveImage(bytes.buffer.asUint8List());
-                  msgxToast("Descargargado en galeria");
+                  msgxToast("Desgargado en galeria");
                   debugPrint(result.toString());
                 }
                 catch (e) {

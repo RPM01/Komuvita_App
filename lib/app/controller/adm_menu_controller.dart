@@ -24,16 +24,16 @@ class AdmMenuController extends GetxController {
   ];
   List screens = const [
   //  AdmPrivacyPolicyScreen(),
-    AdmTermsAndServiceScreen(),
-    AdmPrivacyPolicyScreen(),
-    AdmTermsAndServiceScreen(),
-    AdmPrivacyPolicyScreen(),
-    AdmTermsAndServiceScreen(),
-    AdmPrivacyPolicyScreen(),
-    AdmTermsAndServiceScreen(),
-    AdmPrivacyPolicyScreen(),
-    AdmNotificationScreen(),
-    AdmPasswordCreationScreen(),
+    //AdmTermsAndServiceScreen(),
+    //AdmPrivacyPolicyScreen(),
+    //AdmTermsAndServiceScreen(),
+    //AdmPrivacyPolicyScreen(),
+    //AdmTermsAndServiceScreen(),
+    //AdmPrivacyPolicyScreen(),
+    //AdmTermsAndServiceScreen(),
+    //AdmPrivacyPolicyScreen(),
+    //AdmNotificationScreen(),
+    //AdmPasswordCreationScreen(),
    // AdmTermsAndServiceScreen(),
   ];
 }

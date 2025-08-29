@@ -235,9 +235,36 @@ class _AdmPasswordCreationScreenState extends State<AdmPasswordCreationScreen> {
                                   onPressed: () {
                                     showDialog(
                                       context: context,
-                                      builder: (_) => AlertDialog(
-                                        title:Text("Lamentamos que desee remover su cuenta de Komuvita. Nuestro administrador se pondrá en contacto con usted para continuar con el proceso"),
-                                      ),
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            backgroundColor:
+                                            Get.isDarkMode ? admDarkBorderColor : admWhiteColor,
+                                            content: SizedBox(
+                                              height: 160,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                   Text("Lamentamos que desee remover su cuenta de Komuvita. Nuestro administrador se pondrá en contacto con usted para continuar con el proceso"),
+                                                ],
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              Center(
+                                                child: TextButton(
+                                                  style: TextButton.styleFrom(
+                                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                    textStyle: Theme.of(context).textTheme.labelLarge,
+                                                  ),
+                                                  child:  Text('Aceptar',style: TextStyle(fontSize: 20),),
+                                                  onPressed: () {
+                                                    Get.back();
+                                                    Get.back();
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          );
+                                        }
                                     );
                                 },
                                 child: Text(
