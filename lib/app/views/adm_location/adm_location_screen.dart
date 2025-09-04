@@ -205,8 +205,6 @@ class _AdmLocationScreenState extends State<AdmLocationScreen> {
                 zoomControlsEnabled: false,
                 circles: controller.circles,
                 onMapCreated: (GoogleMapController controller) {},
-
-
               ),
 
             ],

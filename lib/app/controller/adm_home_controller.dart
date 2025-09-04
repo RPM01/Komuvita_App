@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:administra/adm_theme/theme_controller.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../api_Clases/class_Document5.dart';
 import '../../api_Clases/class_RentasVentas5.dart';
 import '../../api_Clases/class_Reservas5.dart';
@@ -25,6 +26,7 @@ import 'dart:developer'as devLog;
 List<Map<String, dynamic>> CargoLecturaClienteCrearListadoList = [];
 String mensajeErrorClienteCrearCargoListado = "";
 String verificacionClienteCrearCargoListado ="";
+String recibo = "";
 
 List<String> formaPago = [];
 List<String> formapagoDescirpcion = [];
@@ -721,8 +723,9 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json',
       };
       var url = Uri.parse(
-        "http://api.komuvita.com/portal/tickets/gestiones_listado",
-      );
+        //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+        "http://api.komuvita.com/portal/tickets/gestiones_listado");
+
 
       Map body = {
         "autenticacion": {
@@ -1451,6 +1454,7 @@ class ServicioListadoCargoClienteCargar{
 
           verificacionClienteCrearCargoListado = response.data["resultado"]["pn_error"].toString();
           mensajeErrorClienteCrearCargoListado = response.data["resultado"]["pv_error_descripcion"].toString();
+          recibo = response.data["datos"]["pn_recibo"].toString();
           debugPrint(verificacionClienteCrearCargoListado);
 
           debugPrint("!!#####!!!!""######");
@@ -1459,7 +1463,21 @@ class ServicioListadoCargoClienteCargar{
           if(verificacionClienteCrearCargoListado == "0")
           {
             status =  true;
+            if(recibo != "0")
+              {
+                final rawUrl =  response.data["datos"]["pv_recibo_url"].toString()!;
+                final uri = Uri.tryParse(rawUrl);
+                final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
+                if (await canLaunchUrl(safeUri)) {
+                  await launchUrl(safeUri, mode: LaunchMode.externalApplication);
+                }
+                else
+                {
+                  debugPrint("Could not launch $safeUri");
+                }
+              }
             debugPrint(status.toString());
+
           }
           else
           {
@@ -1522,21 +1540,34 @@ class ServicioListadoCargoClienteCargar{
           devLog.log(data.toString());
           debugPrint(lista);
           debugPrint("!!!!!");
-          CargoLecturaClienteCrearListadoList = List<Map<String, dynamic>>.from(response.data['datos']!);
+          //CargoLecturaClienteCrearListadoList = List<Map<String, dynamic>>.from(response.data['datos']!);
 
            devLog.log(CargoLecturaClienteCrearListadoList.toString());
           debugPrint(response.statusMessage);
 
           verificacionClienteCrearCargoListado = response.data["resultado"]["pn_error"].toString();
           mensajeErrorClienteCrearCargoListado = response.data["resultado"]["pv_error_descripcion"].toString();
+          recibo = response.data["datos"]["pn_recibo"].toString();
           debugPrint(verificacionClienteCrearCargoListado);
-
           debugPrint("!!!!?!");
           debugPrint("Funciono!!!");
 
           if(verificacionClienteCrearCargoListado == "0")
           {
             status =  true;
+            if(recibo != "0")
+            {
+              final rawUrl =  response.data["datos"]["pv_recibo_url"].toString()!;
+              final uri = Uri.tryParse(rawUrl);
+              final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
+              if (await canLaunchUrl(safeUri)) {
+                await launchUrl(safeUri, mode: LaunchMode.externalApplication);
+              }
+              else
+              {
+                debugPrint("Could not launch $safeUri");
+              }
+            }
             debugPrint(status.toString());
           }
           else

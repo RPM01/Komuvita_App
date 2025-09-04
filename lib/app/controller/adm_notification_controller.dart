@@ -19,7 +19,6 @@ class AdmNotificationController extends GetxController{
   RxList<NotificationModalData> listOfNotification = <NotificationModalData>[].obs;
 
 
-
   @override
   void onInit() {
     super.onInit();
@@ -44,7 +43,10 @@ class AdmNotificationController extends GetxController{
       var header = {
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse("https://apidesa.komuvita.com/portal/notificaciones/notificaciones_listado");
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/notificaciones/notificaciones_listado"
+          "http://api.komuvita.com/portal/notificaciones/notificaciones_listado"
+      );
       Map body = {
         "autenticacion":
         {
@@ -67,17 +69,23 @@ class AdmNotificationController extends GetxController{
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        // ✅ Check if datos exists and is not null
+        if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+          // Return an empty list instead of throwing
+          debugPrint("⚠️ 'datos' is null or empty in response");
+          return [];
+        }
 
         debugPrint("Regreso correcto");
-        if(json["resultado"]["pn_tiene_datos"] == 1)
-        {
-          return List<Map<String, dynamic>>.from(json["datos"]);
-        }
-        else
-        {
-          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+          if (json["resultado"]["pn_tiene_datos"] == 1) {
+            return List<Map<String, dynamic>>.from(json["datos"]);
+          } else {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(
+                json["resultado"]["pv_error_descripcion"].toString());
+          }
         }
       }
     }
@@ -99,6 +107,7 @@ class AdmNotificationController extends GetxController{
     }
     throw Exception("Error en conexión");
   }
+
 
   Future<List<NotificationModalData>> getNotificationDetail() async {
     String jsonData = await rootBundle.loadString("assets/administra/data/adm_notification.json");

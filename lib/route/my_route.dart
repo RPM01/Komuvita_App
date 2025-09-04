@@ -1,3 +1,4 @@
+import 'package:administra/app/views/adm_estado_de_cuenta/adm_estado_de_cuenta_screen.dart';
 import 'package:administra/app/views/adm_home/adm_home_screen.dart';
 import 'package:get/get.dart';
 
@@ -46,6 +47,7 @@ import '../app/views/adm_welcome/adm_welcome_screen.dart';
 
 class MyRoute {
   /*------------------------------ Adm Adoption App -------------------------------------------*/
+  static const admEstadoCuenta = '/adm_estado_de_cuenta';
   static const admSplash = '/adm_splash';
   static const admOnboardingScreen = '/adm_onboarding';
   static const welcomeScreen = '/adm_welcome';
@@ -100,6 +102,12 @@ class MyRoute {
       name: admSplash,
       page: () => const AdmSplashScreen(),
       transition: Transition.downToUp,
+      transitionDuration: const Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: admEstadoCuenta,
+      page: () => const AdmEstadoDeCuentaScreen(),
+      transition: Transition.leftToRight,
       transitionDuration: const Duration(milliseconds: 500),
     ),
     GetPage(

@@ -28,19 +28,27 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
+
+
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location while in use to provide location-based features.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to your location even in the background to support continuous tracking.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Your app needs access to your location at all times to provide features like background tracking and location-based alerts.</string>
+
+
 	<key>NSCameraUsageDescription</key>
-    <string>This app requires access to the camera to take photos.</string>
+	<string>This app requires access to the camera to take photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need permission to access your photo library to view and select your photos and videos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need permission to save photos and videos to your library for your convenience.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs microphone access to record audio.</string>
 
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app needs access to your photo library to select and upload images.</string>
 
-    <key>NSMicrophoneUsageDescription</key>
-    <string>This app needs microphone access to record audio.</string>
-
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app uses your location while in use to provide location-based features.</string>
-
+	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
@@ -53,19 +61,16 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+	<!-- ✅ Other settings -->
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>LSApplicationQueriesSchemes</key>
-    <array>
-      <string>sms</string>
-      <string>tel</string>
-    </array>
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>We need permission to save photos and videos to your library for your convenience.</string>
-
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need permission to access your photo library to view and select your photos and videos.</string>
+	<array>
+		<string>sms</string>
+		<string>tel</string>
+	</array>
 </dict>
 </plist>

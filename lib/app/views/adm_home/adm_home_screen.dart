@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,6 +41,8 @@ import 'package:path_provider/path_provider.dart';
  import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 
+String _EdificioPropiedadSelecionada = "";
+
 class AdmHomeScreen extends StatefulWidget {
   const AdmHomeScreen({super.key});
 
@@ -81,8 +82,6 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
   File ? iamgenSelect;
 
   String base64Image = "";
-
-
   String edificioID = "";
   String edificioDescripcion = "";
 
@@ -106,7 +105,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
     super.initState();
     getUserInfo();
     //futuros
+    setState(() {
 
+    });
     _futureDocumentos = homeController.documentosListados5B();
     _futureRentas = homeController.listadoRentas5B();
     _futureReservas = homeController.amenidadesReservadas5B();
@@ -131,16 +132,33 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
       theme = homeController.themeController.isDarkMode
           ? AdmTheme.admDarkTheme
           : AdmTheme.admLightTheme;
+
     });
   }
   int currentIndex = 0;
+  String admincheck = "";
+  bool tickets = true;
 
   getUserInfo() async
   {
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
+       prefs.setString("cliente", clientesIdsSet[0].toString());
+       debugPrint("cliente!!");
+       debugPrint(prefs.getString("cliente"));
       userName = prefs.getString("NombreUser")!;
       instrucionesPago = prefs.getString("intruciones de pago")!;
+      admincheck = prefs.getString("Admin")!;
+
+      if(admincheck == "1")
+        {
+          tickets = true;
+        }
+      else
+        {
+          tickets = false;
+        }
       debugPrint("Intruciones");
       debugPrint(instrucionesPago);
       pago = instrucionesPago.split('|');
@@ -374,16 +392,19 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                         IconData iconData;
                         switch (index) {
                           case 0: iconData = FontAwesomeIcons.clipboardList; break;
-                          case 1: iconData = FontAwesomeIcons.newspaper; break;
-                          case 2: iconData = FontAwesomeIcons.cartShopping; break;
-                          case 3: iconData = FontAwesomeIcons.question; break;
-                          case 4: iconData = FontAwesomeIcons.houseSignal; break;
-                          case 5: iconData = FontAwesomeIcons.usersRectangle; break;
-                          case 6: iconData = FontAwesomeIcons.doorOpen; break;
-                          case 7: iconData = FontAwesomeIcons.boxesStacked; break;
-                          case 8: iconData = FontAwesomeIcons.bell; break;
-                          case 9: iconData = FontAwesomeIcons.lockOpen; break;
-                          case 10: iconData = Icons.logout; break;
+                          case 1: iconData = Icons.logout; break;
+                          case 2: iconData = FontAwesomeIcons.lockOpen; break;
+                          case 3: iconData = FontAwesomeIcons.newspaper; break;
+                          //case 1: iconData = FontAwesomeIcons.newspaper; break;
+                          //case 2: iconData = FontAwesomeIcons.cartShopping; break;
+                          //case 3: iconData = FontAwesomeIcons.question; break;
+                          //case 4: iconData = FontAwesomeIcons.houseSignal; break;
+                          //case 5: iconData = FontAwesomeIcons.usersRectangle; break;
+                          //case 6: iconData = FontAwesomeIcons.doorOpen; break;
+                          //case 7: iconData = FontAwesomeIcons.boxesStacked; break;
+                          //case 8: iconData = FontAwesomeIcons.bell; break;
+                          //case 9: iconData = FontAwesomeIcons.lockOpen; break;
+                          //case 10: iconData = Icons.logout; break;
                           default: iconData = Icons.menu;
                         }
 
@@ -461,7 +482,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             Center(
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width*0.95,
-                                height: MediaQuery.of(context).size.height*0.20,
+                                //height: MediaQuery.of(context).size.height*0.20,
                                 child: Card(
                                   elevation: 3,
                                     color: Colors.grey[200],
@@ -474,8 +495,8 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                       )),
                                     DropdownButtonFormField<String>(
                                       isExpanded: true,
-                                      value: empresasIdsSet[0].toString(),
-                                      hint: const Text("Seleccione una empresa"),
+                                      value: clientesIdsSet[0].toString(),
+                                      hint: const Text("Seleccione un Edificio"),
                                       decoration: InputDecoration(
                                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                         border: OutlineInputBorder(
@@ -493,9 +514,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                         color: Colors.black87,
                                       ),
                                       icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                      items: List.generate(empresasIdsSet.length, (index) {
+                                      items: List.generate(clientesIdsSet.length, (index) {
                                         return DropdownMenuItem<String>(
-                                          value: empresasIdsSet[index].toString(),
+                                          value: clientesIdsSet[index].toString(),
                                           child: Text(
                                             " ${empresasNombresSet[index]} (${empresasPropiedadSet[index]})",
                                             style: const TextStyle(
@@ -505,11 +526,15 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                           ),
                                         );
                                       }),
-                                      onChanged: (value) {
+                                      onChanged: (value) async{
+                                        final prefs = await SharedPreferences.getInstance();
                                         setState(() {
-                                          int index = empresasIdsSet.indexOf(int.parse(value!));
+                                          int index = clientesIdsSet.indexOf(value!);
                                           edificioID = value;
-                                           debugPrint(edificioID);
+                                          prefs.setString("cliente", value);
+                                          _EdificioPropiedadSelecionada = value;
+                                          debugPrint(prefs.getString("cliente"));
+                                           //debugPrint(edificioID);
                                         });
                                       },
                                     ),
@@ -537,9 +562,26 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
-                                  return const Center();
+                                  return  Center(
+                                   child: Title(color: Color.fromRGBO(6,78,116,1),
+                                    child: Text("No hay documentos Pendientes",style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: MediaQuery.of(context).size.width*0.035,
+                                      color: Color.fromRGBO(6,78,116,1),
+                                      ),
+                                    ),
+                                    )
+                                  );
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay documentos Pendientes",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      ));
                                 }
                                 final documentos = snapshot.data!;
                                 return LayoutBuilder(
@@ -1089,7 +1131,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                 final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
                                                                 if (await canLaunchUrl(safeUri)) {
                                                                   await launchUrl(safeUri, mode: LaunchMode.externalApplication);
-                                                                } else {
+                                                                }
+                                                                else
+                                                                {
                                                                   debugPrint("Could not launch $safeUri");
                                                                 }
                                                               }
@@ -1516,8 +1560,10 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                           }),
                                                                                           onChanged: (value) {
                                                                                             setState(() {
-                                                                                              int index = formaPago.indexOf(value!);
-                                                                                              formaPagoController.text = index.toString();
+                                                                                              int indexB = formaPago.indexOf(value!);
+                                                                                              debugPrint(indexB.toString());
+                                                                                              debugPrint(formaPago[indexB].toString());
+                                                                                              formaPagoController.text =formaPago[indexB].toString();
                                                                                               //formaPagoController.text = formapagoDescirpcion[index];
                                                                                             });
                                                                                           },
@@ -1563,7 +1609,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                             if (fechaSelect != null) {
                                                                                               setState(() {
                                                                                                 // Format as yyyy-MM-dd
-                                                                                                fechaPagoController.text = DateFormat('yyyy-MM-dd').format(fechaSelect);
+                                                                                                fechaPagoController.text = DateFormat('yyyyMMdd').format(fechaSelect);
                                                                                               });
                                                                                             }
                                                                                           },
@@ -1633,6 +1679,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                               ),
                                                                                             ),),
                                                                                         ),
+                                                                                        /*
                                                                                         10.height,
                                                                                         Container(
                                                                                           padding: const EdgeInsets.all(10),
@@ -1648,8 +1695,8 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                                 if (regresarIamgenSelect == null) return;
                                                                                                 iamgenSelect = File(regresarIamgenSelect.path);
                                                                                               });
-                                                                                              //_PickFoto();
-                                                                                              //Navigator.of(context).pop();
+                                                                                              // _PickFoto();
+                                                                                              Navigator.of(context).pop();
                                                                                             },
                                                                                             child: Text(
                                                                                               "Tomar Fotografía",
@@ -1661,6 +1708,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                             ),),
                                                                                         ),
                                                                                         10.height,
+                                                                                         */
                                                                                         iamgenSelect != null ? SizedBox(
                                                                                           height: constraints.maxWidth*0.4,
                                                                                           width: constraints.maxWidth*0.4,
@@ -1690,7 +1738,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                               debugPrint(numeroAutorizacionController.text);
                                                                                               debugPrint(formaPagoController.text);
                                                                                               debugPrint(base64Image.toString());
-                                                                                              //makeApiCall(event.pnDocumento.toString(),montoPagarController.text,formaPagoController.text,fechaPagoController.text,numeroAutorizacionController.text,iamgenSelect.toString());
+                                                                                              makeApiCall(event.pnDocumento.toString(),montoPagarController.text,formaPagoController.text,fechaPagoController.text,numeroAutorizacionController.text,base64Image.toString());
                                                                                             },
                                                                                             child: Text(
                                                                                               "Realizar pago",
@@ -1760,9 +1808,26 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay contactos creados",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay contactos creados",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      ));
                                 }
                                 final events = snapshot.data!;
                                 //debugPrint(events.toString());
@@ -1837,14 +1902,32 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             )),
 
                             17.height,
-                            FutureBuilder(future:_futureNoticias,
+                            FutureBuilder(
+                              future:_futureNoticias,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay noticias del día de hoy",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      ));
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay noticias del día de hoy",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 }
                                 final events = snapshot.data!;
                                 //debugPrint(events.toString());
@@ -1955,9 +2038,27 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(child: CircularProgressIndicator());
                               } else if (snapshot.hasError) {
-                                return const Center();
+                                return  Center(
+                                    child: Title(color: Color.fromRGBO(6,78,116,1),
+                                      child: Text("No se han reportado objetos perdidos",style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: MediaQuery.of(context).size.width*0.035,
+                                        color: Color.fromRGBO(6,78,116,1),
+                                      ),
+                                      ),
+                                    )
+                                );
                               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return const Center();
+                                return  Center(
+                                    child: Title(color: Color.fromRGBO(6,78,116,1),
+                                      child: Text("No se han reportado objetos perdidos",style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: MediaQuery.of(context).size.width*0.035,
+                                        color: Color.fromRGBO(6,78,116,1),
+                                      ),
+                                      ),
+                                    )
+                                );
                               }
 
                               final events = snapshot.data!;
@@ -2069,9 +2170,27 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No existen rentas y ventas",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No existen rentas y ventas",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 }
                                 final documentos = snapshot.data!;
                                 return LayoutBuilder(
@@ -2421,9 +2540,29 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
-                                  return const Center();
+                                  return   Center(
+
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay amenidades reservadas",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center();
+                                  return   Center(
+
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay amenidades reservadas",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 }
                                 final documentos = snapshot.data!; // API list
                                 return LayoutBuilder(
@@ -2578,7 +2717,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
                             17.height,
-                          Center(
+                            tickets? Center(
                             child: Container(
                               width: MediaQuery.of(context).size.width*0.8,
                               child: Card(
@@ -2633,7 +2772,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 )
                               ),
                             ),
-                          ),
+                          ):Center(),
                             17.height,
                           FutureBuilder<List<TickestG5>>(
                             future: _futureTickets,
@@ -2641,9 +2780,26 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(child: CircularProgressIndicator());
                               } else if (snapshot.hasError) {
-                                return const Center();
+                                return Center(
+                                    child: Title(color: Color.fromRGBO(6,78,116,1),
+                                      child: Text("No hay tickets pendientes",style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: MediaQuery.of(context).size.width*0.035,
+                                        color: Color.fromRGBO(6,78,116,1),
+                                      ),
+                                      ),
+                                    ));
                               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return const Center();
+                                return  Center(
+                                    child: Title(color: Color.fromRGBO(6,78,116,1),
+                                      child: Text("No hay tickets pendientes",style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: MediaQuery.of(context).size.width*0.035,
+                                        color: Color.fromRGBO(6,78,116,1),
+                                      ),
+                                      ),
+                                    )
+                                );
                               }
                               final documentos = snapshot.data!; // API list
                               return LayoutBuilder(
@@ -2872,7 +3028,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             },
                           ),
                             17.height,
-                            Center(
+                            tickets? Center(
                               child: Container(
                                 width: MediaQuery.of(context).size.width*0.8,
                                 child: Card(
@@ -2913,7 +3069,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                     )
                                 ),
                               ),
-                            ),
+                            ):Center(),
                             17.height,
                             //commonRowText("Paquetes", viewAll, theme, () {}),
                             Text("Paquetes",style: theme.textTheme.headlineSmall?.copyWith(
@@ -2927,9 +3083,27 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay paquetes registrados",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay paquetes registrados",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 }
                                 final events = snapshot.data!;
                                 //debugPrint(events.toString());
@@ -3023,9 +3197,27 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
-                                  return const Center();
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay visitas registrados",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return const Center();
+                                  return Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay visitas registrados",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
                                 }
                                 final events = snapshot.data!;
                                 return LayoutBuilder(
@@ -4539,24 +4731,21 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
 
   }
 
-  Future<void> makeApiCall(String numeroDocumento,String montoPago,String formaPago,String fechaPago,String numeroAutorizacion,String imagen,) async {
+  Future<void> makeApiCall(String numeroDocumento,String montoPago,String formaPago,String fechaPago,String numeroAutorizacion,String imagen,)
+  async {
     // Example API call
 
     ServicioListadoCargoClienteCargar(numeroDocumento,montoPago,formaPago,fechaPago,numeroDocumento,imagen);
     await ServicioListadoCargoClienteCargar(numeroDocumento,montoPago,formaPago,fechaPago,numeroDocumento,imagen)
         .loadListCargo();
     setState(() {
-
-
     });
 
     Navigator.of(context).pop();
     msgxToast("Lista cargada");
   }
 
-  void _showLogOutBottomSheet(
-      BuildContext context,
-      ) {
+  void _showLogOutBottomSheet(BuildContext context,) {
     final ThemeData theme = Theme.of(context);
     showModalBottomSheet(
       isScrollControlled: true,

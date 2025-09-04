@@ -1,3 +1,5 @@
+import 'package:administra/app/views/adm_estado_de_cuenta/adm_estado_de_cuenta_screen.dart';
+import 'package:administra/app/views/adm_news/adm_news_screen.dart';
 import 'package:administra/app/views/adm_notification/adm_notification_screen.dart';
 import 'package:administra/app/views/adm_password_creation/adm_password_creation_screen.dart';
 import 'package:get/get.dart';
@@ -10,20 +12,21 @@ class AdmMenuController extends GetxController {
   List helpAndSupport = [
     //'Inicio',
     'Estado de cuenta',
-    'Noticias y Avisos',
-    'Rentas y Ventas',
-    'Objetos Perdidos',
-    'Reservar Amenidad',
-    'Comunicación con Administrador',
-    'Visitas',
-    'Paquetes pendientes',
-    'Notificaciones',
+    //'Noticias y Avisos',
+    //'Rentas y Ventas',
+    //'Objetos Perdidos',
+    //'Reservar Amenidad',
+    //'Comunicación con Administrador',
+    //'Visitas',
+    //'Paquetes pendientes',
+    //'Notificaciones',
     'Cambio de contraseña',
     'Cerrar Sesion',
 
   ];
   List screens = const [
-  //  AdmPrivacyPolicyScreen(),
+    AdmEstadoDeCuentaScreen(),
+    //AdmNoticiasScreen(),
     //AdmTermsAndServiceScreen(),
     //AdmPrivacyPolicyScreen(),
     //AdmTermsAndServiceScreen(),
@@ -31,9 +34,8 @@ class AdmMenuController extends GetxController {
     //AdmTermsAndServiceScreen(),
     //AdmPrivacyPolicyScreen(),
     //AdmTermsAndServiceScreen(),
-    //AdmPrivacyPolicyScreen(),
     //AdmNotificationScreen(),
-    //AdmPasswordCreationScreen(),
+    AdmPasswordCreationScreen(),
    // AdmTermsAndServiceScreen(),
   ];
 }

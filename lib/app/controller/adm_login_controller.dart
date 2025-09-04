@@ -21,7 +21,12 @@ import 'adm_home_controller.dart';
 List<int> empresasIdsSet = [];
 List<String> empresasNombresSet = [];
 List<String> empresasPropiedadSet = [];
+List<String> clientesPropiedadSet = [];
 
+List<String> propiedadesInternasIdsSet = [];
+List<String> clientesIdsSet = [];
+List<String> propiedadesInternaNombresSet = [];
+List<String> propiedadesDireccionNombresSet = [];
 
 class LoginController extends GetxController {
   AdmHomeController homeController = Get.put(AdmHomeController());
@@ -82,7 +87,7 @@ class LoginController extends GetxController {
     else if (Platform.isIOS) {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      deviceID = iosInfo.toString();
+      deviceID = iosInfo.identifierForVendor.toString();
       deviceName = "Iphone";
       debugPrint("Iphone: $deviceID");
     }
@@ -119,6 +124,7 @@ class LoginController extends GetxController {
 
             debugPrint("Contraseña correcta");
             prefs.setString("Token", json["datos"]["pv_token"].toString());
+            prefs.setString("Admin", json["datos"]["pn_administrador"].toString());
             prefs.setString("Empresa", json["datos"]["pl_empresas"][0][0]["pn_empresa"].toString());
             prefs.setString("correo",emailControllerText);
             prefs.setString("intruciones de pago",json["datos"]["pl_empresas"][0][0]["pv_instrucciones_pago"].toString());
@@ -132,6 +138,7 @@ class LoginController extends GetxController {
             final List<int> empresasIds = flatList.map((e) => e["pn_empresa"] as int).toList();
             final List<String> empresasNombres = flatList.map((e) => e["pv_empresa_nombre"] as String).toList();
             final List<String> empresasPropiedad = flatList.map((e) => e["pv_propiedad_tipo"] as String).toList();
+
 
 
             empresasIdsSet = empresasIds;
@@ -205,11 +212,44 @@ class LoginController extends GetxController {
       debugPrint("Objetos Perdidos");
       //debugPrint(response.body.toString());
       debugPrint("clientes");
+
       debugPrint(json["datos"][0]["pv_cliente"].toString());
       prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+
+      //prefs.setStringList('ListaPropiedad', json["datos"]["pv_descripcion"]);
+     // prefs.setStringList('ListaPropiedadID', json["datos"]["pn_propiedad"]);
+
+
+
+      final empresasList = json["datos"] as List;
+
+      debugPrint(empresasList.toString());
+
+
+      //final List<int> propiedadIds = flatList.map((e) => e["pn_propiedad"] as int).toList();
+      final List<String> clientesIds = empresasList.map((e) => e["pv_cliente"] as String).toList();
+      final List<String> propiedadIds = empresasList.map((e) => e["pn_propiedad"] as String).toList();
+      final List<String> propiedadDescripcion = empresasList.map((e) => e["pv_descripcion"] as String).toList();
+      final List<String> direccionDescripcion = empresasList.map((e) => e["pv_direccion"] as String).toList();
+
+
       debugPrint("Propiedad");
+
+      prefs.setStringList("clientesInternos", clientesIds);
+
+      debugPrint(clientesIds.toString());
+      clientesIdsSet = clientesIds;
+      propiedadesInternasIdsSet = propiedadIds;
+      propiedadesInternaNombresSet = propiedadDescripcion;
+      propiedadesDireccionNombresSet = direccionDescripcion;
+
+      debugPrint(propiedadesInternasIdsSet.toString());
+      debugPrint(propiedadesInternaNombresSet.toString());
+      debugPrint(propiedadesDireccionNombresSet.toString());
+
       prefs.setString("propiedad", json["datos"][0]["pn_propiedad"].toString());
       debugPrint(json["datos"][0]["pv_propiedad"].toString());
+
       debugPrint("Tickest100");
       debugPrint(response.body.toString());
       if(response.statusCode == 200)

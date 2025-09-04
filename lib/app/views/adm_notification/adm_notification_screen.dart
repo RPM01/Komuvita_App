@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:administra/widgets/common_appbar.dart';
+import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../../constant/adm_colors.dart';
 import '../../../constant/adm_images.dart';
@@ -41,52 +42,114 @@ class _AdmNotificationScreenState extends State<AdmNotificationScreen> {
           init: controller,
           tag: 'adm_Notification',
           // theme: theme,
-          builder: (controller) => Padding(
-            padding: const EdgeInsets.all(15.0),
-            child:  Obx(() {
-              return ListView.builder(
-                itemCount: controller.listOfNotification.length,
-                shrinkWrap: true,
-                //physics: AlwaysScrollableScrollPhysics(),
-                itemBuilder: (context, mainIndex) {
+          builder: (controller) => SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                children: [
+                  17.height,
+                  Text("Notificaciones",style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: MediaQuery.of(context).size.width*0.035,
+                    color: Color.fromRGBO(6,78,116,1),
+                  )),
 
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(controller.listOfNotification[mainIndex].date,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600, color: darkGreyColor),
-                          ),
-                          10.width,
-                          Expanded(
-                            child: Divider(
-                              color: Get.isDarkMode ? darkGreyColor : greyColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                      23.height,
-                      20.height,
-                      ListView.builder(
-                        itemCount: controller.listOfNotification[mainIndex].messagesList.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-
-                          final NotificationModal notification=controller.listOfNotification[mainIndex].messagesList[index];
-                          return notificationView(notification,controller.listOfNotification[mainIndex].date=="Today"?true:false);
-                        },)
-                    ],
-                  );
-                },);
-
-            }),
-
-
+                  17.height,
+                  FutureBuilder(
+                    future:controller.getNotificationDetailTrue(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return const Center(child: Text("No hay notificaciones, por el momento"));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text("No hay notificaciones, por el momento"),);
+                      }
+                      final events = snapshot.data!;
+                      //debugPrint(events.toString());
+                      return SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height*0.65,
+                          child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final cardWidth = constraints.maxWidth * 0.9;
+                                final cardHeight = constraints.maxHeight * 0.65;
+                                final titleFontSize = constraints.maxWidth * 0.035;
+                                final subtitleFontSize = constraints.maxWidth * 0.03;
+                                return ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  physics: ClampingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: events.length,
+                                  itemBuilder: (context, index) {
+                                    final event = events[index];
+                                    return Container(
+                                      width: constraints.maxWidth,
+                                      height: constraints.maxHeight*0.5,
+                                      child: Card(
+                                          elevation: 3,
+                                          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(12),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(12),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Text(DateFormat('yyyyMMdd').format(DateTime.parse(event["pf_fecha"])),style: theme.textTheme.headlineSmall?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                color:Color.fromRGBO(167,167,132,1),
+                                                                fontSize: constraints.maxWidth * 0.03,
+                                                              ),maxLines: 2,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                                  Title(color:Color.fromRGBO(167,167,132,1), child: Text(event["pv_notificacion_tipo_descripcion"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: constraints.maxWidth * 0.05,
+                                                                    color: Color.fromRGBO(6,78,116,1),
+                                                              )
+                                                              ),
+                                                            ),
+                                                            Text(event["pv_estado_descripcion"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                            color:Color.fromRGBO(6,78,116,1),
+                                                            fontSize: constraints.maxWidth * 0.05,
+                                                            )
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                          )
+                      );
+                    },
+                  ),
+                  17.height,
+                ],
+              ),
             ),
+          ),
           ),
         );
   }

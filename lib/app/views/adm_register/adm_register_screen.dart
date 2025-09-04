@@ -87,7 +87,7 @@ class _AdmRegisterScreenState extends State<AdmRegisterScreen> {
                       child:  Text('Aceptar',style: TextStyle(fontSize: 20),),
                       onPressed: () {
                         Get.back();
-                        Get.back();
+                        Get.offAllNamed(MyRoute.loginScreen);
                       },
                     ),
                   )
