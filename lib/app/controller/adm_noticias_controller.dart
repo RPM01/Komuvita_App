@@ -34,13 +34,110 @@ class AdmNoticiasController extends GetxController
 
 }
 
-class getNewsH5{
+
+class setNewsComentC7{
+
+  String noticiaID="";
+  String comentario="";
+
+  setNewsComentC7(this.noticiaID, this.comentario);
+
+  Future<List<Map<String, dynamic>>>ComentarioNoticias7()async
+
+  {
+    debugPrint("**********C7***********");
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String? empresa = prefs.getString("Empresa");
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+        //"https://apidesa.komuvita.com/portal/noticias/comentario_noticia_creacion"
+          "http://api.komuvita.com/portal/noticias/comentario_noticia_creacion"
+      );
+      Map body = {
+        "autenticacion":
+        {
+          "pv_token": token
+        },
+        "parametros":
+        {
+          "pn_empresa": int.parse(empresa!),
+          "pn_noticia": noticiaID,
+          "pv_comentario": comentario
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+      debugPrint("Noticias");
+      debugPrint(body.toString());
+      debugPrint(response.body.toString());
+
+      if(response.statusCode == 200)
+      {
+
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        // ✅ Check if datos exists and is not null
+        if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+          // Return an empty list instead of throwing
+          debugPrint("⚠️ 'datos' is null or empty in response");
+          return [];
+        }
+
+        debugPrint("Noticias3 comentario");
+        //debugPrint(json["datos"][0]["pl_comentarios"][0]["pv_descripcion"].toString());
+
+        if (json["resultado"]["pn_tiene_datos"] == 1) {
+          debugPrint("Comentario ingresado!!");
+          return List<Map<String, dynamic>>.from(json["datos"]);
+        } else {
+          debugPrint("Noticia comentario Sin datos");
+          debugPrint("Noticias comentario Error");
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          errorMensaje = json["resultado"]["pv_error_descripcion"].toString();
+          // //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          // throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        }
+        }
+      }
+    }
+    catch(e)
+    {
+      //Get.back();
+      debugPrint(e.toString());
+      showDialog(
+          context: Get.context!,
+          builder: (context)
+          {
+            return SimpleDialog(
+              title: Text(errorMensaje),
+              contentPadding: EdgeInsets.all(20),
+              children: [Text(e.toString())],
+            );
+          }
+      );
+    }
+    throw Exception("Error en llamado");
+  }
+}
+
+class getNewsC5{
 
 String noticiaTipo="";
 String importante="";
 String criterio="";
+String periodo="";
 
-getNewsH5(this.noticiaTipo, this.importante,this.criterio,);
+getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
 
   Future<List<Map<String, dynamic>>>importanNoticias5()async
 
@@ -60,7 +157,7 @@ getNewsH5(this.noticiaTipo, this.importante,this.criterio,);
       'Content-Type': 'application/json'
     };
     var url = Uri.parse(
-      //"https://apidesa.komuvita.com/portal/noticias/noticias_listado"
+       //"https://apidesa.komuvita.com/portal/noticias/noticias_listado"
         "http://api.komuvita.com/portal/noticias/noticias_listado"
     );
     Map body = {
@@ -71,10 +168,10 @@ getNewsH5(this.noticiaTipo, this.importante,this.criterio,);
       "parametros":
       {
         "pn_empresa": int.parse(empresa!),
-        "pn_periodo": 1,
-        "pn_noticia_tipo": "-1",
-        "pn_importante": "-1",
-        "pv_criterio": ""
+        "pn_periodo": periodo,
+        "pn_noticia_tipo": noticiaTipo,
+        "pn_importante": importante,
+        "pv_criterio": criterio
       }
     };
 

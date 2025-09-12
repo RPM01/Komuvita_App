@@ -388,23 +388,14 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                       itemCount: controller.helpAndSupport.length,
                       itemBuilder: (context, index) {
                         final isLast = index == controller.helpAndSupport.length - 1;
-
                         IconData iconData;
                         switch (index) {
                           case 0: iconData = FontAwesomeIcons.clipboardList; break;
-                          case 1: iconData = Icons.logout; break;
-                          case 2: iconData = FontAwesomeIcons.lockOpen; break;
-                          case 3: iconData = FontAwesomeIcons.newspaper; break;
-                          //case 1: iconData = FontAwesomeIcons.newspaper; break;
-                          //case 2: iconData = FontAwesomeIcons.cartShopping; break;
-                          //case 3: iconData = FontAwesomeIcons.question; break;
-                          //case 4: iconData = FontAwesomeIcons.houseSignal; break;
-                          //case 5: iconData = FontAwesomeIcons.usersRectangle; break;
-                          //case 6: iconData = FontAwesomeIcons.doorOpen; break;
-                          //case 7: iconData = FontAwesomeIcons.boxesStacked; break;
-                          //case 8: iconData = FontAwesomeIcons.bell; break;
-                          //case 9: iconData = FontAwesomeIcons.lockOpen; break;
-                          //case 10: iconData = Icons.logout; break;
+                          case 1: iconData = FontAwesomeIcons.newspaper; break;
+                          case 2: iconData = FontAwesomeIcons.doorOpen; break;
+                          case 3: iconData = FontAwesomeIcons.boxesStacked; break;
+                          case 4: iconData = FontAwesomeIcons.lockOpen; break;
+                          case 5: iconData = Icons.logout; break;
                           default: iconData = Icons.menu;
                         }
 
@@ -1103,8 +1094,6 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                         Navigator.of(context).pop();
                                                                       },
                                                                     ),
-
-
                                                                   ],
                                                                 );
                                                               },
@@ -1958,13 +1947,34 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: [
                                                     SizedBox(
-                                                      width: constraints.maxWidth*0.8,
-                                                      height: constraints.maxHeight*0.4,
-                                                      child: ClipRRect(
-                                                        borderRadius: BorderRadius.circular(10),
-                                                        child: Image.memory(base64Decode(event["pl_fotografias"][0]["pv_fotografiab64"].toString()),
-                                                          fit: BoxFit.fill,
-                                                          width: double.infinity,),
+                                                      width: constraints.maxWidth * 0.8,
+                                                      height: constraints.maxHeight * 0.4,
+                                                      child: (event["pl_fotografias"] == null || (event["pl_fotografias"] as List).isEmpty)
+                                                          ? const Center(child: Text("Sin fotos"))
+                                                          : CarouselSlider(
+                                                        options: CarouselOptions(
+                                                          height: constraints.maxHeight * 0.4,
+                                                          viewportFraction: 1.0,
+                                                          enableInfiniteScroll: false,
+                                                          enlargeCenterPage: true,
+                                                        ),
+                                                        items: (event["pl_fotografias"] as List<dynamic>)
+                                                            .map((foto) {
+                                                          final base64Img = foto["pv_fotografiab64"]?.toString();
+                                                          if (base64Img == null || base64Img.isEmpty) {
+                                                            return const Center(child: Text("Imagen inválida"));
+                                                          }
+                                                          final bytes = base64Decode(base64Img);
+                                                          return ClipRRect(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            child: Image.memory(
+                                                              bytes,
+                                                              fit: BoxFit.cover,
+                                                              width: double.infinity,
+                                                            ),
+                                                          );
+                                                        })
+                                                            .toList(),
                                                       ),
                                                     ),
                                                     Padding(
@@ -4824,7 +4834,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             Expanded(
                               child: InkWell(
                                 onTap: () {
-                                  Get.offNamed(MyRoute.loginScreen);
+                                  Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
                                   //Get.back();
                                 },
                                 child: Container(

@@ -85,7 +85,7 @@ class _AdmNotificationScreenState extends State<AdmNotificationScreen> {
                                     final event = events[index];
                                     return Container(
                                       width: constraints.maxWidth,
-                                      height: constraints.maxHeight*0.5,
+                                      height: constraints.maxHeight*0.3,
                                       child: Card(
                                           elevation: 3,
                                           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

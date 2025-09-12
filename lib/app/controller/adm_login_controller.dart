@@ -123,6 +123,7 @@ class LoginController extends GetxController {
           {
 
             debugPrint("Contraseña correcta");
+
             prefs.setString("Token", json["datos"]["pv_token"].toString());
             prefs.setString("Admin", json["datos"]["pn_administrador"].toString());
             prefs.setString("Empresa", json["datos"]["pl_empresas"][0][0]["pn_empresa"].toString());
@@ -144,6 +145,7 @@ class LoginController extends GetxController {
             empresasIdsSet = empresasIds;
             empresasNombresSet = empresasNombres;
             empresasPropiedadSet = empresasPropiedad;
+
             GestionTickets1();
 
             if(json["datos"]["pn_clave_vencida"] == 1)

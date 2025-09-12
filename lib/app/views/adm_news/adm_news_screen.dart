@@ -72,14 +72,24 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
   String periodoCuentaID = "";
   String periodoCuentaDescripcion = "";
 
+  Future<List<Map<String, dynamic>>>? _futureNoticias;
+
+  TextEditingController criterionNoticiasController  = TextEditingController();
+
+  List<TextEditingController>  comentarioNoticiasController =[];
+
+
+  final Map<int, CarouselSliderController> _controllers = {};
+  final Map<int, int> _currentIndex = {};
+
   List<String>radioTipo =["1","2","-1"];
   List<String>radioImportatne =["1","0","-1"];
 
-  Future ? _futureNoticias;
+ late String tipoOpcion = radioTipo[2];
+ late String importanteOpcion = radioImportatne[2];
 
-  TextEditingController criterionNoticiasController  = TextEditingController();
-  final Map<int, CarouselSliderController> _controllers = {};
-  final Map<int, int> _currentIndex = {};
+ List<bool> comentariosVisibles = [];
+  List<String> comentarioBoton =[];
 
   @override
   void didChangeDependencies() {
@@ -107,15 +117,16 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
       pago = instrucionesPago.split('|');
       debugPrint(pago.toString());
        */
+      _futureNoticias = getNewsC5(tipoOpcion.toString(),importanteOpcion.toString(),criterionNoticiasController.text,periodoCuentaID).importanNoticias5();
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    String? tipoOpcion ;
-    String? importanteOpcion;
+
     return Scaffold(
-    backgroundColor:newsController.themeController.isDarkMode?admDarkPrimary:admWhiteColor ,
+    backgroundColor:newsController.themeController.isDarkMode?admDarkPrimary:admWhiteColor,
     appBar: AppBar(
       backgroundColor: newsController.themeController.isDarkMode
           ? admDarkPrimary
@@ -271,19 +282,11 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                     IconData iconData;
                     switch (index) {
                       case 0: iconData = FontAwesomeIcons.clipboardList; break;
-                      case 1: iconData = Icons.logout; break;
-                      case 2: iconData = FontAwesomeIcons.lockOpen; break;
-                      case 3: iconData = FontAwesomeIcons.newspaper; break;
-                    //case 1: iconData = FontAwesomeIcons.newspaper; break;
-                    //case 2: iconData = FontAwesomeIcons.cartShopping; break;
-                    //case 3: iconData = FontAwesomeIcons.question; break;
-                    //case 4: iconData = FontAwesomeIcons.houseSignal; break;
-                    //case 5: iconData = FontAwesomeIcons.usersRectangle; break;
-                    //case 6: iconData = FontAwesomeIcons.doorOpen; break;
-                    //case 7: iconData = FontAwesomeIcons.boxesStacked; break;
-                    //case 8: iconData = FontAwesomeIcons.bell; break;
-                    //case 9: iconData = FontAwesomeIcons.lockOpen; break;
-                    //case 10: iconData = Icons.logout; break;
+                      case 1: iconData = FontAwesomeIcons.newspaper; break;
+                      case 2: iconData = FontAwesomeIcons.doorOpen; break;
+                      case 3: iconData = FontAwesomeIcons.boxesStacked; break;
+                      case 4: iconData = FontAwesomeIcons.lockOpen; break;
+                      case 5: iconData = Icons.logout; break;
                       default: iconData = Icons.menu;
                     }
 
@@ -378,7 +381,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                 value: periodeDeCuentaID[0].toString(),
                                                 hint: const Text("Seleccione periodo"),
                                                 decoration: InputDecoration(
-                                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                                  contentPadding: const EdgeInsets.symmetric(  vertical: 12),
                                                   border: OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(12),
                                                     borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
@@ -400,7 +403,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                     child: Text(
                                                       periodeDeCuenta[index],
                                                       style: const TextStyle(
-                                                        fontSize: 20,
+                                                        fontSize: 17,
                                                         color: Colors.black,
                                                       ),
                                                     ),
@@ -409,12 +412,17 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                 onChanged: (value) {
                                                   setState(() {
                                                     int index = periodeDeCuentaID.indexOf(int.parse(value!));
+                                                    debugPrint(periodeDeCuentaID[index].toString());
                                                     periodoCuentaID = value;
                                                     debugPrint(periodoCuentaID);
                                                   });
                                                 },
                                               ),
                                             ),
+                                          ],
+                                        ),
+                                        Column(
+                                          children: [
                                             Text("Criterio",style: theme.textTheme.headlineSmall?.copyWith(
                                               fontWeight: FontWeight.bold,
                                               color:Color.fromRGBO(6,78,116,1),
@@ -432,11 +440,17 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                   criterionNoticiasController .text = value;
                                                 },
                                               ),
-                                            )
+                                            ),
                                           ],
                                         ),
+                                      ],
+                                    ),
+                                    17.height,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
                                         SizedBox(
-                                          width: MediaQuery.of(context).size.width*0.22,
+                                          width: MediaQuery.of(context).size.width*0.45,
                                           child: Column(
                                             children: [
                                               Text("Tipo",style: theme.textTheme.headlineSmall?.copyWith(
@@ -451,7 +465,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                   groupValue: tipoOpcion,
                                                   onChanged: (value){
                                                     setState(() {
-                                                      tipoOpcion = value.toString();
+                                                      tipoOpcion = value!;
                                                       debugPrint(tipoOpcion.toString());
                                                     });
                                                   },
@@ -464,7 +478,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                   groupValue: tipoOpcion,
                                                   onChanged: (value){
                                                     setState(() {
-                                                      tipoOpcion = value.toString();
+                                                      tipoOpcion = value!;
                                                       debugPrint(tipoOpcion.toString());
                                                     });
                                                   },
@@ -477,7 +491,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                   groupValue: tipoOpcion,
                                                   onChanged: (value){
                                                     setState(() {
-                                                      tipoOpcion = value.toString();
+                                                      tipoOpcion = value!;
                                                       debugPrint(tipoOpcion.toString());
                                                     });
                                                   },
@@ -487,7 +501,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                           ),
                                         ),
                                         SizedBox(
-                                          width: MediaQuery.of(context).size.width*0.22,
+                                          width: MediaQuery.of(context).size.width*0.45,
                                           child: Column(
                                             children: [
                                               Text("Importante",style: theme.textTheme.headlineSmall?.copyWith(
@@ -502,7 +516,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                   groupValue: importanteOpcion,
                                                   onChanged: (value){
                                                     setState(() {
-                                                      importanteOpcion = value.toString();
+                                                      importanteOpcion = value!;
                                                       debugPrint(importanteOpcion);
                                                     });
                                                   },
@@ -515,7 +529,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                   groupValue: importanteOpcion,
                                                   onChanged: (value){
                                                     setState(() {
-                                                      importanteOpcion = value.toString();
+                                                      importanteOpcion = value!;
                                                       debugPrint(importanteOpcion);
                                                     });
                                                   },
@@ -528,7 +542,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                   groupValue: importanteOpcion,
                                                   onChanged: (value){
                                                     setState(() {
-                                                      importanteOpcion = value.toString();
+                                                      importanteOpcion = value!;
                                                       debugPrint(importanteOpcion);
                                                     });
                                                   },
@@ -556,7 +570,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
-                                                fontSize: 25,
+                                                fontSize: MediaQuery.of(context).size.width*0.035,
                                               ),
                                             ),),
                                         ),
@@ -574,7 +588,13 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                 debugPrint(criterionNoticiasController.text);
                                                 debugPrint(tipoOpcion.toString());
                                                 debugPrint(importanteOpcion.toString());
-                                                _futureNoticias = makeApiCall(tipoOpcion.toString(),importanteOpcion.toString(),criterionNoticiasController.text );
+                                                if(criterionNoticiasController.text.isEmpty)
+                                                  {
+                                                    setState(() {
+                                                      criterionNoticiasController.text = "";
+                                                      _futureNoticias = getNewsC5(tipoOpcion.toString(),importanteOpcion.toString(),criterionNoticiasController.text,periodoCuentaID).importanNoticias5();
+                                                    });
+                                                  }
                                               });
                                             },
                                             child: Text(
@@ -582,7 +602,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
-                                                fontSize: 25,
+                                                fontSize: MediaQuery.of(context).size.width*0.035,
                                               ),
                                             ),),
                                         )
@@ -597,11 +617,13 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                               future:_futureNoticias,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const Center(child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
+                                  return  Center(child: CircularProgressIndicator());
+                                } else if (snapshot.hasError)
+                                {
+                                  debugPrint(snapshot.hasError.toString());
                                   return  Center(
                                       child: Title(color: Color.fromRGBO(6,78,116,1),
-                                        child: Text("No hay noticias del día de hoy",style: theme.textTheme.bodyMedium?.copyWith(
+                                        child: Text("No hay noticias del día de hoy A",style: theme.textTheme.bodyMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context).size.width*0.035,
                                           color: Color.fromRGBO(6,78,116,1),
@@ -609,54 +631,97 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                         ),
                                       ));
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return  Center(
-                                      child: Title(color: Color.fromRGBO(6,78,116,1),
-                                        child: Text("No hay noticias del día de hoy",style: theme.textTheme.bodyMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width*0.035,
-                                          color: Color.fromRGBO(6,78,116,1),
-                                        ),
-                                        ),
-                                      )
-                                  );
+                                  debugPrint(snapshot.hasData.toString());
+                                  return  Center(child: Text("No hay noticias disponibles para ese periodo"),);
                                 }
                                 final events = snapshot.data!;
-                                //debugPrint(events.toString());
+
+                                debugPrint("Evento");
+                                debugPrint(events.toString());
                                 return SizedBox(
                                     width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height*0.65,
+                                    height: MediaQuery.of(context).size.height > 400 ? MediaQuery.of(context).size.height*0.45:MediaQuery.of(context).size.height*0.10,
                                     child: LayoutBuilder(
                                         builder: (context, constraints) {
                                           final cardWidth = constraints.maxWidth * 0.9;
                                           final cardHeight = constraints.maxHeight * 0.65;
                                           final titleFontSize = constraints.maxWidth * 0.035;
                                           final subtitleFontSize = constraints.maxWidth * 0.03;
+                                          double noticiaSize = constraints.maxHeight;
+
                                           return ListView.builder(
-                                            padding: EdgeInsets.zero,
-                                            physics: ClampingScrollPhysics(),
+                                            physics: const ClampingScrollPhysics(),
                                             shrinkWrap: true,
+                                            padding: EdgeInsets.zero,
                                             itemCount: events.length,
                                             itemBuilder: (context, index) {
                                               final event = events[index];
-
+                                              for (int i = 0; i < events.length; i++)
+                                                {
+                                                  comentarioNoticiasController.add(TextEditingController(text:""));
+                                                  comentariosVisibles.add(false);
+                                                  comentarioBoton.add("Ver comentarios ()");
+                                                }
+                                             /*
                                               final images = event["pl_fotografias"]
-                                                  ?.where((f) => f.event["pl_fotografias"]["pv_fotografiab64"] != null && f.event["pl_fotografias"] !.isNotEmpty)
-                                                  .map((f) => f.event["pl_fotografias"]["pv_fotografiab64"]!)
+                                                  ?.where((f) => f["pl_fotografias"]["pv_fotografiab64"] != null && f.event["pl_fotografias"] !.isNotEmpty)
+                                                  .map((f) => f["pl_fotografias"]["pv_fotografiab64"]!)
                                                   .toList() ?? [];
-
                                               _controllers.putIfAbsent(index, () => CarouselSliderController());
                                               _currentIndex[index] = _currentIndex[index] ?? 0;
-
-                                              return Container(
-                                                width: constraints.maxWidth*0.5,
-                                                height: constraints.maxHeight,
-                                                child: Card(
+                                              */
+                                              return Card(
                                                     elevation: 3,
                                                     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                                     child: Column(
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                       children: [
+                                                        Text(event["pv_descripcion"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                          color:Color.fromRGBO(167,167,132,1),
+                                                          fontSize: constraints.maxWidth * 0.055,
+                                                        )),
+                                                        Row(
+                                                          children: [
+                                                            Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event["pf_fecha"].toString())),style: theme.textTheme.headlineSmall?.copyWith(
+                                                              fontWeight: FontWeight.bold,
+                                                              color:Color.fromRGBO(167,167,132,1),//color: Colors.grey[600],
+                                                              fontSize: constraints.maxWidth * 0.035,)),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          width: constraints.maxWidth * 0.45,
+                                                          height: constraints.maxHeight * 0.45,
+                                                          child: (event["pl_fotografias"] == null || (event["pl_fotografias"] as List).isEmpty)
+                                                              ? const Center(child: Text("Sin fotos"))
+                                                              : CarouselSlider(
+                                                            options: CarouselOptions(
+                                                              height: constraints.maxHeight * 0.6,
+                                                              viewportFraction: 1.0,
+                                                              enableInfiniteScroll: false,
+                                                              enlargeCenterPage: true,
+                                                            ),
+                                                            items: (event["pl_fotografias"] as List<dynamic>)
+                                                                .map((foto) {
+                                                              final base64Img = foto["pv_fotografiab64"]?.toString();
+                                                              if (base64Img == null || base64Img.isEmpty) {
+                                                                return const Center(child: Text("Imagen inválida"));
+                                                              }
+                                                              final bytes = base64Decode(base64Img);
+                                                              return ClipRRect(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                                child: Image.memory(
+                                                                  bytes,
+                                                                  fit: BoxFit.fill,
+                                                                  width: double.infinity,
+                                                                ),
+                                                              );
+                                                            })
+                                                                .toList(),
+                                                          ),
+                                                        ),
+                                                        /*
                                                         StatefulBuilder(
                                                             builder: (context, setLocalState) {
                                                               return  SizedBox(
@@ -711,8 +776,6 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                           },
                                                                         ),
                                                                       ),
-
-                                                                    // ➡️ Flecha derecha
                                                                     if (images.length > 1)
                                                                       Positioned(
                                                                         right: 10,
@@ -739,57 +802,176 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                               );
                                                             }
                                                         ),
+                                                         */
                                                         Padding(
                                                           padding: const EdgeInsets.all(12),
-                                                          child: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.start,
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              Text(event["pv_descripcion"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
-                                                                fontSize: constraints.maxWidth * 0.05,
-                                                              )),
-                                                              /*Padding(
-                                                            padding: const EdgeInsets.all(12),
-                                                            child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                          child:  Center(
+                                                            child: Column(
                                                               children: [
-                                                                Text("Noticia | ",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color:Color.fromRGBO(6,78,116,1),
-                                                                  fontSize: constraints.maxWidth * 0.050,)),
-                                                                Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event["pf_fecha"].toString())),style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                    color:Color.fromRGBO(167,167,132,1),//color: Colors.grey[600],
-                                                                  fontSize: constraints.maxWidth * 0.050,)),
+                                                                Row(
+                                                                  children: [
+                                                                    Title(color:Color.fromRGBO(6,78,116,1), child:Text("Comentario",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color:Color.fromRGBO(6,78,116,1),
+                                                                      fontSize: MediaQuery.of(context).size.width*0.040,
+                                                                            )
+                                                                          )
+                                                                        ),
+                                                                      ],
+                                                                     ),
+                                                                    Center(
+                                                                      child: SizedBox(
+                                                                        width: constraints.maxWidth,
+                                                                        child: TextFormField(
+
+                                                                          keyboardType: TextInputType.multiline,
+                                                                          maxLines: null,
+                                                                           controller: comentarioNoticiasController[index],
+                                                                          onChanged: (value)
+                                                                          {
+                                                                            setState(() {
+                                                                              comentarioNoticiasController[index].text = value;
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    ),
+
                                                               ],
                                                             ),
                                                           ),
-                                                           */
-                                                              Row(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: constraints.maxWidth*0.8,
-                                                                    child: Text(event["pl_comentarios"][0]["pv_descripcion"],style: theme.textTheme.headlineSmall?.copyWith(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color:Color.fromRGBO(167,167,132,1),//color: Colors.grey[600],
-                                                                      fontSize: constraints.maxWidth * 0.028,
-                                                                    ),maxLines: 5,),
-                                                                  ),
-
-                                                                ],
-                                                              )
-                                                            ],
-                                                          ),
                                                         ),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: constraints.maxWidth *0.45,
+                                                              height: constraints.maxHeight *0.10,
+                                                              child: ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
+                                                                  ),
+                                                                  onPressed: () async{
+                                                                    makeApiCall2(event["pn_noticia"].toString(), comentarioNoticiasController[index].text);
+                                                                    setState(() {
+                                                                      comentarioNoticiasController[index].text = "";
+                                                                    });
+                                                                  },
+                                                                  child:  Text(
+                                                                    "Ingresar comentario",
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: Colors.white,
+                                                                      fontSize:  MediaQuery.of(context).size.height > 400 ? constraints.maxWidth * 0.04: constraints.maxWidth * 0.015,
+                                                                    ),
+                                                                    maxLines:3,
+                                                                  ),
+                                                              )
+                                                            ),SizedBox(
+                                                                width: constraints.maxWidth *0.45,
+                                                                height: constraints.maxHeight *0.10,
+                                                                child: ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                                    // set the background color
+                                                                  ),
+                                                                  onPressed: () {
+                                                                    setState(() {
+                                                                      if (comentariosVisibles[index] == false)
+                                                                      {
+                                                                        comentariosVisibles[index] = true;
+                                                                        comentarioBoton[index] = "Ocultar comentarios";
+                                                                      }
+                                                                      else
+                                                                        {
+                                                                          comentariosVisibles[index] = false;
+                                                                          comentarioBoton[index] = "Ver comentarios";
+                                                                        }
+                                                                    });
+                                                                  },
+                                                                  child: Text(
+                                                                    comentarioBoton[index],
+                                                                    style: TextStyle(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: Colors.white,
+                                                                      fontSize:  MediaQuery.of(context).size.height > 400 ? constraints.maxWidth * 0.04: constraints.maxWidth * 0.015,
+                                                                    ),
+                                                                    maxLines: 3,
+                                                                  ),
+                                                                )
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8),
+                                                          child: comentariosVisibles[index] ? Column(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Title(color:Color.fromRGBO(6,78,116,1), child:Text("Comentarios:",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                color:Color.fromRGBO(6,78,116,1),
+                                                                fontSize: MediaQuery.of(context).size.width*0.060,
+                                                                 )
+                                                                )
+                                                              ),
+                                                              SizedBox(
+                                                                width: constraints.maxWidth * 0.8,
+                                                                child: event["pl_comentarios"] == null || (event["pl_comentarios"] as List).isEmpty
+                                                                    ? const Center(child: Text("Sin comentarios"))
+                                                                    : SingleChildScrollView(
+                                                                  scrollDirection: Axis .vertical,
+                                                                  child: Column(
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: (event["pl_comentarios"] as List<dynamic>)
+                                                                        .map((comentario) => Column(
+                                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            Text(comentario["pv_autor"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color:Color.fromRGBO(6, 78, 116, 1),
+                                                                              fontSize: constraints.maxWidth * 0.055,
+                                                                            ),maxLines: 4,),
+                                                                          /*
+                                                                            Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(comentario["pf_fecha"].toString())),style: theme.textTheme.headlineSmall?.copyWith(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color:Color.fromRGBO(6, 78, 116, 1),
+                                                                              fontSize: constraints.maxWidth * 0.045,
+                                                                            ),maxLines: 4,
+                                                                            ),
+                                                                           */
+                                                                          ],
+                                                                        ),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(bottom: 8.0),
+                                                                          child: Text(
+                                                                            comentario["pv_descripcion"].toString(),
+                                                                            style: theme.textTheme.headlineSmall?.copyWith(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: const Color.fromRGBO(167, 167, 132, 1),
+                                                                              fontSize: constraints.maxWidth * 0.035,
+                                                                            ),
+                                                                            maxLines: 5,
+                                                                            overflow: TextOverflow.ellipsis,),
+                                                                        ),
+                                                                      ],
+                                                                    )).toList(),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ):Center(),
+                                                        ),
+
                                                       ],
                                                     )
-                                                ),
-                                              );
+
+                                                );
+
                                             },
                                           );
                                         }
@@ -797,6 +979,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                 );
                               },
                             ),
+                            50.height,
                           ]
                       )
                   )
@@ -808,12 +991,19 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
   }
 }
 
+Future<void> makeApiCall2(String noticiasID,String comentario)
+async {
+ debugPrint("Comentario tratando de ingresar");
+  setNewsComentC7(noticiasID,comentario);
+  await setNewsComentC7(noticiasID,comentario).ComentarioNoticias7();
 
-Future<void> makeApiCall(String noticiaTipo,String importante,String criterio)
+}
+
+Future<void> makeApiCall(String noticiaTipo,String importante,String criterio, String periodo)
 async {
   // Example API call
-  getNewsH5(noticiaTipo,importante,criterio);
-  await getNewsH5(noticiaTipo,importante,criterio).importanNoticias5();
+  getNewsC5(noticiaTipo,importante,criterio,periodo);
+  await getNewsC5(noticiaTipo,importante,criterio,periodo).importanNoticias5();
 }
 
 void _showLogOutBottomSheet(BuildContext context,) {
@@ -895,7 +1085,7 @@ void _showLogOutBottomSheet(BuildContext context,) {
                           Expanded(
                             child: InkWell(
                               onTap: () {
-                                Get.offNamed(MyRoute.loginScreen);
+                                Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
                                 //Get.back();
                               },
                               child: Container(
