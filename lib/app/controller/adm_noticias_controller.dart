@@ -22,6 +22,8 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'adm_login_controller.dart';
+
 class AdmNoticiasController extends GetxController
 {
   final ThemeController themeController = Get.put(ThemeController());
@@ -70,7 +72,7 @@ class setNewsComentC7{
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_noticia": noticiaID,
           "pv_comentario": comentario
         }
@@ -167,7 +169,7 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
       },
       "parametros":
       {
-        "pn_empresa": int.parse(empresa!),
+        "pn_empresa": empresaID,
         "pn_periodo": periodo,
         "pn_noticia_tipo": noticiaTipo,
         "pn_importante": importante,

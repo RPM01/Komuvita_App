@@ -11,6 +11,8 @@ import '../modal/adm_notification_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'adm_login_controller.dart';
+
 
 class AdmNotificationController extends GetxController{
 
@@ -33,7 +35,7 @@ class AdmNotificationController extends GetxController{
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -54,7 +56,7 @@ class AdmNotificationController extends GetxController{
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_notificacion_tipo": "-1",
           "pn_estado": "-1",
           "pv_criterio": ""

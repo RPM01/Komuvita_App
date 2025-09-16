@@ -255,15 +255,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                 : admTextColor,
                           ),
                         ),
-                        Text(
-                          "Administrador",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: menuController.themeController.isDarkMode
-                                ? Colors.grey[300]
-                                : Colors.grey[700],
-                          ),
-                        ),
+
                       ],
                     ),
                   ),
@@ -281,13 +273,15 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
 
                     IconData iconData;
                     switch (index) {
-                      case 0: iconData = FontAwesomeIcons.clipboardList; break;
-                      case 1: iconData = FontAwesomeIcons.newspaper; break;
-                      case 2: iconData = FontAwesomeIcons.doorOpen; break;
-                      case 3: iconData = FontAwesomeIcons.boxesStacked; break;
-                      case 4: iconData = FontAwesomeIcons.lockOpen; break;
-                      case 5: iconData = Icons.logout; break;
-                      default: iconData = Icons.menu;
+                      case 0: iconData = Icons.house; break;
+                      case 1: iconData = FontAwesomeIcons.clipboardList; break;
+                      case 2: iconData = FontAwesomeIcons.newspaper; break;
+                      case 3: iconData = FontAwesomeIcons.doorOpen; break;
+                      case 4: iconData = FontAwesomeIcons.boxesStacked; break;
+                      case 5: iconData = FontAwesomeIcons.calendarCheck; break;
+                      case 6: iconData = FontAwesomeIcons.phoneFlip; break;
+                      case 7: iconData = Icons.lock_reset; break;
+                      default: iconData = Icons.logout;
                     }
 
                     return Padding(
@@ -375,20 +369,28 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                               fontSize: MediaQuery.of(context).size.width*0.030,
                                             )),
                                             SizedBox(
-                                              width: MediaQuery.of(context).size.width*0.45,
+                                              width: MediaQuery.of(context).size.width * 0.45,
                                               child: DropdownButtonFormField<String>(
-                                                isExpanded: false,
+                                                isExpanded: true,
+                                                // allow multi-line heights in dropdown
+                                                itemHeight: null,
                                                 value: periodeDeCuentaID[0].toString(),
                                                 hint: const Text("Seleccione periodo"),
                                                 decoration: InputDecoration(
-                                                  contentPadding: const EdgeInsets.symmetric(  vertical: 12),
+                                                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                                                   border: OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(12),
-                                                    borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
+                                                    borderSide: const BorderSide(
+                                                      color: Color.fromRGBO(6, 78, 116, 1),
+                                                      width: 1,
+                                                    ),
                                                   ),
                                                   focusedBorder: OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(12),
-                                                    borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
+                                                    borderSide: const BorderSide(
+                                                      color: Color.fromRGBO(6, 78, 116, 1),
+                                                      width: 2,
+                                                    ),
                                                   ),
                                                 ),
                                                 style: const TextStyle(
@@ -396,19 +398,54 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.black87,
                                                 ),
-                                                icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
+                                                icon: const Icon(
+                                                  Icons.arrow_drop_down,
+                                                  color: Color.fromRGBO(6, 78, 116, 1),
+                                                ),
+
+                                                // 🔹 Custom selected item builder to support multi-line when collapsed
+                                                selectedItemBuilder: (context) {
+                                                  return List.generate(periodeDeCuentaID.length, (index) {
+                                                    return ConstrainedBox(
+                                                      constraints: const BoxConstraints(minHeight: 48),
+                                                      child: Align(
+                                                        alignment: Alignment.centerLeft,
+                                                        child: Text(
+                                                          periodeDeCuenta[index],
+                                                          maxLines: 3,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          softWrap: true,
+                                                          style: const TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight: FontWeight.w500,
+                                                            color: Colors.black87,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  });
+                                                },
+
+                                                // 🔹 Dropdown items
                                                 items: List.generate(periodeDeCuentaID.length, (index) {
                                                   return DropdownMenuItem<String>(
                                                     value: periodeDeCuentaID[index].toString(),
-                                                    child: Text(
-                                                      periodeDeCuenta[index],
-                                                      style: const TextStyle(
-                                                        fontSize: 17,
-                                                        color: Colors.black,
+                                                    child: ConstrainedBox(
+                                                      constraints: const BoxConstraints(minHeight: 48),
+                                                      child: Text(
+                                                        periodeDeCuenta[index],
+                                                        maxLines: 10, // allow long text
+                                                        softWrap: true,
+                                                        overflow: TextOverflow.visible,
+                                                        style: const TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.black,
+                                                        ),
                                                       ),
                                                     ),
                                                   );
                                                 }),
+
                                                 onChanged: (value) {
                                                   setState(() {
                                                     int index = periodeDeCuentaID.indexOf(int.parse(value!));
@@ -432,7 +469,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                               width: MediaQuery.of(context).size.width*0.45,
                                               child: TextFormField(
                                                 controller: criterionNoticiasController ,
-                                                autofocus: true,
+
                                                 onChanged: (value) {
                                                   criterionNoticiasController .text = value;
                                                 },
@@ -656,20 +693,44 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                             itemCount: events.length,
                                             itemBuilder: (context, index) {
                                               final event = events[index];
-                                              for (int i = 0; i < events.length; i++)
-                                                {
-                                                  comentarioNoticiasController.add(TextEditingController(text:""));
-                                                  comentariosVisibles.add(false);
-                                                  comentarioBoton.add("Ver comentarios ()");
-                                                }
-                                             /*
-                                              final images = event["pl_fotografias"]
-                                                  ?.where((f) => f["pl_fotografias"]["pv_fotografiab64"] != null && f.event["pl_fotografias"] !.isNotEmpty)
-                                                  .map((f) => f["pl_fotografias"]["pv_fotografiab64"]!)
+                                              List<int> cantidadComentarios = [];
+
+                                               /*final images = event["plFotografias"]
+                                                  ?.where((f) => f["pv_fotografiab64"] != null && f["pv_fotografiab64"]!.isNotEmpty)
+                                                  .map((f) => f["pv_fotografiab64"]!)
                                                   .toList() ?? [];
+                                               */
                                               _controllers.putIfAbsent(index, () => CarouselSliderController());
                                               _currentIndex[index] = _currentIndex[index] ?? 0;
-                                              */
+                                              for (int i = 0; i < events.length; i++)
+                                                {
+                                                  cantidadComentarios.add(0);
+                                                  comentarioNoticiasController.add(TextEditingController(text:""));
+                                                  comentariosVisibles.add(false);
+
+                                                  if(event["pl_comentarios"] != null )
+                                                  {
+                                                    cantidadComentarios[i] = event["pl_comentarios"].length;
+                                                    debugPrint("$i ${event ["pl_comentarios"].length}");
+                                                  }
+                                                  else
+                                                  {
+                                                    cantidadComentarios[i] = 0;
+                                                  }
+                                                }
+                                              for (int i = 0; i < events.length; i++)
+                                                {
+                                                  comentarioBoton.add("Ver comentarios (${cantidadComentarios[i]})");
+                                                }
+
+                                              final images = (event["pl_fotografias"] as List<dynamic>?)
+                                                  ?.where((f) => f["pv_fotografiab64"] != null && f["pv_fotografiab64"].toString().isNotEmpty)
+                                                  .map((f) => f["pv_fotografiab64"].toString())
+                                                  .toList()
+                                                  ?? [];
+                                              _controllers.putIfAbsent(index, () => CarouselSliderController());
+                                              _currentIndex[index] = _currentIndex[index] ?? 0;
+
                                               return Card(
                                                     elevation: 3,
                                                     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -690,52 +751,22 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                               fontSize: constraints.maxWidth * 0.035,)),
                                                           ],
                                                         ),
-                                                        SizedBox(
-                                                          width: constraints.maxWidth * 0.45,
-                                                          height: constraints.maxHeight * 0.45,
-                                                          child: (event["pl_fotografias"] == null || (event["pl_fotografias"] as List).isEmpty)
-                                                              ? const Center(child: Text("Sin fotos"))
-                                                              : CarouselSlider(
-                                                            options: CarouselOptions(
-                                                              height: constraints.maxHeight * 0.6,
-                                                              viewportFraction: 1.0,
-                                                              enableInfiniteScroll: false,
-                                                              enlargeCenterPage: true,
-                                                            ),
-                                                            items: (event["pl_fotografias"] as List<dynamic>)
-                                                                .map((foto) {
-                                                              final base64Img = foto["pv_fotografiab64"]?.toString();
-                                                              if (base64Img == null || base64Img.isEmpty) {
-                                                                return const Center(child: Text("Imagen inválida"));
-                                                              }
-                                                              final bytes = base64Decode(base64Img);
-                                                              return ClipRRect(
-                                                                borderRadius: BorderRadius.circular(10),
-                                                                child: Image.memory(
-                                                                  bytes,
-                                                                  fit: BoxFit.fill,
-                                                                  width: double.infinity,
-                                                                ),
-                                                              );
-                                                            })
-                                                                .toList(),
-                                                          ),
-                                                        ),
-                                                        /*
                                                         StatefulBuilder(
-                                                            builder: (context, setLocalState) {
-                                                              return  SizedBox(
-                                                                width: constraints.maxWidth * 0.40,
-                                                                height: constraints.maxWidth * 0.30,
-                                                                child: images.isNotEmpty
-                                                                    ? Stack(
-                                                                  children: [CarouselSlider(
+                                                          builder: (context, setLocalState) {
+                                                            return SizedBox(
+                                                              width: constraints.maxWidth * 0.85,
+                                                              height: constraints.maxWidth * 0.50,
+                                                              child: images.isNotEmpty
+                                                                  ? Stack(
+                                                                alignment: Alignment.center,
+                                                                children: [
+                                                                  CarouselSlider(
                                                                     carouselController: _controllers[index],
                                                                     options: CarouselOptions(
                                                                       viewportFraction: 1.0,
-                                                                      enableInfiniteScroll: false,
+                                                                      enableInfiniteScroll: images.length > 1,
                                                                       enlargeCenterPage: true,
-                                                                      height: 200,
+                                                                      height: constraints.maxWidth * 0.50, // ✅ match parent
                                                                       onPageChanged: (page, reason) {
                                                                         setLocalState(() {
                                                                           _currentIndex[index] = page;
@@ -743,66 +774,81 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                       },
                                                                     ),
                                                                     items: images.map((base64Img) {
-                                                                      final bytes = base64Decode(base64Img);
-                                                                      return ClipRRect(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(10),
-                                                                        child: Image.memory(
-                                                                          bytes,
-                                                                          fit: BoxFit.cover,
-                                                                          width: double.infinity,
-                                                                        ),
-                                                                      );
+                                                                      try {
+                                                                        final bytes = base64Decode(base64Img);
+                                                                        return GestureDetector(
+                                                                          onTap: () => showImageDialog(context,base64Img),
+                                                                          child: ClipRRect(
+                                                                            borderRadius: BorderRadius.circular(10),
+                                                                            child: Image.memory(
+                                                                              bytes,
+                                                                              fit: BoxFit.fill,
+                                                                              width: double.infinity,
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      } catch (e) {
+                                                                        return const Center(child: Text("Imagen inválida"));
+                                                                      }
                                                                     }).toList(),
                                                                   ),
 
-                                                                    if (images.length > 1)
-                                                                      Positioned(
-                                                                        left: 10,
-                                                                        top: 0,
-                                                                        bottom: 0,
-                                                                        child: IconButton(
-                                                                          icon: const Icon(
-                                                                            Icons.arrow_back_ios,
-                                                                            color: Colors.white,
-                                                                            size: 20,
-                                                                          ),
-                                                                          onPressed: () {
-                                                                            _controllers[index]?.previousPage(
-                                                                              duration: const Duration(
-                                                                                  milliseconds: 300),
-                                                                              curve: Curves.easeInOut,
-                                                                            );
-                                                                          },
-                                                                        ),
+                                                                  // ⬅️ Left arrow
+                                                                  if (images.length > 1)
+                                                                    Positioned(
+                                                                      left: 5,
+                                                                      child: IconButton(
+                                                                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+                                                                        onPressed: () {
+                                                                          _controllers[index]?.previousPage(
+                                                                            duration: const Duration(milliseconds: 300),
+                                                                            curve: Curves.easeInOut,
+                                                                          );
+                                                                        },
                                                                       ),
-                                                                    if (images.length > 1)
-                                                                      Positioned(
-                                                                        right: 10,
-                                                                        top: 0,
-                                                                        bottom: 0,
-                                                                        child: IconButton(
-                                                                          icon: const Icon(
-                                                                            Icons.arrow_forward_ios,
-                                                                            color: Colors.white,
-                                                                            size: 20,
-                                                                          ),
-                                                                          onPressed: () {
-                                                                            _controllers[index]?.nextPage(
-                                                                              duration: const Duration(
-                                                                                  milliseconds: 300),
-                                                                              curve: Curves.easeInOut,
-                                                                            );
-                                                                          },
-                                                                        ),
+                                                                    ),
+
+                                                                  // ➡️ Right arrow
+                                                                  if (images.length > 1)
+                                                                    Positioned(
+                                                                      right: 5,
+                                                                      child: IconButton(
+                                                                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
+                                                                        onPressed: () {
+                                                                          _controllers[index]?.nextPage(
+                                                                            duration: const Duration(milliseconds: 300),
+                                                                            curve: Curves.easeInOut,
+                                                                          );
+                                                                        },
                                                                       ),
-                                                                  ],
-                                                                )
-                                                                    : const Center(child: Text("Sin fotos")),
-                                                              );
-                                                            }
+                                                                    ),
+
+                                                                  // 🔘 Indicator dots
+                                                                  if (images.length > 1)
+                                                                    Positioned(
+                                                                      bottom: 5,
+                                                                      child: Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                                        children: images.asMap().entries.map((entry) {
+                                                                          final isActive = _currentIndex[index] == entry.key;
+                                                                          return Container(
+                                                                            width: isActive ? 10 : 6,
+                                                                            height: isActive ? 10 : 6,
+                                                                            margin: const EdgeInsets.symmetric(horizontal: 2),
+                                                                            decoration: BoxDecoration(
+                                                                              shape: BoxShape.circle,
+                                                                              color: isActive ? Colors.white : Colors.grey,
+                                                                            ),
+                                                                          );
+                                                                        }).toList(),
+                                                                      ),
+                                                                    ),
+                                                                ],
+                                                              )
+                                                                  : const Center(child: Text("Sin fotos")),
+                                                            );
+                                                          },
                                                         ),
-                                                         */
                                                         Padding(
                                                           padding: const EdgeInsets.all(12),
                                                           child:  Center(
@@ -823,7 +869,6 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                       child: SizedBox(
                                                                         width: constraints.maxWidth,
                                                                         child: TextFormField(
-
                                                                           keyboardType: TextInputType.multiline,
                                                                           maxLines: null,
                                                                            controller: comentarioNoticiasController[index],
@@ -852,11 +897,15 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                     backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
                                                                   ),
                                                                   onPressed: () async{
-                                                                    makeApiCall2(event["pn_noticia"].toString(), comentarioNoticiasController[index].text);
-                                                                    setState(() {
-                                                                      comentarioNoticiasController[index].text = "";
-                                                                    });
-                                                                  },
+                                                                   if(comentarioNoticiasController[index].text != "")
+                                                                   {
+                                                                      makeApiCall2(
+                                                                      event["pn_noticia"].toString(), comentarioNoticiasController[index].text);
+                                                                      setState(() {comentarioNoticiasController[index].text = "";}
+                                                                      );
+                                                                      msgxToast("El comentario fue enviado para su aprobación");
+                                                              }
+                                                            },
                                                                   child:  Text(
                                                                     "Ingresar comentario",
                                                                     style: TextStyle(
@@ -885,7 +934,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                       else
                                                                         {
                                                                           comentariosVisibles[index] = false;
-                                                                          comentarioBoton[index] = "Ver comentarios";
+                                                                          comentarioBoton[index] = "Ver comentarios (${cantidadComentarios[index]})";
                                                                         }
                                                                     });
                                                                   },
@@ -920,11 +969,11 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                 child: event["pl_comentarios"] == null || (event["pl_comentarios"] as List).isEmpty
                                                                     ? const Center(child: Text("Sin comentarios"))
                                                                     : SingleChildScrollView(
-                                                                  scrollDirection: Axis .vertical,
-                                                                  child: Column(
-                                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: (event["pl_comentarios"] as List<dynamic>)
+                                                                       scrollDirection: Axis .vertical,
+                                                                      child: Column(
+                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                        children: (event["pl_comentarios"] as List<dynamic>)
                                                                         .map((comentario) => Column(
                                                                       mainAxisAlignment: MainAxisAlignment.start,
                                                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1150,5 +1199,28 @@ void _showLogOutBottomSheet(BuildContext context,) {
         },
       );
     },
+  );
+}
+void showImageDialog(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      content: Image.memory(base64Decode(imageUrl),
+
+      ),
+    ),
+  );
+}
+
+void msgxToast(String msxg){
+
+  Fluttertoast.showToast(
+    msg: msxg,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.CENTER,
+    timeInSecForIosWeb: 1,
+    backgroundColor: Colors.blue,
+    textColor: Colors.white,
+    fontSize: 20,
   );
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:administra/app/controller/adm_login_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,8 @@ Future<List<Map<String, dynamic>>>objetosPerdidos5()async
       },
       "parametros":
       {
-        "pn_empresa": int.parse(empresa!),
+        
+        "pn_empresa": empresaID,
         "pv_criterio": busqueda,
         "pn_resumen": "1",
       }
@@ -156,7 +158,7 @@ class objetosPerdidosSetReporteE6
         },
         "parametros":
         {
-          "pn_empresa":int.parse(empresa!),
+          "pn_empresa":empresaID,
           "pn_cosa_perdida":idObjeto,
           "pf_fecha":fecha,
           "pv_reclamada_por":reclamadoPor

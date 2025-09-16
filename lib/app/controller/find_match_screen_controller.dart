@@ -2,8 +2,6 @@
 import 'package:get/get.dart';
 
 
-
-
 class AdmFindMatchController extends GetxController {
   List data=[
     {

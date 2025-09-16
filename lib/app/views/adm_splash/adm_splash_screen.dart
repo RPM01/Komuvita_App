@@ -54,6 +54,7 @@ class _AdmSplashScreenState extends State<AdmSplashScreen> {
                   width: 50.0,
                   child: Center(
                     child: CircularProgressIndicator(
+
                       //backgroundColor: admWhiteColor,
                       valueColor:
                           AlwaysStoppedAnimation(admWhiteColor.withOpacity(0.7)),

@@ -32,7 +32,7 @@ abstract class AdmTheme {
           textSelectionTheme:
               const TextSelectionThemeData(cursorColor: Colors.black),
           colorScheme: const ColorScheme.light(primary: Colors.white),
-          cardTheme: const CardTheme(color: Colors.white),
+          cardTheme: const CardThemeData(color: Colors.white),
           cardColor: cardLightColor,
           iconTheme: const IconThemeData(color: Colors.black),
           bottomSheetTheme:
@@ -176,7 +176,7 @@ abstract class AdmTheme {
             fontFamily: fontFamily,
             letterSpacing: letterSpacing,
             height: letterHeight)),
-    cardTheme: const CardTheme(color: admDarkPrimary),
+    cardTheme: const CardThemeData(color: admDarkPrimary),
     //cardColor: foodCardDark,
     iconTheme: const IconThemeData(color: whiteColor),
     textTheme: TextTheme(

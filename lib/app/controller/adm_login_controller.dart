@@ -24,9 +24,12 @@ List<String> empresasPropiedadSet = [];
 List<String> clientesPropiedadSet = [];
 
 List<String> propiedadesInternasIdsSet = [];
+
 List<String> clientesIdsSet = [];
 List<String> propiedadesInternaNombresSet = [];
 List<String> propiedadesDireccionNombresSet = [];
+String clienteIDset = "";
+String empresaID = "";
 
 class LoginController extends GetxController {
   AdmHomeController homeController = Get.put(AdmHomeController());
@@ -98,7 +101,7 @@ class LoginController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          "http://api.komuvita.com/administracion/usuarios/login");
+            "http://api.komuvita.com/administracion/usuarios/login");
           //"https://apidesa.komuvita.com/administracion/usuarios/login");
       Map body = {
         "autenticacion":
@@ -132,6 +135,7 @@ class LoginController extends GetxController {
             prefs.setString("NombreUser",json["datos"]["pv_usuario_nombre"].toString());
             //prefs.setString("UserCode",json["datos"]["pv_token"].toString());
 
+            empresaID = json["datos"]["pl_empresas"][0][0]["pn_empresa"].toString();
             final empresasList = json["datos"]["pl_empresas"] as List;
 
             debugPrint(empresasList.toString());
@@ -146,6 +150,10 @@ class LoginController extends GetxController {
             empresasNombresSet = empresasNombres;
             empresasPropiedadSet = empresasPropiedad;
 
+            debugPrint("Info LogIn");
+            debugPrint(empresasIds.toString());
+            debugPrint(empresasNombres.toString());
+            debugPrint(empresasPropiedad.toString());
             GestionTickets1();
 
             if(json["datos"]["pn_clave_vencida"] == 1)
@@ -180,12 +188,13 @@ class LoginController extends GetxController {
 
   Future<List<Map<String, dynamic>>>GestionTickets1()async
   {
+
     debugPrint("**********G1***********");
 
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -205,7 +214,7 @@ class LoginController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
         }
       };
 
@@ -216,7 +225,12 @@ class LoginController extends GetxController {
       debugPrint("clientes");
 
       debugPrint(json["datos"][0]["pv_cliente"].toString());
+      debugPrint("Set cliente");
+      clienteIDset = json["datos"][0]["pv_cliente"].toString();
       prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+      String? clineteIDs = prefs.getString("cliente");
+      debugPrint("$clineteIDs + LoL");
+      //prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
 
       //prefs.setStringList('ListaPropiedad', json["datos"]["pv_descripcion"]);
      // prefs.setStringList('ListaPropiedadID', json["datos"]["pn_propiedad"]);
@@ -239,15 +253,24 @@ class LoginController extends GetxController {
 
       prefs.setStringList("clientesInternos", clientesIds);
 
-      debugPrint(clientesIds.toString());
       clientesIdsSet = clientesIds;
+      debugPrint("clientes ID");
+      debugPrint(clientesIds.toString());
+      debugPrint(clientesIds.length.toString());
+
       propiedadesInternasIdsSet = propiedadIds;
       propiedadesInternaNombresSet = propiedadDescripcion;
       propiedadesDireccionNombresSet = direccionDescripcion;
 
+      debugPrint("propiedadesInternasIdsSet");
       debugPrint(propiedadesInternasIdsSet.toString());
+      debugPrint(propiedadesInternasIdsSet.length.toString());
+      debugPrint("propiedadesInternaNombresSet");
       debugPrint(propiedadesInternaNombresSet.toString());
+      debugPrint(propiedadesInternaNombresSet.length.toString());
+      debugPrint("propiedadesDireccionNombresSet");
       debugPrint(propiedadesDireccionNombresSet.toString());
+      debugPrint(propiedadesDireccionNombresSet.length.toString());
 
       prefs.setString("propiedad", json["datos"][0]["pn_propiedad"].toString());
       debugPrint(json["datos"][0]["pv_propiedad"].toString());
@@ -275,20 +298,127 @@ class LoginController extends GetxController {
     {
       //Get.back();
       debugPrint(e.toString());
-      showDialog(
-          context: Get.context!,
-          builder: (context)
-          {
-            return SimpleDialog(
-              title: Text(errorMensaje),
-              contentPadding: EdgeInsets.all(20),
-              children: [Text(e.toString())],
-            );
-          }
-      );
+      return [];
     }
     throw Exception("Error en conexión");
   }
+
+  Future<List<Map<String, dynamic>>>GestionTickets1B()async
+  {
+
+    debugPrint("**********G1***********");
+
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String empresa = empresaID;
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
+      "http://api.komuvita.com/portal/tickets/propiedades_listado");
+      Map body = {
+        "autenticacion":
+        {
+          "pv_token": token
+        },
+        "parametros":
+        {
+          "pn_empresa": empresaID,
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+      debugPrint("Objetos Perdidos");
+      //debugPrint(response.body.toString());
+      debugPrint("clientes");
+
+      debugPrint(json["datos"][0]["pv_cliente"].toString());
+      debugPrint("Set cliente");
+      clienteIDset = json["datos"][0]["pv_cliente"].toString();
+      prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+      String? clineteIDs = prefs.getString("cliente");
+      debugPrint("$clineteIDs + LoL");
+      //prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+
+      //prefs.setStringList('ListaPropiedad', json["datos"]["pv_descripcion"]);
+      // prefs.setStringList('ListaPropiedadID', json["datos"]["pn_propiedad"]);
+
+
+
+      final empresasList = json["datos"] as List;
+
+      debugPrint(empresasList.toString());
+
+
+      //final List<int> propiedadIds = flatList.map((e) => e["pn_propiedad"] as int).toList();
+      final List<String> clientesIds = empresasList.map((e) => e["pv_cliente"] as String).toList();
+      final List<String> propiedadIds = empresasList.map((e) => e["pn_propiedad"] as String).toList();
+      final List<String> propiedadDescripcion = empresasList.map((e) => e["pv_descripcion"] as String).toList();
+      final List<String> direccionDescripcion = empresasList.map((e) => e["pv_direccion"] as String).toList();
+
+
+      debugPrint("Propiedad");
+
+      prefs.setStringList("clientesInternos", clientesIds);
+
+      clientesIdsSet = clientesIds;
+      debugPrint("clientes ID");
+      debugPrint(clientesIds.toString());
+      debugPrint(clientesIds.length.toString());
+
+      propiedadesInternasIdsSet = propiedadIds;
+      propiedadesInternaNombresSet = propiedadDescripcion;
+      propiedadesDireccionNombresSet = direccionDescripcion;
+
+      debugPrint("propiedadesInternasIdsSet");
+      debugPrint(propiedadesInternasIdsSet.toString());
+      debugPrint(propiedadesInternasIdsSet.length.toString());
+      debugPrint("propiedadesInternaNombresSet");
+      debugPrint(propiedadesInternaNombresSet.toString());
+      debugPrint(propiedadesInternaNombresSet.length.toString());
+      debugPrint("propiedadesDireccionNombresSet");
+      debugPrint(propiedadesDireccionNombresSet.toString());
+      debugPrint(propiedadesDireccionNombresSet.length.toString());
+
+      prefs.setString("propiedad", json["datos"][0]["pn_propiedad"].toString());
+      debugPrint(json["datos"][0]["pv_propiedad"].toString());
+
+      debugPrint("Tickest100");
+      debugPrint(response.body.toString());
+      if(response.statusCode == 200)
+
+      {
+        debugPrint("Regreso correcto");
+        if(json["resultado"]["pn_tiene_datos"] == 1)
+        {
+          return List<Map<String, dynamic>>.from(json["datos"]);
+        }
+        else
+        {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        }
+      }
+    }
+    catch(e)
+    {
+      //Get.back();
+      debugPrint(e.toString());
+      return [];
+    }
+    throw Exception("Error en conexión");
+  }
+
 
   void togglePasswordVisibility() {
     passwordVisible.value = !passwordVisible.value;
@@ -350,6 +480,130 @@ class LoginController extends GetxController {
       return passwordValidation;
     }
     return null;
+  }
+}
+
+class reacargarTicket
+{
+  String clienteID_SET = "";
+
+  reacargarTicket(this.clienteID_SET);
+
+  Future<List<Map<String, dynamic>>>GestionTickets1()async
+  {
+
+    debugPrint("**********G1***********");
+
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String empresa = empresaID;
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
+      "http://api.komuvita.com/portal/tickets/propiedades_listado");
+      Map body = {
+        "autenticacion":
+        {
+          "pv_token": token
+        },
+        "parametros":
+        {
+          "pn_empresa": clienteID_SET,
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+      debugPrint("Objetos Perdidos");
+      //debugPrint(response.body.toString());
+      debugPrint("clientes");
+
+      debugPrint(json["datos"][0]["pv_cliente"].toString());
+      debugPrint("Set cliente");
+      clienteIDset = json["datos"][0]["pv_cliente"].toString();
+      prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+      String? clineteIDs = prefs.getString("cliente");
+      debugPrint("$clineteIDs + LoL");
+      //prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+
+      //prefs.setStringList('ListaPropiedad', json["datos"]["pv_descripcion"]);
+      // prefs.setStringList('ListaPropiedadID', json["datos"]["pn_propiedad"]);
+
+
+
+      final empresasList = json["datos"] as List;
+
+      debugPrint(empresasList.toString());
+
+
+      //final List<int> propiedadIds = flatList.map((e) => e["pn_propiedad"] as int).toList();
+      final List<String> clientesIds = empresasList.map((e) => e["pv_cliente"] as String).toList();
+      final List<String> propiedadIds = empresasList.map((e) => e["pn_propiedad"] as String).toList();
+      final List<String> propiedadDescripcion = empresasList.map((e) => e["pv_descripcion"] as String).toList();
+      final List<String> direccionDescripcion = empresasList.map((e) => e["pv_direccion"] as String).toList();
+
+
+      debugPrint("Propiedad");
+
+      prefs.setStringList("clientesInternos", clientesIds);
+
+      clientesIdsSet = clientesIds;
+      debugPrint("clientes ID");
+      debugPrint(clientesIds.toString());
+      debugPrint(clientesIds.length.toString());
+
+      propiedadesInternasIdsSet = propiedadIds;
+      propiedadesInternaNombresSet = propiedadDescripcion;
+      propiedadesDireccionNombresSet = direccionDescripcion;
+
+      debugPrint("propiedades ID");
+      debugPrint(propiedadesInternasIdsSet.toString());
+      debugPrint(propiedadesInternasIdsSet.length.toString());
+      debugPrint("propiedades descripcion");
+      debugPrint(propiedadesInternaNombresSet.toString());
+      debugPrint(propiedadesInternaNombresSet.length.toString());
+      debugPrint("propiedades dirreccion");
+      debugPrint(propiedadesDireccionNombresSet.toString());
+      debugPrint(propiedadesDireccionNombresSet.length.toString());
+
+      prefs.setString("propiedad", json["datos"][0]["pn_propiedad"].toString());
+      debugPrint(json["datos"][0]["pv_propiedad"].toString());
+
+      debugPrint("Tickest100");
+      debugPrint(response.body.toString());
+      if(response.statusCode == 200)
+
+      {
+        debugPrint("Regreso correcto");
+        if(json["resultado"]["pn_tiene_datos"] == 1)
+        {
+          Get.offNamedUntil(MyRoute.home,(route) => route.isFirst,);
+          return List<Map<String, dynamic>>.from(json["datos"]);
+        }
+        else
+        {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        }
+      }
+    }
+    catch(e)
+    {
+      //Get.back();
+      debugPrint(e.toString());
+      return [];
+    }
+    throw Exception("Error en conexión");
   }
 }
 void msgxToast(String msxg){

@@ -78,12 +78,12 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
   late String tipoOpcion = radioTipo[2];
   final _formKey = GlobalKey<FormState>();
 
-  File ? iamgenSelect;
+  List<File> imagenesSeleccionadas = [];
+  List<String> base64Images = [];
 
-  String base64Image = "";
 
   List<String> tipoRoV = ["Venta","Renta"];
-  List<String> tipoRoV_ID = ["1","0"];
+  List<String> tipoRoV_ID = ["2","1"];
   String ? tipoSelect;
   String tipoSet = "";
   List<String> monedaRoV = ["Quetzal","Dolar"];
@@ -101,6 +101,8 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
       theme = _admRentaVentasController.themeController.isDarkMode
           ? AdmTheme.admDarkTheme
           : AdmTheme.admLightTheme;
+
+      _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
 
     }
     );
@@ -263,15 +265,7 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                     : admTextColor,
                               ),
                             ),
-                            Text(
-                              "Administrador",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: menuController.themeController.isDarkMode
-                                    ? Colors.grey[300]
-                                    : Colors.grey[700],
-                              ),
-                            ),
+
                           ],
                         ),
                       ),
@@ -289,13 +283,15 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
 
                         IconData iconData;
                         switch (index) {
-                          case 0: iconData = FontAwesomeIcons.clipboardList; break;
-                          case 1: iconData = FontAwesomeIcons.newspaper; break;
-                          case 2: iconData = FontAwesomeIcons.doorOpen; break;
-                          case 3: iconData = FontAwesomeIcons.boxesStacked; break;
-                          case 4: iconData = FontAwesomeIcons.lockOpen; break;
-                          case 5: iconData = Icons.logout; break;
-                          default: iconData = Icons.menu;
+                          case 0: iconData = Icons.house; break;
+                          case 1: iconData = FontAwesomeIcons.clipboardList; break;
+                          case 2: iconData = FontAwesomeIcons.newspaper; break;
+                          case 3: iconData = FontAwesomeIcons.doorOpen; break;
+                          case 4: iconData = FontAwesomeIcons.boxesStacked; break;
+                          case 5: iconData = FontAwesomeIcons.calendarCheck; break;
+                          case 6: iconData = FontAwesomeIcons.phoneFlip; break;
+                          case 7: iconData = Icons.lock_reset; break;
+                          default: iconData = Icons.logout;
                         }
 
                         return Padding(
@@ -386,7 +382,6 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                 width: MediaQuery.of(context).size.width*0.45,
                                                 child: TextFormField(
                                                   controller: criterionBusquedaController ,
-                                                  autofocus: true,
                                                   onChanged: (value) {
                                                     criterionBusquedaController .text = value;
                                                   },
@@ -470,7 +465,7 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                 onPressed: () async{
                                                   final prefs = await SharedPreferences.getInstance();
                                                   setState(() {
-                                                      _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();;
+                                                      _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
                                                     //_futureCuentasH7 = ServicioListadoCuenta(prefs.getString("cliente")!,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
                                                   });
                                                 },
@@ -572,7 +567,7 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                           );
                                                                         }),
                                                                         onChanged: (value) {
-                                                                          setState(() {
+                                                                          setStateDialog(()  {
                                                                             tipoSet = value!;
                                                                             debugPrint(tipoSet);
                                                                             //formaPagoController.text = formapagoDescirpcion[index];
@@ -626,7 +621,7 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                           );
                                                                         }),
                                                                         onChanged: (value) {
-                                                                          setState(() {
+                                                                          setStateDialog(() {
                                                                             monedaSet = value!;
                                                                             debugPrint(monedaSet);
                                                                             //formaPagoController.text = formapagoDescirpcion[index];
@@ -664,8 +659,15 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                       return null; // Return null if the input is valid
                                                                     },
                                                                   ),
+                                                                  Text("Colocar valor 0 si prefiere que sea contactado directamente",maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      style: theme.textTheme.headlineSmall?.copyWith(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: Colors.black26,
+                                                                        fontSize: MediaQuery.of(context).size.width*0.025,)
+                                                                  ),
                                                                   10.height,
-                                                                  Text("Informacion de contacto ",maxLines: 1,
+                                                                  Text("Información de contacto ",maxLines: 1,
                                                                       overflow: TextOverflow.ellipsis,
                                                                       style: theme.textTheme.headlineSmall?.copyWith(
                                                                         fontWeight: FontWeight.bold,
@@ -693,36 +695,78 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                     padding: const EdgeInsets.all(10),
                                                                     child: ElevatedButton(
                                                                       style: ElevatedButton.styleFrom(
-                                                                        backgroundColor: Color.fromRGBO(6, 78, 116, 1),
-                                                                        // set the background color
+                                                                        backgroundColor: const Color.fromRGBO(6, 78, 116, 1),
                                                                       ),
-                                                                      onPressed: () async{
-                                                                        msgxToast("Cargando imagen...");
-                                                                        final regresarIamgenSelect = await ImagePicker().pickImage(
-                                                                            source: ImageSource.gallery);
+                                                                      onPressed: () async {
+                                                                        imagenesSeleccionadas.clear();
+                                                                        base64Images.clear();
+                                                                        final regresarImagenesSelect =
+                                                                        await ImagePicker().pickMultiImage();
                                                                         setStateDialog(() {
-                                                                          if (regresarIamgenSelect == null) return;
-                                                                          iamgenSelect = File(regresarIamgenSelect.path);
+                                                                          if (regresarImagenesSelect.isEmpty) return;
+                                                                          imagenesSeleccionadas = regresarImagenesSelect
+                                                                              .map((x) => File(x.path))
+                                                                              .toList();
+                                                                          debugPrint("Imagenes recibidas");
+                                                                          debugPrint(regresarImagenesSelect.toString());
+                                                                          debugPrint("Imagenes enlistadas");
+                                                                          debugPrint(imagenesSeleccionadas.toString());
+                                                                          debugPrint("Listas creadas");
                                                                         });
-                                                                        //_PickGalery();
-                                                                        //Navigator.of(context).pop();
+                                                                        for (var img in imagenesSeleccionadas) {
+                                                                          List<int> imageBytes =
+                                                                          await img.readAsBytes();
+                                                                          base64Images.add(base64Encode(imageBytes));
+                                                                        }
+                                                                        debugPrint("Imagenes en String");
+                                                                        debugPrint(base64Images.toString());
+                                                                        msgxToast("Cargando imágenes...");
                                                                       },
-
                                                                       child: Text(
-                                                                        "Elegir Fotografía de Galería",
+                                                                        "Elegir Fotografías de Galería",
                                                                         style: TextStyle(
                                                                           fontWeight: FontWeight.bold,
                                                                           color: Colors.white,
-                                                                          fontSize: MediaQuery.of(context).size.width * 0.03,
+                                                                          fontSize:
+                                                                          MediaQuery.of(context).size.width * 0.03,
                                                                         ),
-                                                                      ),),
+                                                                      ),
+                                                                    ),
                                                                   ),
                                                                   10.height,
-                                                                  iamgenSelect != null ? SizedBox(
-                                                                    height:MediaQuery.of(context).size.width*0.4,
-                                                                    width: MediaQuery.of(context).size.width*0.4,
-                                                                    child: Image.file(iamgenSelect!),
-                                                                  ) : const Text("Puede seleccionar una opcion"),
+
+                                                                  // ---------- LISTADO DE IMÁGENES ----------
+                                                                  imagenesSeleccionadas.isNotEmpty
+                                                                      ? SizedBox(
+                                                                    height:  MediaQuery.of(context).size.width*0.4,
+                                                                    width:  MediaQuery.of(context).size.width*0.4,
+                                                                    child: CarouselSlider(
+                                                                      options: CarouselOptions(
+                                                                        height:  MediaQuery.of(context).size.width * 0.4,
+                                                                        enableInfiniteScroll: false,
+                                                                        enlargeCenterPage: true,
+                                                                        viewportFraction: 1.0,
+                                                                        autoPlay: true,
+                                                                      ),
+                                                                      items: imagenesSeleccionadas.map((imgFile) {
+                                                                        return Builder(
+                                                                          builder: (BuildContext context) {
+                                                                            return SizedBox(
+                                                                              width: MediaQuery.of(context).size.width* 0.4,
+                                                                              child: ClipRRect(
+                                                                                borderRadius: BorderRadius.circular(12),
+                                                                                child: Image.file(
+                                                                                  imgFile,
+                                                                                  fit: BoxFit.cover,
+                                                                                ),
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                        );
+                                                                      }).toList(),
+                                                                    ),
+                                                                  )
+                                                                      : const Text("Selecione una imagen como minimo"),
                                                                   10.height,
                                                                   Container(
                                                                     padding: const EdgeInsets.all(10),
@@ -732,37 +776,25 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                       ),
                                                                       onPressed: () async{
 
-                                                                        if (_formKey.currentState!.validate()) {
-                                                                          if (iamgenSelect == null) {
-                                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                              const SnackBar(content: Text("Debe seleccionar una imagen")),
-                                                                            );
-                                                                            return; // No continúa si no hay imagen
-                                                                          }
-
-                                                                          ScaffoldMessenger.of(context).showSnackBar(
-                                                                            const SnackBar(content: Text('Procesando datos...')),
-                                                                          );
-
-                                                                          File imageFile = File(iamgenSelect!.path);
-                                                                          List<int> imageBytes = await imageFile.readAsBytes();
-                                                                          setStateDialog(() {
-                                                                            base64Image = base64Encode(imageBytes);
-                                                                          });
                                                                           debugPrint(tipoSet);
                                                                           debugPrint(descripcionController.text);
                                                                           debugPrint(precioController.text);
                                                                           debugPrint(infoContactoController.text);
                                                                           debugPrint(monedaSet);
-                                                                          devLog.log(base64Image);
-                                                                             RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Image,monedaSet).listadoCreacionRentas6B();
-                                                                           Get.back();
+                                                                          devLog.log(base64Images.toString());
+                                                                          //await RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Images,monedaSet);
+                                                                          RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Images,monedaSet).listadoCreacionRentas6B();
+                                                                          Future.delayed(const Duration(milliseconds: 400), () {
+                                                                            _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
+                                                                            Navigator.of(context).pop();
+                                                                          }
+                                                                          );
                                                                           descripcionController.text ="";
                                                                           precioController.text = "";
                                                                           infoContactoController.text = "";
-                                                                          }
-                                                                        },
-                                                                      child: Text(
+
+                                                                          },
+                                                                          child: Text(
                                                                         "Crear Venta o renta",
                                                                         style: TextStyle(
                                                                           fontWeight: FontWeight.bold,
@@ -918,13 +950,16 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                     ),
                                                                     items: images.map((base64Img) {
                                                                       final bytes = base64Decode(base64Img);
-                                                                      return ClipRRect(
-                                                                        borderRadius:
-                                                                        BorderRadius.circular(10),
-                                                                        child: Image.memory(
-                                                                          bytes,
-                                                                          fit: BoxFit.cover,
-                                                                          width: double.infinity,
+                                                                      return GestureDetector(
+                                                                        onTap: () => showImageDialog(context,base64Img),
+                                                                        child: ClipRRect(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(10),
+                                                                          child: Image.memory(
+                                                                            bytes,
+                                                                            fit: BoxFit.cover,
+                                                                            width: double.infinity,
+                                                                          ),
                                                                         ),
                                                                       );
                                                                     }).toList(),
@@ -1087,12 +1122,10 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                     color: const Color.fromRGBO(167, 167, 132, 1),
                                                                   ),
                                                                   maxLines: 3,
-
                                                                   overflow: TextOverflow.ellipsis,
                                                                 ),
                                                               ],
                                                             ),
-
                                                           ],
                                                         ),
                                                       ),
@@ -1268,6 +1301,18 @@ void _showLogOutBottomSheet(BuildContext context,) {
     },
   );
 }
+
+void showImageDialog(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      content: Image.memory(base64Decode(imageUrl),
+
+      ),
+    ),
+  );
+}
+
 void msgxToast(String msxg){
 
   Fluttertoast.showToast(

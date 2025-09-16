@@ -23,6 +23,8 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'adm_login_controller.dart';
+
 class AdmEstadoCuentaController extends GetxController
 {
   final ThemeController themeController = Get.put(ThemeController());
@@ -50,7 +52,7 @@ class ServicioListadoCuenta{
 
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String empresa = empresaID;
 
     debugPrint(token);
     debugPrint("Empresa");
@@ -72,8 +74,8 @@ class ServicioListadoCuenta{
           "pv_token": token
         },
         "parametros": {
-          "pn_empresa": int.parse(empresa!),
-          "pv_cliente": prefs.getString("cliente"),
+          "pn_empresa": empresaID,
+          "pv_cliente": clienteIDset,
           "pv_propiedad":propiedad,
           "pn_periodo": periodo
         }
@@ -87,7 +89,7 @@ class ServicioListadoCuenta{
 
       final json = jsonDecode(response.body);
 
-      debugPrint("Documentos");
+      debugPrint("Listado de cuenta11");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 

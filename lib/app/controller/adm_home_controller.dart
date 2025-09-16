@@ -22,6 +22,8 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'adm_login_controller.dart';
+
 
 List<Map<String, dynamic>> CargoLecturaClienteCrearListadoList = [];
 String mensajeErrorClienteCrearCargoListado = "";
@@ -56,7 +58,7 @@ class AdmHomeController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
 
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -68,7 +70,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/importantes/datos_importantes_listado"
-          "http://api.komuvita.com/portal/importantes/datos_importantes_listado"
+           "http://api.komuvita.com/portal/importantes/datos_importantes_listado"
       );
       Map body = {
             "autenticacion":
@@ -77,7 +79,7 @@ class AdmHomeController extends GetxController {
             },
             "parametros":
             {
-            "pn_empresa": int.parse(empresa!),
+            "pn_empresa": empresaID,
             "pn_dato_importante_tipo":"-1",
             "pn_forma_contacto": "-1",
             "pv_criterio": "",
@@ -107,7 +109,7 @@ class AdmHomeController extends GetxController {
         {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
           //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+          //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
         }
       }
     }
@@ -115,18 +117,9 @@ class AdmHomeController extends GetxController {
     {
       //Get.back();
       debugPrint(e.toString());
-      showDialog(
-          context: Get.context!,
-          builder: (context)
-          {
-            return SimpleDialog(
-              title: Text(errorMensaje),
-              contentPadding: EdgeInsets.all(20),
-              children: [Text(e.toString())],
-            );
-          }
-      );
+      return [];
     }
+    return [];
     throw Exception("Error en llamado");
   }
 
@@ -137,7 +130,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -149,7 +142,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/noticias/noticias_listado"
-          "http://api.komuvita.com/portal/noticias/noticias_listado"
+           "http://api.komuvita.com/portal/noticias/noticias_listado"
         );
       Map body = {
         "autenticacion":
@@ -158,7 +151,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_periodo": 1,
           "pn_noticia_tipo": "-1",
           "pn_importante": "-1",
@@ -195,7 +188,7 @@ class AdmHomeController extends GetxController {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             errorMensaje = json["resultado"]["pv_error_descripcion"].toString();
             // //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-            // throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+            // //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
           }
         }
       }
@@ -225,7 +218,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -237,7 +230,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado"
-          "http://api.komuvita.com/portal/rentasventas/rentas_listado"
+           "http://api.komuvita.com/portal/rentasventas/rentas_listado"
       );
       Map body = {
         "autenticacion":
@@ -246,7 +239,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-            "pn_empresa": int.parse(empresa!),
+            "pn_empresa": empresaID,
             "pn_renta_tipo": "-1",
             "pv_criterio": ""
         }
@@ -303,7 +296,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -315,7 +308,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
-          "http://api.komuvita.com/portal/rentasventas/rentas_listado");
+           "http://api.komuvita.com/portal/rentasventas/rentas_listado");
       Map body = {
         "autenticacion":
         {
@@ -323,7 +316,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_renta_tipo": "-1",
           "pv_criterio": ""
         }
@@ -385,7 +378,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -397,7 +390,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
-          "http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+           "http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
       Map body = {
         "autenticacion":
         {
@@ -405,7 +398,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pv_criterio": "",
           "pn_resumen": "1",
         }
@@ -416,6 +409,7 @@ class AdmHomeController extends GetxController {
       //debugPrint("Objetos Perdidos");
       //debugPrint(response.body.toString());
       debugPrint("Objetos Perdidos");
+      debugPrint((response.body.toString()));
       if(response.statusCode == 200)
       {
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -441,17 +435,7 @@ class AdmHomeController extends GetxController {
     {
       //Get.back();
       debugPrint(e.toString());
-      showDialog(
-          context: Get.context!,
-          builder: (context)
-          {
-            return SimpleDialog(
-              title: Text(errorMensaje),
-              contentPadding: EdgeInsets.all(20),
-              children: [Text(e.toString())],
-            );
-          }
-      );
+      return [];
     }
     throw Exception("Error en conexión");
   }
@@ -462,7 +446,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -474,7 +458,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
-          "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+           "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
       Map body = {
         "autenticacion":
         {
@@ -482,7 +466,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pv_criterio": "",
           "pn_amenidad":"-1",
           "pn_estado": "-1"
@@ -536,13 +520,15 @@ class AdmHomeController extends GetxController {
     throw Exception("Error en llamado");
   }
 
+
+
   Future<List<ReservasF5>>amenidadesReservadas5B()async
   {
     debugPrint("**********F5***********");
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -554,7 +540,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
-          "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+           "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
       Map body = {
         "autenticacion":
         {
@@ -562,7 +548,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pv_criterio": "",
           "pn_amenidad":"-1",
           "pn_estado": "-1"
@@ -578,7 +564,7 @@ class AdmHomeController extends GetxController {
 
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto!!!!!");
+        debugPrint("Regreso correcto!!!!!6");
 
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
           // ✅ Check if datos exists and is not null
@@ -594,8 +580,7 @@ class AdmHomeController extends GetxController {
           } else {
             // debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             // //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-            throw Exception(
-                json["resultado"]["pv_error_descripcion"].toString());
+            throw Exception(json["resultado"]["pv_error_descripcion"].toString());
           }
         }
       }
@@ -626,7 +611,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -638,7 +623,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-          "http://api.komuvita.com/portal/tickets/gestiones_listado");
+           "http://api.komuvita.com/portal/tickets/gestiones_listado");
       Map body = {
         "autenticacion":
         {
@@ -646,7 +631,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_periodo": "-1",
           "pv_cliente": prefs.getString("correo"),
           "pv_propiedad": "-1",
@@ -711,7 +696,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
 
     debugPrint(token);
     debugPrint("Empresa");
@@ -724,7 +709,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-        "http://api.komuvita.com/portal/tickets/gestiones_listado");
+         "http://api.komuvita.com/portal/tickets/gestiones_listado");
 
 
       Map body = {
@@ -732,8 +717,8 @@ class AdmHomeController extends GetxController {
           "pv_token": token,
         },
         "parametros": {
-          "pn_empresa": int.parse(empresa!),
-          "pn_periodo": "-1",
+          "pn_empresa": empresaID,
+          "pn_periodo": "1",
           "pv_cliente": prefs.getString("correo"),
           "pv_propiedad": "-1",
           "pn_gestion_tipo": "-1",
@@ -749,8 +734,8 @@ class AdmHomeController extends GetxController {
       );
 
       final json = jsonDecode(response.body);
-      debugPrint("Tickets69");
-
+      debugPrint("Tickets69LOL");
+      debugPrint(body.toString());
       if (json["datos"] == null || json["datos"] is! List) {
         debugPrint("⚠️ 'datos' is null or not a list");
         return [];
@@ -807,7 +792,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -819,7 +804,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-          "http://api.komuvita.com/portal/tickets/gestiones_listado");
+           "http://api.komuvita.com/portal/tickets/gestiones_listado");
       Map body = {
         "autenticacion":
         {
@@ -827,7 +812,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_periodo": "1",
           "pv_cliente": prefs.getString("correo"),
           "pv_propiedad": "-1",
@@ -842,7 +827,7 @@ class AdmHomeController extends GetxController {
 
       debugPrint(body.toString());
       debugPrint(response.body.toString());
-      debugPrint("Tickets69");
+      debugPrint("Tickets159");
 
       debugPrint(json["datos"]["pn_gestion"].toString());
       int secondItemsLength = (json["datos"]["pn_gestion"] as List).length;
@@ -899,7 +884,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -912,7 +897,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
-          "http://api.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
+           "http://api.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -920,7 +905,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pv_cliente": prefs.getString("cliente"),
           "pv_propiedad": "-1",
         }
@@ -978,7 +963,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -991,7 +976,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/visitas/visita_pendiente_listado");
-          "http://api.komuvita.com/portal/visitas/visita_pendiente_listado");
+           "http://api.komuvita.com/portal/visitas/visita_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -999,7 +984,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pv_cliente": prefs.getString("cliente"),
           "pv_propiedad": "-1",
         }
@@ -1027,8 +1012,7 @@ class AdmHomeController extends GetxController {
           } else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-            throw Exception(
-                json["resultado"]["pv_error_descripcion"].toString());
+            //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
           }
         }
       }
@@ -1037,21 +1021,10 @@ class AdmHomeController extends GetxController {
     {
       //Get.back();
       debugPrint(e.toString());
-      showDialog(
-          context: Get.context!,
-          builder: (context)
-          {
-            return SimpleDialog(
-              title: Text(errorMensaje),
-              contentPadding: EdgeInsets.all(20),
-              children: [Text(e.toString())],
-            );
-          }
-      );
+      return [];
     }
     throw Exception("Error en conexión");
   }
-
 
   Future<List<Map<String, dynamic>>>listaPagosH2()async
   {
@@ -1059,7 +1032,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -1072,7 +1045,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/cuentas/forma_pago_listado");
-          "http://api.komuvita.com/portal/cuentas/forma_pago_listado");
+           "http://api.komuvita.com/portal/cuentas/forma_pago_listado");
       Map body = {
         "autenticacion":
         {
@@ -1080,7 +1053,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
         }
       };
 
@@ -1093,7 +1066,7 @@ class AdmHomeController extends GetxController {
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
-        debugPrint("Regreso correcto!!!!!");
+        debugPrint("Regreso correcto!!!!!8");
         if (json["resultado"]["pn_error"] == 0) {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
           // ✅ Check if datos exists and is not null
@@ -1139,18 +1112,9 @@ class AdmHomeController extends GetxController {
     {
       //Get.back();
       debugPrint(e.toString());
-      showDialog(
-          context: Get.context!,
-          builder: (context)
-          {
-            return SimpleDialog(
-              title: Text(errorMensaje),
-              contentPadding: EdgeInsets.all(20),
-              children: [Text(e.toString())],
-            );
-          }
-      );
+      return [];
     }
+    return [];
     throw Exception("Error en conexión");
   }
 
@@ -1160,7 +1124,7 @@ class AdmHomeController extends GetxController {
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -1173,7 +1137,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
-          "http://api.komuvita.com/portal/cuentas/documentos_listado");
+           "http://api.komuvita.com/portal/cuentas/documentos_listado");
       Map body = {
         "autenticacion":
         {
@@ -1181,7 +1145,7 @@ class AdmHomeController extends GetxController {
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pv_cliente": prefs.getString("correo"),
           "pn_propiedad": "-1",
           "pn_documento_tipo": "-1",
@@ -1261,7 +1225,7 @@ class AdmHomeController extends GetxController {
 
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
 
     debugPrint(token);
     debugPrint("Empresa");
@@ -1276,14 +1240,14 @@ class AdmHomeController extends GetxController {
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
-          "http://api.komuvita.com/portal/cuentas/documentos_listado");
+           "http://api.komuvita.com/portal/cuentas/documentos_listado");
 
       Map<String, dynamic> body = {
         "autenticacion": {
           "pv_token": token
         },
         "parametros": {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pv_cliente": prefs.getString("correo"),
           "pn_propiedad": "-1",
           "pn_documento_tipo": "-1",
@@ -1321,7 +1285,7 @@ class AdmHomeController extends GetxController {
           } else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-            throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+            //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
           }
         }
       }
@@ -1391,14 +1355,14 @@ class ServicioListadoCargoClienteCargar{
 
   ServicioListadoCargoClienteCargar(this.numeroDocumento, this.montoPago,this.formaPago,this.fechaPago,this.numeroAutorizacion,this.imagen);
 
-  Future<bool> loadListCargo() async {
+  Future<bool> hacerPago() async {
 
     debugPrint("**********H6***********");
     const String errorMensaje = "Falla de conexión";
     bool status = false;
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
 
     debugPrint(token);
     debugPrint("Empresa");
@@ -1418,7 +1382,7 @@ class ServicioListadoCargoClienteCargar{
             "pv_token": token
           },
           "parametros": {
-            "pn_empresa": int.parse(empresa!),
+            "pn_empresa": empresaID,
             "pn_documento": numeroDocumento,
             "pn_forma_pago": formaPago,
             "pf_fecha_pago":fechaPago,
@@ -1431,7 +1395,7 @@ class ServicioListadoCargoClienteCargar{
         var dio = Dio();
         var response = await dio.request(
           //"https://apidesa.komuvita.com/portal/cuentas/documento_aplicar_pago",
-          "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
+           "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
           options: Options(
             method: 'POST',
             headers: headers,
@@ -1456,6 +1420,7 @@ class ServicioListadoCargoClienteCargar{
           mensajeErrorClienteCrearCargoListado = response.data["resultado"]["pv_error_descripcion"].toString();
           recibo = response.data["datos"]["pn_recibo"].toString();
           debugPrint(verificacionClienteCrearCargoListado);
+          msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
 
           debugPrint("!!#####!!!!""######");
           debugPrint("Funciono sin imagen !!!");
@@ -1463,19 +1428,7 @@ class ServicioListadoCargoClienteCargar{
           if(verificacionClienteCrearCargoListado == "0")
           {
             status =  true;
-            if(recibo != "0")
-              {
-                final rawUrl =  response.data["datos"]["pv_recibo_url"].toString()!;
-                final uri = Uri.tryParse(rawUrl);
-                final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
-                if (await canLaunchUrl(safeUri)) {
-                  await launchUrl(safeUri, mode: LaunchMode.externalApplication);
-                }
-                else
-                {
-                  debugPrint("Could not launch $safeUri");
-                }
-              }
+            msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
             debugPrint(status.toString());
 
           }
@@ -1510,7 +1463,7 @@ class ServicioListadoCargoClienteCargar{
           "pv_token": token
         },
         "parametros": {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_documento": numeroDocumento,
           "pn_forma_pago": formaPago,
           "pf_fecha_pago":fechaPago,
@@ -1523,7 +1476,7 @@ class ServicioListadoCargoClienteCargar{
         var dio = Dio();
       var response = await dio.request(
         //"https://apidesa.komuvita.com/portal/cuentas/documento_aplicar_pago",
-        "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
+         "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
 
           options: Options(
             method: 'POST',
@@ -1531,9 +1484,16 @@ class ServicioListadoCargoClienteCargar{
           ),
           data: data,
         );
+
+        debugPrint("Realizando pago....");
         debugPrint(response.statusCode.toString());
         debugPrint(data.toString());
-        if (response.statusCode == 200 && response.data['datos'] != []) {
+        debugPrint(response.data["datos"].toString());
+        debugPrint(response.data["datos"]["pv_recibo_url"].toString()!);
+        debugPrint(response.data["datos"]["pn_recibo"].toString());
+
+
+      if (response.statusCode == 200 && response.data['datos'] != []) {
 
           String lista = json.encode(response.data);
           // debugPrint(data.toString());
@@ -1549,25 +1509,17 @@ class ServicioListadoCargoClienteCargar{
           mensajeErrorClienteCrearCargoListado = response.data["resultado"]["pv_error_descripcion"].toString();
           recibo = response.data["datos"]["pn_recibo"].toString();
           debugPrint(verificacionClienteCrearCargoListado);
-          debugPrint("!!!!?!");
+          debugPrint("Aplicando pago");
           debugPrint("Funciono!!!");
+          debugPrint(response.data["datos"].toString());
+          debugPrint(response.data["datos"]["pv_recibo_url"].toString()!);
+          debugPrint(response.data["datos"]["pn_recibo"].toString());
+          msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
 
           if(verificacionClienteCrearCargoListado == "0")
           {
             status =  true;
-            if(recibo != "0")
-            {
-              final rawUrl =  response.data["datos"]["pv_recibo_url"].toString()!;
-              final uri = Uri.tryParse(rawUrl);
-              final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
-              if (await canLaunchUrl(safeUri)) {
-                await launchUrl(safeUri, mode: LaunchMode.externalApplication);
-              }
-              else
-              {
-                debugPrint("Could not launch $safeUri");
-              }
-            }
+            msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
             debugPrint(status.toString());
           }
           else
@@ -1593,9 +1545,195 @@ class ServicioListadoCargoClienteCargar{
     debugPrint(status.toString());
     return status;
   }
-
-
 }
+
+class AutorizarClass
+{
+
+  String reserva = "";
+
+
+  AutorizarClass(this.reserva);
+
+  Future<List<Map<String, dynamic>>>amenidadesReservadas7B()async
+  {
+    debugPrint("**********F7***********");
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String? empresa = empresaID;
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+      //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_autoriza");
+      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_autoriza");
+      Map body = {
+        "autenticacion":
+        {
+          "pv_token": token
+        },
+        "parametros":
+        {
+          "pn_empresa": empresaID,
+          "pn_reserva":reserva,
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+      //debugPrint("Objetos Perdidos");
+      debugPrint("Amenidades Reservadasdos");
+      debugPrint(body.toString());
+      debugPrint(response.body.toString());
+
+      if(response.statusCode == 200)
+      {
+        debugPrint("Regreso correcto!!!!!6");
+
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+
+         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+          // Return an empty list instead of throwing
+          debugPrint("⚠️ 'datos' is null or empty in response");
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          return [];
+        }
+        if (json["resultado"]["pn_tiene_datos"] == 1) {
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          return List<Map<String, dynamic>>.from(json["datos"]);
+
+        } else {
+          // debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        }
+        }
+      }
+    }
+    catch(e)
+    {
+      //Get.back();
+      debugPrint(e.toString());
+      msgxToast(e.toString());
+      debugPrint("Amenidades reservadas 2");
+      showDialog(
+          context: Get.context!,
+          builder: (context)
+          {
+            return SimpleDialog(
+              title: Text(errorMensaje),
+              contentPadding: EdgeInsets.all(20),
+              children: [Text(e.toString())],
+            );
+          }
+      );
+    }
+    throw Exception("Error en llamado");
+  }
+}
+
+class RechazarClass
+{
+
+  String reserva = "";
+  String observaciones = "";
+
+
+  RechazarClass(this.reserva,this.observaciones);
+
+  Future<List<Map<String, dynamic>>>amenidadesReservadas8B()async
+  {
+    debugPrint("**********F8***********");
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String? empresa = empresaID;
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_rechaza");
+      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_rechaza");
+      Map body = {
+        "autenticacion":
+        {
+          "pv_token":token
+        },
+        "parametros":
+        {
+          "pn_empresa":empresaID,
+          "pn_reserva":reserva,
+          "pv_observaciones":observaciones,
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+      //debugPrint("Objetos Perdidos");
+      debugPrint("Amenidades Rechazadas");
+      debugPrint(body.toString());
+      debugPrint(response.body.toString());
+
+      if(response.statusCode == 200)
+      {
+        debugPrint("Regreso correcto!!!!!6");
+
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        // ✅ Check if datos exists and is not null
+        if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+          // Return an empty list instead of throwing
+          debugPrint("⚠️ 'datos' is null or empty in response");
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          return [];
+        }
+        if (json["resultado"]["pn_tiene_datos"] == 1) {
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          return List<Map<String, dynamic>>.from(json["datos"]);
+
+        } else {
+          // debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        }
+        }
+      }
+    }
+    catch(e)
+    {
+      //Get.back();
+      debugPrint(e.toString());
+      msgxToast(e.toString());
+      debugPrint("Amenidades reservadas 2");
+      showDialog(
+          context: Get.context!,
+          builder: (context)
+          {
+            return SimpleDialog(
+              title: Text(errorMensaje),
+              contentPadding: EdgeInsets.all(20),
+              children: [Text(e.toString())],
+            );
+          }
+      );
+    }
+    throw Exception("Error en llamado");
+  }
+}
+
+
 
 void msgxToast(String msxg){
 

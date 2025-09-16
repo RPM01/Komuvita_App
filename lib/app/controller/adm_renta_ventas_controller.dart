@@ -22,6 +22,8 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'adm_login_controller.dart';
+
 
 
 List<String> monedaId = [];
@@ -53,7 +55,7 @@ class RentaVentasSetE5
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -73,7 +75,7 @@ class RentaVentasSetE5
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_renta_tipo": tipo,
           "pv_criterio": busqueda,
         }
@@ -81,7 +83,7 @@ class RentaVentasSetE5
 
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
-      debugPrint("Rentas");
+      debugPrint("Rentas Lista");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
@@ -139,7 +141,7 @@ class listaDeMonedas
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
@@ -159,7 +161,7 @@ class listaDeMonedas
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
         }
       };
 
@@ -243,7 +245,8 @@ class RentaVentasSetE7
   String valor = "";
   String contacto = "";
   String moneda = "";
-  String imagen = "";
+
+  List<String> imagen = [];
 
   RentaVentasSetE7(this.tipoRenta,this.detalle,this.valor,this.contacto,this.imagen,this.moneda);
 
@@ -253,10 +256,18 @@ class RentaVentasSetE7
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
-    String? empresa = prefs.getString("Empresa");
+    String? empresa = empresaID;
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
+
+    List<Map<String, dynamic>> listaFotografias = List.generate(
+      imagen.length,
+          (index) => {
+        "pn_fotografia": index, // use index as ID
+        "pv_fotografiab64": imagen[index],
+      },
+    );
 
     try
     {
@@ -264,7 +275,7 @@ class RentaVentasSetE7
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/rentasventas/rentas_creacion");
+      //"https://apidesa.komuvita.com/portal/rentasventas/rentas_creacion");
       "http://api.komuvita.com/portal/rentasventas/rentas_creacion");
       Map<String,dynamic> body = {
         "autenticacion":
@@ -273,50 +284,54 @@ class RentaVentasSetE7
         },
         "parametros":
         {
-          "pn_empresa": int.parse(empresa!),
+          "pn_empresa": empresaID,
           "pn_renta_tipo": tipoRenta,
           "pv_detalle": detalle,
           "pm_valor":valor,
           "pv_contacto": contacto,
           "pn_moneda": moneda,
-          "pl_fotografias":
-          [
-            {
-              "pn_fotografia": 999,
-              "pv_fotografiab64": imagen,
-            }
-          ]
+          "pl_fotografias":listaFotografias,
         }
       };
 
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
-      debugPrint("Rentas");
-      debugPrint(body.toString());
+      debugPrint("Rentas_Creadas");
+      devLog.log(body.toString());
+      //debugPrint(body.toString());
       debugPrint(response.body.toString());
+      devLog.log("Lista formada");
+      devLog.log(body.toString());
+      //devLog.log(listaFotografias.toString());
+      msgxToast(json["resultado"]["pv_error_descripcion"].toString());
 
       if(response.statusCode == 200)
       {
+        msgxToast(json["resultado"]["pv_error_descripcion"].toString());
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
           // Return an empty list instead of throwing
           debugPrint("⚠️ 'datos' is null or empty in response");
+          listaFotografias.clear();
           return [];
         }
         debugPrint("Regreso correcto!!!!!");
-
+        msgxToast(json["resultado"]["pv_error_descripcion"].toString());
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+          msgxToast("Se creo nueva Venta o Renta");
+          listaFotografias.clear();
           return List<Map<String, dynamic>>.from(json["datos"]);
 
         } else {
+          listaFotografias.clear();
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
-          //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
-          throw Exception(
-              json["resultado"]["pv_error_descripcion"].toString());
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
         }
         }
       }
+      listaFotografias.clear();
     }
     catch(e)
     {

@@ -90,7 +90,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
       theme = admEstadoDeCuentaController.themeController.isDarkMode
           ? AdmTheme.admDarkTheme
           : AdmTheme.admLightTheme;
-      propiedadCuentaID = propiedadesInternasIdsSet[0];
+      propiedadCuentaID = clientesIdsSet[0];
       periodoCuentaID = periodeDeCuentaID[0].toString();
     }
     );
@@ -110,8 +110,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
       debugPrint(pago.toString());
        */
     });
-    _futureCuentasH7 = ServicioListadoCuenta(prefs.getString("cliente")!,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
-
+    _futureCuentasH7 = ServicioListadoCuenta(clienteIDset,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
   }
 
   String formatMoneyWithoutSymbol(double amount) {
@@ -255,22 +254,13 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                     : admTextColor,
                               ),
                             ),
-                            Text(
-                              "Administrador",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: menuController.themeController.isDarkMode
-                                    ? Colors.grey[300]
-                                    : Colors.grey[700],
-                              ),
-                            ),
+
                           ],
                         ),
                       ),
                     ],
                   ),
                 ),
-
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -281,13 +271,15 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
 
                         IconData iconData;
                         switch (index) {
-                          case 0: iconData = FontAwesomeIcons.clipboardList; break;
-                          case 1: iconData = FontAwesomeIcons.newspaper; break;
-                          case 2: iconData = FontAwesomeIcons.doorOpen; break;
-                          case 3: iconData = FontAwesomeIcons.boxesStacked; break;
-                          case 4: iconData = FontAwesomeIcons.lockOpen; break;
-                          case 5: iconData = Icons.logout; break;
-                          default: iconData = Icons.menu;
+                          case 0: iconData = Icons.house; break;
+                          case 1: iconData = FontAwesomeIcons.clipboardList; break;
+                          case 2: iconData = FontAwesomeIcons.newspaper; break;
+                          case 3: iconData = FontAwesomeIcons.doorOpen; break;
+                          case 4: iconData = FontAwesomeIcons.boxesStacked; break;
+                          case 5: iconData = FontAwesomeIcons.calendarCheck; break;
+                          case 6: iconData = FontAwesomeIcons.phoneFlip; break;
+                          case 7: iconData = Icons.lock_reset; break;
+                          default: iconData = Icons.logout;
                         }
 
                         return Padding(
@@ -418,7 +410,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                         width: MediaQuery.of(context).size.width*0.45,
                                         child: DropdownButtonFormField<String>(
                                           isExpanded: true,
-                                          value: propiedadesInternasIdsSet[0].toString(),
+                                          value: clientesIdsSet[0].toString(),
                                           hint: const Text("Seleccione una empresa"),
                                           decoration: InputDecoration(
                                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -437,9 +429,9 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                             color: Colors.black87,
                                           ),
                                           icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                          items: List.generate(propiedadesInternasIdsSet.length, (index) {
+                                          items: List.generate(clientesIdsSet.length, (index) {
                                             return DropdownMenuItem<String>(
-                                              value: propiedadesInternasIdsSet[index],
+                                              value: clientesIdsSet[index],
                                               child: Text("${propiedadesInternaNombresSet[index]} ${propiedadesDireccionNombresSet[index]}",
                                                 style: const TextStyle(
                                                   fontSize:  20,
@@ -451,8 +443,10 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                           onChanged: (value) {
                                             setState(() {
                                               int index = propiedadesInternaNombresSet.indexOf(value!);
-                                              propiedadCuentaID = value;
-
+                                              debugPrint("setcuenta");
+                                              debugPrint(index.toString());
+                                              propiedadCuentaID = "1";
+                                              clienteIDset = value;
                                               debugPrint(propiedadCuentaID);
                                             });
                                           },
@@ -491,7 +485,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                           onPressed: () async{
                                             final prefs = await SharedPreferences.getInstance();
                                             setState(() {
-                                              _futureCuentasH7 = ServicioListadoCuenta(prefs.getString("cliente")!,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
+                                              _futureCuentasH7 = ServicioListadoCuenta(prefs.getString("cliente")!,"1",periodoCuentaID).estadoDeCuentaH7();
                                             });
                                             },
                                           child: Text(

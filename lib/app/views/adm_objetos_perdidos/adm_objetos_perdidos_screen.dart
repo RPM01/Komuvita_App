@@ -235,15 +235,7 @@ class _AdmNoticiasScreenState extends State<AdmObjetosPerdidsoScreen>
                                     : admTextColor,
                               ),
                             ),
-                            Text(
-                              "Administrador",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: menuController.themeController.isDarkMode
-                                    ? Colors.grey[300]
-                                    : Colors.grey[700],
-                              ),
-                            ),
+
                           ],
                         ),
                       ),
@@ -261,13 +253,15 @@ class _AdmNoticiasScreenState extends State<AdmObjetosPerdidsoScreen>
 
                         IconData iconData;
                         switch (index) {
-                          case 0: iconData = FontAwesomeIcons.clipboardList; break;
-                          case 1: iconData = FontAwesomeIcons.newspaper; break;
-                          case 2: iconData = FontAwesomeIcons.doorOpen; break;
-                          case 3: iconData = FontAwesomeIcons.boxesStacked; break;
-                          case 4: iconData = FontAwesomeIcons.lockOpen; break;
-                          case 5: iconData = Icons.logout; break;
-                          default: iconData = Icons.menu;
+                          case 0: iconData = Icons.house; break;
+                          case 1: iconData = FontAwesomeIcons.clipboardList; break;
+                          case 2: iconData = FontAwesomeIcons.newspaper; break;
+                          case 3: iconData = FontAwesomeIcons.doorOpen; break;
+                          case 4: iconData = FontAwesomeIcons.boxesStacked; break;
+                          case 5: iconData = FontAwesomeIcons.calendarCheck; break;
+                          case 6: iconData = FontAwesomeIcons.phoneFlip; break;
+                          case 7: iconData = Icons.lock_reset; break;
+                          default: iconData = Icons.logout;
                         }
 
                         return Padding(
@@ -358,7 +352,7 @@ class _AdmNoticiasScreenState extends State<AdmObjetosPerdidsoScreen>
                                                   width: MediaQuery.of(context).size.width*0.45,
                                                   child: TextFormField(
                                                     controller: criterionBusquedaController ,
-                                                    autofocus: true,
+
                                                     onChanged: (value) {
                                                       criterionBusquedaController .text = value;
                                                     },
@@ -484,14 +478,17 @@ class _AdmNoticiasScreenState extends State<AdmObjetosPerdidsoScreen>
                                                           ? cardWidth * 0.2:cardWidth * 0.3,
                                                       height:constraints.maxWidth < 400
                                                           ? cardWidth * 0.2:cardWidth * 0.3,
-                                                      child: ClipRRect(
-                                                        borderRadius: BorderRadius.circular(10),
-                                                        child: Image.memory(
-                                                          base64Decode(
-                                                            event["pl_fotografias"][0]["pv_fotografiab64"]
-                                                                .toString(),
+                                                      child: GestureDetector(
+                                                        onTap: () => showImageDialog2(context,event["pl_fotografias"][0]["pv_fotografiab64"].toString(),),
+                                                        child: ClipRRect(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          child: Image.memory(
+                                                            base64Decode(
+                                                              event["pl_fotografias"][0]["pv_fotografiab64"]
+                                                                  .toString(),
+                                                            ),
+                                                            fit: BoxFit.contain,
                                                           ),
-                                                          fit: BoxFit.contain,
                                                         ),
                                                       ),
                                                     ),
@@ -867,5 +864,15 @@ void _showLogOutBottomSheet(BuildContext context,) {
         },
       );
     },
+  );
+}
+void showImageDialog2(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      content: Image.memory(base64Decode(imageUrl),
+
+      ),
+    ),
   );
 }

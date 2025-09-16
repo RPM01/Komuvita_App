@@ -71,18 +71,4 @@ class AdmFavoriteController extends GetxController{
     return admList;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
