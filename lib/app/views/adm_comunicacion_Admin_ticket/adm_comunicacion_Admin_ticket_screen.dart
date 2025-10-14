@@ -65,7 +65,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
   TextEditingController comentarioController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  String periodoElegido = "-1";
+  String periodoElegido = "3";
   String propiedadElegido = "-1";
   String TipoElegido = "-1";
   String EstadoTicketElegido = "-1";
@@ -113,7 +113,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
 
   getUserInfo() async
   {
-
+    _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
 
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -128,6 +128,40 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
        */
     });
 
+  }
+
+
+  Widget _infoColumn(ThemeData theme, String title, String value, double width) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: const Color.fromRGBO(167, 167, 132, 1),
+            fontSize: width * 0.04,
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[600],
+            fontSize: width * 0.04,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDuration(dynamic raw) {
+    if (raw == null || raw == "") return 'Sin atender';
+    final seconds = raw is String ? int.tryParse(raw) ?? 0 : raw;
+    final duration = Duration(seconds: seconds);
+    final days = duration.inDays;
+    final hours = duration.inHours % 24;
+    final minutes = duration.inMinutes % 60;
+    return "${days}d ${hours}h ${minutes}m";
   }
 
   @override
@@ -387,7 +421,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                   width: MediaQuery.of(context).size.width*0.45,
                                                   child: DropdownButtonFormField<String>(
                                                     isExpanded: true,
-                                                    value: periodeDeCuentaID[0].toString(),
+                                                    value: periodeDeCuentaID[3].toString(),
                                                     //hint: const Text("Seleccione una empresa"),
                                                     decoration: InputDecoration(
                                                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -721,8 +755,14 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                       SizedBox(
                                                                         width: MediaQuery.of(context).size.width * 0.45,
                                                                         child: DropdownButtonFormField<String>(
+                                                                          validator: (String? value) {
+                                                                            if (value == null || value.isEmpty) {
+                                                                              return 'Información requerida'; // Error message if empty
+                                                                            }
+                                                                            return null; // Return null if the input is valid
+                                                                          },
                                                                           isExpanded: true,
-                                                                          value: gestionIDs[0].toString(),
+                                                                          value: gestionIDsB[0].toString(),
                                                                           hint: const Text("Seleccione una Tipo"),
                                                                           decoration: InputDecoration(
                                                                             contentPadding: const EdgeInsets.symmetric(
@@ -745,11 +785,11 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                           ),
                                                                           icon: const Icon(Icons.arrow_drop_down,
                                                                               color: Color.fromRGBO(6, 78, 116, 1)),
-                                                                          items: List.generate(gestionDescripcion.length, (index) {
+                                                                          items: List.generate(gestionDescripcionB.length, (index) {
                                                                             return DropdownMenuItem<String>(
-                                                                              value: gestionIDs[index].toString(),
+                                                                              value: gestionIDsB[index].toString(),
                                                                               child: Text(
-                                                                                gestionDescripcion[index],
+                                                                                gestionDescripcionB[index],
                                                                                 style: const TextStyle(
                                                                                   fontSize: 18,
                                                                                   color: Colors.black,
@@ -762,7 +802,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                           onChanged: (value) {
                                                                             setState(() {
                                                                               int index =
-                                                                              gestionIDs.indexOf(int.parse(value!));
+                                                                              gestionIDsB.indexOf(int.parse(value!));
                                                                               TipoElegidoB = value;
                                                                               debugPrint(TipoElegidoB);
 
@@ -781,57 +821,92 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      SizedBox(
-                                                                        width: MediaQuery.of(context).size.width * 0.45,
-                                                                        child: DropdownButtonFormField<String>(
-                                                                          isExpanded: true,
-                                                                          value: clientesIdsSet[0].toString(),
-                                                                          hint: const Text("Seleccione una Propiedad"),
-                                                                          decoration: InputDecoration(
-                                                                            contentPadding: const EdgeInsets.symmetric(
-                                                                                horizontal: 16, vertical: 12),
-                                                                            border: OutlineInputBorder(
-                                                                              borderRadius: BorderRadius.circular(12),
-                                                                              borderSide: const BorderSide(
-                                                                                  color: Color.fromRGBO(6, 78, 116, 1), width: 1),
-                                                                            ),
-                                                                            focusedBorder: OutlineInputBorder(
-                                                                              borderRadius: BorderRadius.circular(12),
-                                                                              borderSide: const BorderSide(
-                                                                                  color: Color.fromRGBO(6, 78, 116, 1), width: 2),
-                                                                            ),
+                                                                  SizedBox(
+                                                                    width: MediaQuery.of(context).size.width * 0.45,
+                                                                    child: DropdownButtonFormField<String>(
+                                                                      validator: (String? value) {
+                                                                        if (value == null || value.isEmpty) {
+                                                                          return 'Información requerida'; // Mensaje si está vacío
+                                                                        }
+                                                                        return null; // Si es válido
+                                                                      },
+                                                                      isExpanded: true,
+                                                                      // Si el primer elemento (-1) es solo "Todos", mejor usar null como valor inicial
+                                                                      value: (clientesIdsSetB.isNotEmpty && clientesIdsSetB.first != -1)
+                                                                          ? clientesIdsSetB.first.toString()
+                                                                          : null,
+                                                                      hint: const Text("Seleccione una Propiedad"),
+                                                                      decoration: InputDecoration(
+                                                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                                                        border: OutlineInputBorder(
+                                                                          borderRadius: BorderRadius.circular(12),
+                                                                          borderSide: const BorderSide(
+                                                                            color: Color.fromRGBO(6, 78, 116, 1),
+                                                                            width: 1,
                                                                           ),
-                                                                          style: const TextStyle(
-                                                                            fontSize: 16,
-                                                                            fontWeight: FontWeight.w500,
-                                                                            color: Colors.black87,
+                                                                        ),
+                                                                        focusedBorder: OutlineInputBorder(
+                                                                          borderRadius: BorderRadius.circular(12),
+                                                                          borderSide: const BorderSide(
+                                                                            color: Color.fromRGBO(6, 78, 116, 1),
+                                                                            width: 2,
                                                                           ),
-                                                                          icon: const Icon(Icons.arrow_drop_down,
-                                                                              color: Color.fromRGBO(6, 78, 116, 1)),
-                                                                          items: List.generate(clientesIdsSet.length, (index) {
-                                                                            return DropdownMenuItem<String>(
-                                                                              value: clientesIdsSet[index],
-                                                                              child: Text(
-                                                                                "${propiedadesInternaNombresSet[index]} ${propiedadesDireccionNombresSet[index]}",
-                                                                                style: const TextStyle(
-                                                                                  fontSize: 20,
-                                                                                  color: Colors.black,
-                                                                                ),
-                                                                              ),
-                                                                            );
-                                                                          }),
-                                                                          onChanged: (value) {
-                                                                            setState(() {
-                                                                              int index = propiedadesInternasIdsSet.indexOf(value!);
-                                                                              propiedadElegidoB = value;
-                                                                              PropiedadElegidaDEscripcion = propiedadesDireccionNombresSet[index].toString();
-                                                                              debugPrint(PropiedadElegidaDEscripcion);
-                                                                              debugPrint(propiedadElegidoB);
-                                                                            });
-                                                                          },
                                                                         ),
                                                                       ),
-                                                                      SizedBox(
+                                                                      style: const TextStyle(
+                                                                        fontSize: 16,
+                                                                        fontWeight: FontWeight.w500,
+                                                                        color: Colors.black87,
+                                                                      ),
+                                                                      icon: const Icon(
+                                                                        Icons.arrow_drop_down,
+                                                                        color: Color.fromRGBO(6, 78, 116, 1),
+                                                                      ),
+
+                                                                      // --- Construcción segura de los ítems ---
+                                                                      items: List.generate(clientesIdsSetB.length, (index) {
+                                                                        // Evita errores si las listas no tienen la misma longitud
+                                                                        String nombre = (index < propiedadesInternaNombresSetB.length)
+                                                                            ? propiedadesInternaNombresSetB[index]
+                                                                            : "Desconocido";
+
+                                                                        String direccion = (index < propiedadesDireccionNombresSetB.length)
+                                                                            ? propiedadesDireccionNombresSetB[index]
+                                                                            : "Sin dirección";
+
+                                                                        return DropdownMenuItem<String>(
+                                                                          value: clientesIdsSetB[index].toString(),
+                                                                          child: Text(
+                                                                            "$nombre $direccion",
+                                                                            style: const TextStyle(fontSize: 16, color: Colors.black),
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                          ),
+                                                                        );
+                                                                      }),
+
+                                                                      // --- Manejo seguro del cambio de valor ---
+                                                                      onChanged: (value) {
+                                                                        setState(() {
+                                                                          if (value == null) return;
+
+                                                                          // Buscar el índice usando la lista correcta
+                                                                          int index = clientesIdsSetB.indexOf(value);
+
+                                                                          if (index != -1 && index < propiedadesDireccionNombresSetB.length) {
+                                                                            propiedadElegidoB = value;
+                                                                            PropiedadElegidaDEscripcion =
+                                                                                propiedadesDireccionNombresSetB[index].toString();
+
+                                                                            debugPrint("✅ Propiedad seleccionada: $propiedadElegidoB");
+                                                                            debugPrint("📍 Dirección: $PropiedadElegidaDEscripcion");
+                                                                          } else {
+                                                                            debugPrint("⚠️ Valor no encontrado o fuera de rango: $value");
+                                                                          }
+                                                                        });
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
                                                                         width: MediaQuery.of(context).size.width * 0.45,
                                                                         child: Text(
                                                                           "Descripción",
@@ -844,9 +919,15 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                       ),
                                                                       SizedBox(
                                                                         width: MediaQuery.of(context).size.width * 0.45,
+
                                                                         child: TextFormField(
                                                                           controller: descripcionController,
-
+                                                                          validator: (String? value) {
+                                                                            if (value == null || value.isEmpty) {
+                                                                              return 'Información requerida'; // Error message if empty
+                                                                            }
+                                                                            return null; // Return null if the input is valid
+                                                                          },
                                                                           onChanged: (value) {
                                                                             descripcionController.text = value;
                                                                           },
@@ -943,20 +1024,38 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                           ),
 
                                                                           onPressed: () async {
+                                                                            debugPrint("boton presionado");
+                                                                            if (!_formKey.currentState!.validate()) {
+                                                                              msgxToast("1 Por favor complete todos los campos requeridos.");
+                                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                                const SnackBar(
+                                                                                  content: Text("Por favor complete todos los campos requeridos."),
+                                                                                ),
+                                                                              );
+                                                                              return;
+                                                                            }
+
                                                                             final prefs = await SharedPreferences.getInstance();
                                                                             String? cliente = "";
                                                                             cliente = prefs.getString("cliente");
+                                                                            debugPrint(base64Images.toString());
                                                                             debugPrint("Seting tickets");
                                                                             debugPrint(propiedadElegidoB);
                                                                             debugPrint(TipoElegidoB);
                                                                             debugPrint(descripcionController.text);
                                                                             debugPrint(prefs.getString("cliente"));
                                                                             debugPrint(base64Images.toString());
-                                                                            debugPrint(cliente);
+                                                                            debugPrint(clienteIDset);
                                                                             debugPrint("Total imágenes convertidas: ${base64Images.length}");
                                                                             ServicioTickets(propiedadElegidoB,PropiedadElegidaDEscripcion,TipoElegidoB,descripcionController.text,prefs.getString("cliente")!,base64Images);
                                                                             await ServicioTickets(propiedadElegidoB,PropiedadElegidaDEscripcion,TipoElegidoB,descripcionController.text,prefs.getString("cliente")!,base64Images).listadoCreacionTickets();
 
+                                                                            setState(() {
+                                                                              _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                                            });
+                                                                            Navigator.of(context).pop();
+                                                                            imagenesSeleccionadas.clear();
+                                                                            base64Images.clear();
                                                                           },
                                                                           child: Text(
                                                                             "Crear gestión",
@@ -1010,538 +1109,668 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                     )
                                 ),
                                 17.height,
-                                FutureBuilder<List<TickestG5>>(
-                                  future: _futureTickets,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return const Center(child: CircularProgressIndicator());
-                                    } else if (snapshot.hasError) {
-                                      return Center(
-                                          child: Title(color: Color.fromRGBO(6,78,116,1),
-                                            child: Text("No hay tickets pendientes",style: theme.textTheme.bodyMedium?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context).size.width*0.035,
-                                              color: Color.fromRGBO(6,78,116,1),
-                                            ),
-                                            ),
-                                          ));
-                                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                      return  Center(
-                                          child: Title(color: Color.fromRGBO(6,78,116,1),
-                                            child: Text("No hay tickets pendientes",style: theme.textTheme.bodyMedium?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context).size.width*0.035,
-                                              color: Color.fromRGBO(6,78,116,1),
-                                            ),
-                                            ),
-                                          )
-                                      );
-                                    }
-                                    final documentos = snapshot.data!; // API list
-                                    return LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          return ListView.builder(
-                                            padding: EdgeInsets.zero,
-                                            physics: const ScrollPhysics(),
-                                            shrinkWrap: true,
-                                            itemCount: documentos.length,
-                                            itemBuilder: (context, index) {
-                                              final event = documentos[index];
+            FutureBuilder<List<TickestG5>>(
+              future: _futureTickets,
+              builder: (context, snapshot) {
+                final theme = Theme.of(context);
 
-                                              return Container(
-                                                width: MediaQuery.of(context).size.width*0.75,
-                                                height: constraints.maxWidth < 400? constraints.maxWidth*1.1: constraints.maxWidth*1.1,
-                                                child: Center(
-                                                  child: Card(
-                                                    color: Color.fromRGBO(237, 237, 237,1),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      "Error cargando tickets",
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                        color: const Color.fromRGBO(6, 78, 116, 1),
+                      ),
+                    ),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "No hay tickets pendientes",
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                        color: const Color.fromRGBO(6, 78, 116, 1),
+                      ),
+                    ),
+                  );
+                }
+
+                final documentos = snapshot.data!;
+
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: documentos.length,
+                  itemBuilder: (context, index) {
+                    final event = documentos[index];
+                    final images = event.plFotografias
+                        ?.where((f) => f.pvFotografiaB64 != null && f.pvFotografiaB64!.isNotEmpty)
+                        .map((f) => f.pvFotografiaB64!)
+                        .toList() ??
+                        [];
+
+                    _controllers.putIfAbsent(index, () => CarouselSliderController());
+                    _currentIndex[index] = _currentIndex[index] ?? 0;
+
+                    final screenWidth = MediaQuery.of(context).size.width;
+
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: 10),
+                      child: Card(
+                        color: const Color.fromRGBO(237, 237, 237, 1),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min, // 🔹 Auto-adjust height
+                            children: [
+                              // Estado
+                              Text(
+                                event.pvEstadoDescripcion ?? "",
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600],
+                                  fontSize: screenWidth * 0.045,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              // Imagen + Datos principales
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      // 🖼️ Carrusel de imágenes
+                                      SizedBox(
+                                        width: constraints.maxWidth * 0.45,
+                                        child: images.isNotEmpty
+                                            ? Stack(
+                                          children: [
+                                            CarouselSlider(
+                                              carouselController: _controllers[index],
+                                              options: CarouselOptions(
+                                                viewportFraction: 1.0,
+                                                enableInfiniteScroll: false,
+                                                enlargeCenterPage: true,
+                                                height: constraints.maxWidth * 0.45,
+                                                onPageChanged: (page, reason) {
+                                                  _currentIndex[index] = page;
+                                                },
+                                              ),
+                                              items: images.map((base64Img) {
+                                                final bytes = base64Decode(base64Img);
+                                                return GestureDetector(
+                                                  onTap: () => showImageDialog2(context, base64Img),
+                                                  child: ClipRRect(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    child: Image.memory(
+                                                      bytes,
+                                                      fit: BoxFit.cover,
+                                                      width: double.infinity,
+                                                      height: double.infinity,
                                                     ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.all(8.0),
-                                                      child: Container(
-                                                        width: MediaQuery.of(context).size.width*0.75,
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ],
+                                        )
+                                            : const Center(child: Text("Sin fotos")),
+                                      ),
+
+                                      // 📄 Información del ticket
+                                      SizedBox(width: constraints.maxWidth * 0.05),
+                                      Flexible(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Ticket ${event.pnGestion}",
+                                              style: theme.textTheme.titleMedium?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: const Color.fromRGBO(167, 167, 132, 1),
+                                                fontSize: screenWidth * 0.045,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              event.pvDescripcion ?? "",
+                                              style: theme.textTheme.bodyLarge?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: const Color.fromRGBO(167, 167, 132, 1),
+                                                fontSize: screenWidth * 0.04,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              event.pvPropiedadDescripcion ?? "",
+                                              style: theme.textTheme.bodyLarge?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: const Color.fromRGBO(167, 167, 132, 1),
+                                                fontSize: screenWidth * 0.04,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              DateFormat('dd MMMM yyyy', "es_ES").format(
+                                                  DateTime.parse(event.pfFecha ?? DateTime.now().toString())),
+                                              style: theme.textTheme.bodyLarge?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: const Color.fromRGBO(167, 167, 132, 1),
+                                                fontSize: screenWidth * 0.04,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+
+                              const SizedBox(height: 15),
+
+                              // CREACIÓN / ATENCIÓN
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  _infoColumn(
+                                    theme,
+                                    "CREACIÓN",
+                                    _formatDuration(event.pvTiempoCreacion),
+                                    screenWidth,
+                                  ),
+                                  _infoColumn(
+                                    theme,
+                                    "ATENCIÓN",
+                                    _formatDuration(event.pvTiempoAtencion),
+                                    screenWidth,
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 15),
+
+                              // GESTIÓN / CALIFICACIÓN
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  _infoColumn(
+                                    theme,
+                                    "GESTIÓN",
+                                    event.pvGestionTipoDescripcion ?? "",
+                                    screenWidth,
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        "CALIFICACIÓN",
+                                        style: theme.textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color.fromRGBO(167, 167, 132, 1),
+                                          fontSize: screenWidth * 0.04,
+                                        ),
+                                      ),
+                                      RatingBar.builder(
+                                        initialRating: event.pnCalificacion?.toDouble() ?? 0,
+                                        minRating: 1,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemSize: screenWidth * 0.05,
+                                        itemPadding:
+                                        const EdgeInsets.symmetric(horizontal: 2.0),
+                                        itemBuilder: (context, _) =>
+                                        const Icon(Icons.star, color: Colors.amber),
+                                        onRatingUpdate: (rating) {
+                                          debugPrint("New rating: $rating");
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                             event.pnPermiteSeguimiento == 1 ? SizedBox(
+                                width: MediaQuery.of(context).size.width*0.35,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                    // set the background color
+                                  ),
+                                  onPressed: ()
+                                  {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (BuildContext context, StateSetter setStateDialog) {
+                                            return AlertDialog(
+                                              scrollable: true,
+                                              title:  Text("Ticket ${event.pnGestion} ${event.pvDescripcion.toString()} ${event.pvEstadoDescripcion.toString()}",maxLines: 3,),
+                                              content: SizedBox(
+                                              width: screenWidth * 0.9,
+                                              child: Column(
+                                                  children: [
+                                                    20.height,
+                                                    event.plSeguimiento != null ? SizedBox(
+                                                      width: MediaQuery.of(context).size.width,
+                                                      height: MediaQuery.of(context).size.height * 0.4,
+                                                      child: ListView.builder(
+                                                        padding: EdgeInsets.zero,
+                                                        shrinkWrap: true,
+                                                        physics: const BouncingScrollPhysics(),
+                                                        itemCount: event.plSeguimiento?.length ?? 0,
+                                                        itemBuilder: (context, index)
+                                                        {
+                                                          return  Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+
+                                                              const SizedBox(height: 10),
+                                                              Text(event.plSeguimiento![index].pvUsuario,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                fontSize: screenWidth * 0.045,
+                                                              ),),
+                                                              Row(
+                                                                children: [
+                                                                  Text(() {
+                                                                    final raw = event.pvTiempoCreacion;
+                                                                    if (raw == null || raw == "") return 'Sin atender';
+                                                                    Duration duration = Duration(seconds: raw);
+                                                                    int days = duration.inDays;
+                                                                    int hours = duration.inHours % 24;
+                                                                    int minutes = duration.inMinutes % 60;
+                                                                    return "${days}d ${hours}h ${minutes}m";
+                                                                  }(),
+                                                                    style: theme.textTheme.headlineSmall?.copyWith(
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                      fontSize: screenWidth * 0.04,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(height: 10),
+                                                              Text(
+                                                                DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event.plSeguimiento![index].pfFecha!)),
+                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                  fontSize: screenWidth * 0.045,
+                                                                ),
+                                                                maxLines: 2,
+                                                                textAlign: TextAlign.center,
+                                                              ),
+                                                              const SizedBox(height: 10),
+                                                              Text(
+                                                                event.plSeguimiento![index].pvComentario,
+                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                  fontSize: screenWidth* 0.045,
+                                                                ),
+                                                                maxLines: 2,
+                                                                textAlign: TextAlign.center,
+                                                              ),
+                                                              const SizedBox(height: 10),
+                                                              SizedBox(
+                                                                width: screenWidth* 0.40,
+                                                                height:screenWidth * 0.30,
+                                                                child: event.plSeguimiento![index].plFotografias != null
+                                                                    ? ClipRRect(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                  child: Image.memory(
+                                                                    base64Decode(event.plSeguimiento![index].plFotografias[0].pvFotografiaB64.toString()),
+                                                                    fit: BoxFit.fill,
+                                                                    width: double.infinity,
+                                                                  ),
+                                                                )
+                                                                    : Icon(Icons.image_not_supported,size: 80,),
+                                                              ),
+
+                                                              const SizedBox(height: 10),
+                                                            ],
+                                                          );
+                                                        },
+                                                      ),
+                                                    ):Center(),
+                                                    20.height,
+                                                    Form(
+                                                      child: SizedBox(
+                                                        width: MediaQuery.of(context).size.width * 0.45,
                                                         child: Column(
                                                           children: [
-
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                              children: [
-                                                                Text(event.pvEstadoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color:Colors.grey[500],
-                                                                  fontSize:constraints.maxWidth*0.04,)),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                              children: [
-                                                                SizedBox(
-                                                                 width: constraints.maxWidth*0.40,
-                                                                  height: constraints.maxWidth*0.30,
-                                                                  child: event.plFotografias.isNotEmpty &&
-                                                                      event.plFotografias.first.pvFotografiaB64 != null ? ClipRRect(
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                    child: Image.memory(base64Decode(event.plFotografias[0].pvFotografiaB64!),
-                                                                      fit: BoxFit.fill,
-                                                                      width: double.infinity,),
-                                                                  ):Icon(Icons.image_not_supported,size: 80,),
-                                                                ),
-                                                                Column(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: constraints.maxWidth*0.35,
-                                                                      child: Text("Ticket ${ event.pnGestion}",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color:Color.fromRGBO(167,167,132,1),
-                                                                        fontSize: constraints.maxWidth*0.045,),maxLines: 3,textAlign: TextAlign.center,),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: constraints.maxWidth*0.35,
-                                                                      child: Text(event.pvDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color:Color.fromRGBO(167,167,132,1),
-                                                                        fontSize: constraints.maxWidth*0.045,),maxLines: 3,textAlign: TextAlign.center,),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: constraints.maxWidth*0.35,
-                                                                      child: Text(event.pvPropiedadDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color:Color.fromRGBO(167,167,132,1),
-                                                                        fontSize: constraints.maxWidth*0.045,),maxLines: 3,textAlign: TextAlign.center,),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: constraints.maxWidth*0.35,
-                                                                      child: Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event.pfFecha!)),style: theme.textTheme.headlineSmall?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color:Color.fromRGBO(167,167,132,1),
-                                                                        fontSize: constraints.maxWidth*0.045,),maxLines: 3,textAlign: TextAlign.center,),
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              ],
+                                                            Text(
+                                                              "Comentario",
+                                                              style: theme.textTheme.bodyMedium?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize:
+                                                                MediaQuery.of(context).size.width * 0.045,
+                                                                color: const Color.fromRGBO(6, 78, 116, 1),
+                                                              ),
                                                             ),
                                                             SizedBox(
-                                                              height: MediaQuery.of(context).size.height*0.03,
-                                                              width: MediaQuery.of(context).size.width*0.03,
+                                                              width: MediaQuery.of(context).size.width * 0.45,
+                                                              child: TextFormField(
+                                                                keyboardType: TextInputType.multiline,
+                                                                controller: comentarioController,
+                                                                onChanged: (value) =>
+                                                                comentarioController.text = value,
+                                                                onFieldSubmitted: (value) =>
+                                                                comentarioController.text = value,
+                                                              ),
                                                             ),
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                              children: [
-                                                                Column(
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    Text("CREACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color:Color.fromRGBO(167,167,132,1),
-                                                                      fontSize:constraints.maxWidth*0.04,)),
-                                                                    Text(
-                                                                          () {
-                                                                        final raw = event.pvTiempoCreacion;
-                                                                        if (raw == null || raw == "") return 'Sin atender';
-                                                                        Duration duration = Duration(seconds: raw);
-                                                                        int days = duration.inDays;
-                                                                        int hours = duration.inHours % 24;
-                                                                        int minutes = duration.inMinutes % 60;
-                                                                        return "${days}d ${hours}h ${minutes}m";
-                                                                      }(),
-                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color:Colors.grey[500],
-                                                                        fontSize: constraints.maxWidth * 0.04,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                                Column(
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    Text("ATENCIÓN",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color:Color.fromRGBO(167,167,132,1),
-                                                                      fontSize:constraints.maxWidth*0.04,)),
-
-                                                                    Text(
-                                                                          () {
-                                                                        final raw = event.pvTiempoAtencion;
-                                                                        if (raw == null || raw.isEmpty) return 'Sin atender';
-                                                                        Duration duration = Duration(seconds: int.parse(raw));
-                                                                        int days = duration.inDays;
-                                                                        int hours = duration.inHours % 24;
-                                                                        int minutes = duration.inMinutes % 60;
-                                                                        return "${days}d ${hours}h ${minutes}m";
-                                                                      }(),
-                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color:Colors.grey[500],
-                                                                        fontSize: constraints.maxWidth * 0.04,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
-
-                                                                /*
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Text("CLASIFICACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color:Color.fromRGBO(167,167,132,1),
-                                                              fontSize: constraints.maxWidth*0.04,)),
-                                                            Text(event.pvGestionTipoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color:Colors.grey[500],
-                                                              fontSize: constraints.maxWidth*0.04,))
-                                                          ],
-                                                        )
-                                                         */
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery.of(context).size.height*0.03,
-                                                              width: MediaQuery.of(context).size.width*0.03,
-                                                            ),
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                              children: [
-                                                                /*Column(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Text("ESTADO",style: theme.textTheme.headlineSmall?.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color:Color.fromRGBO(167,167,132,1),
-                                                              fontSize:constraints.maxWidth*0.04,)),
-
-                                                          ],
-                                                        ),*/
-                                                                Column(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    Text("GESTIÓN",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color:Color.fromRGBO(167,167,132,1),
-                                                                      fontSize: constraints.maxWidth*0.04,)),
-                                                                    Text(event.pvGestionTipoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color:Colors.grey[500],
-                                                                      fontSize: constraints.maxWidth*0.04,))
-                                                                  ],
-                                                                ),
-                                                                Column(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    Text("CALIFICACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color:Color.fromRGBO(167,167,132,1),
-                                                                      fontSize: MediaQuery.of(context).size.width*0.04,)),
-                                                                    Center(child: RatingBar.builder(
-                                                                      initialRating: event.pnCalificacion!.toDouble(), // Initial rating value
-                                                                      minRating: 1,
-                                                                      direction: Axis.horizontal,
-                                                                      allowHalfRating: true,
-                                                                      itemCount: 5,
-                                                                      itemSize: constraints.maxWidth < 400 ? 15: 30,
-                                                                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                                      itemBuilder: (context, _) => Icon(
-                                                                        Icons.star,
-                                                                        color: Colors.amber,
-                                                                      ),
-                                                                      onRatingUpdate: (rating) {
-                                                                        debugPrint(rating.toString()); // Handle rating changes
-                                                                      },
-                                                                    ),)
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            20.height,
-                                                            SizedBox(
-                                                              width: MediaQuery.of(context).size.width*0.35,
+                                                            const SizedBox(height: 10),
+                                                            // ---------- BOTÓN SELECCIONAR IMÁGENES ----------
+                                                            Container(
+                                                              padding: const EdgeInsets.all(10),
                                                               child: ElevatedButton(
                                                                 style: ElevatedButton.styleFrom(
-                                                                  backgroundColor: Color.fromRGBO(6, 78, 116, 1),
-                                                                  // set the background color
+                                                                  backgroundColor:
+                                                                  const Color.fromRGBO(6, 78, 116, 1),
                                                                 ),
-                                                                onPressed: ()
-                                                                {
-                                                                  if( event.plSeguimiento != null)
-                                                                    {
-                                                                      showDialog<void>(
-                                                                        context: context,
-                                                                        builder: (BuildContext context) {
-                                                                          return StatefulBuilder(
-                                                                            builder: (BuildContext context, StateSetter setStateDialog) {
-                                                                              return AlertDialog(
-                                                                                title:  Text("Ticket ${event.pnGestion} ${event.pvDescripcion.toString()} ${event.pvEstadoDescripcion.toString()}",maxLines: 3,),
-                                                                                content: SingleChildScrollView(
-                                                                                  physics: const ScrollPhysics(),
-                                                                                  child: Column(
-                                                                                    children: [
-                                                                                      20.height,
-                                                                                      SizedBox(
-                                                                                        width: MediaQuery.of(context).size.width,
-                                                                                        height: MediaQuery.of(context).size.height * 0.7,
-                                                                                        child: ListView.builder(
-                                                                                          padding: EdgeInsets.zero,
-                                                                                          shrinkWrap: true,
-                                                                                          physics: const ScrollPhysics(),
-                                                                                          itemCount: event.plSeguimiento?.length ?? 0,
-                                                                                          itemBuilder: (context, index)
-                                                                                          {
-                                                                                            return  Column(
-                                                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                              children: [
+                                                                onPressed: () async {
+                                                                  final regresarImagenesSelect =
+                                                                  await ImagePicker().pickMultiImage();
 
-                                                                                                const SizedBox(height: 10),
-                                                                                                Text(event.plSeguimiento![index].pvUsuario,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  fontSize: constraints.maxWidth * 0.045,
-                                                                                                ),),
-                                                                                                Row(
-                                                                                                  children: [
-                                                                                                    Text(() {
-                                                                                                      final raw = event.pvTiempoCreacion;
-                                                                                                      if (raw == null || raw == "") return 'Sin atender';
-                                                                                                      Duration duration = Duration(seconds: raw);
-                                                                                                      int days = duration.inDays;
-                                                                                                      int hours = duration.inHours % 24;
-                                                                                                      int minutes = duration.inMinutes % 60;
-                                                                                                      return "${days}d ${hours}h ${minutes}m";
-                                                                                                    }(),
-                                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                        fontWeight: FontWeight.bold,
-                                                                                                        color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                        fontSize: constraints.maxWidth * 0.04,
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ],
-                                                                                                ),
-                                                                                                const SizedBox(height: 10),
-                                                                                                Text(
-                                                                                                  DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event.plSeguimiento![index].pfFecha!)),
-                                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                    fontWeight: FontWeight.bold,
-                                                                                                    color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                    fontSize: constraints.maxWidth * 0.045,
-                                                                                                  ),
-                                                                                                  maxLines: 2,
-                                                                                                  textAlign: TextAlign.center,
-                                                                                                ),
-                                                                                                const SizedBox(height: 10),
-                                                                                                Text(
-                                                                                                  event.plSeguimiento![index].pvComentario,
-                                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                    fontWeight: FontWeight.bold,
-                                                                                                    color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                    fontSize: constraints.maxWidth * 0.045,
-                                                                                                  ),
-                                                                                                  maxLines: 2,
-                                                                                                  textAlign: TextAlign.center,
-                                                                                                ),
-                                                                                                const SizedBox(height: 10),
-                                                                                                SizedBox(
-                                                                                                  width: constraints.maxWidth * 0.40,
-                                                                                                  height: constraints.maxWidth * 0.30,
-                                                                                                  child: event.plSeguimiento![index].plFotografias != null
-                                                                                                      ? ClipRRect(
-                                                                                                    borderRadius: BorderRadius.circular(10),
-                                                                                                    child: Image.memory(
-                                                                                                      base64Decode(event.plSeguimiento![index].plFotografias[0].pvFotografiaB64.toString()),
-                                                                                                      fit: BoxFit.fill,
-                                                                                                      width: double.infinity,
-                                                                                                    ),
-                                                                                                  )
-                                                                                                      : Icon(Icons.image_not_supported,size: 80,),
-                                                                                                ),
+                                                                  setStateDialog(() {
+                                                                    if (regresarImagenesSelect.isEmpty) return;
+                                                                    imagenesSeleccionadas_B = regresarImagenesSelect
+                                                                        .map((x) => File(x.path))
+                                                                        .toList();
+                                                                  });
 
-                                                                                                const SizedBox(height: 10),
-                                                                                              ],
-                                                                                            );
-                                                                                          },
-                                                                                        ),
-                                                                                      ),
-                                                                                      20.height,
-                                                                                      Form(
-                                                                                        child: SizedBox(
-                                                                                          width: MediaQuery.of(context).size.width * 0.45,
-                                                                                          child: Column(
-                                                                                            children: [
-                                                                                              Text(
-                                                                                                "Comentario",
-                                                                                                style: theme.textTheme.bodyMedium?.copyWith(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  fontSize:
-                                                                                                  MediaQuery.of(context).size.width * 0.045,
-                                                                                                  color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                ),
-                                                                                              ),
-                                                                                              SizedBox(
-                                                                                                width: MediaQuery.of(context).size.width * 0.45,
-                                                                                                child: TextFormField(
-                                                                                                  keyboardType: TextInputType.multiline,
-                                                                                                  controller: comentarioController,
-                                                                                                  onChanged: (value) =>
-                                                                                                  comentarioController.text = value,
-                                                                                                  onFieldSubmitted: (value) =>
-                                                                                                  comentarioController.text = value,
-                                                                                                ),
-                                                                                              ),
-                                                                                              const SizedBox(height: 10),
-                                                                                              // ---------- BOTÓN SELECCIONAR IMÁGENES ----------
-                                                                                              Container(
-                                                                                                padding: const EdgeInsets.all(10),
-                                                                                                child: ElevatedButton(
-                                                                                                  style: ElevatedButton.styleFrom(
-                                                                                                    backgroundColor:
-                                                                                                    const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  ),
-                                                                                                  onPressed: () async {
-                                                                                                    final regresarImagenesSelect =
-                                                                                                    await ImagePicker().pickMultiImage();
-
-                                                                                                    setStateDialog(() {
-                                                                                                      if (regresarImagenesSelect.isEmpty) return;
-                                                                                                      imagenesSeleccionadas_B = regresarImagenesSelect
-                                                                                                          .map((x) => File(x.path))
-                                                                                                          .toList();
-                                                                                                    });
-
-                                                                                                    for (var img in imagenesSeleccionadas_B) {
-                                                                                                      List<int> imageBytes = await img.readAsBytes();
-                                                                                                      base64Images_B.add(base64Encode(imageBytes));
-                                                                                                    }
-
-                                                                                                    msgxToast("Cargando imágenes...");
-                                                                                                  },
-                                                                                                  child: Text(
-                                                                                                    "Elegir Fotografías de Galería",
-                                                                                                    style: TextStyle(
-                                                                                                      fontWeight: FontWeight.bold,
-                                                                                                      color: Colors.white,
-                                                                                                      fontSize:
-                                                                                                      MediaQuery.of(context).size.width * 0.03,
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),
-                                                                                              const SizedBox(height: 10),
-                                                                                              // ---------- LISTADO DE IMÁGENES ----------
-                                                                                              imagenesSeleccionadas_B.isNotEmpty
-                                                                                                  ? SizedBox(
-                                                                                                height:
-                                                                                                MediaQuery.of(context).size.width * 0.4,
-                                                                                                width: MediaQuery.of(context).size.width * 0.4,
-                                                                                                child: CarouselSlider(
-                                                                                                  options: CarouselOptions(
-                                                                                                    height:
-                                                                                                    MediaQuery.of(context).size.width * 0.4,
-                                                                                                    enableInfiniteScroll: false,
-                                                                                                    enlargeCenterPage: true,
-                                                                                                    viewportFraction: 1.0,
-                                                                                                    autoPlay: true,
-                                                                                                  ),
-                                                                                                  items: imagenesSeleccionadas_B.map((imgFile) {
-                                                                                                    return Builder(
-                                                                                                      builder: (BuildContext context) {
-                                                                                                        return SizedBox(
-                                                                                                          width: MediaQuery.of(context)
-                                                                                                              .size
-                                                                                                              .width *
-                                                                                                              0.4,
-                                                                                                          child: ClipRRect(
-                                                                                                            borderRadius:
-                                                                                                            BorderRadius.circular(12),
-                                                                                                            child: Image.file(
-                                                                                                              imgFile,
-                                                                                                              fit: BoxFit.cover,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                        );
-                                                                                                      },
-                                                                                                    );
-                                                                                                  }).toList(),
-                                                                                                ),
-                                                                                              )
-                                                                                                  : const Text("Seleccione una imagen como mínimo"),
-                                                                                              const SizedBox(height: 10),
-                                                                                              // ---------- CREAR TICKET ----------
-                                                                                              Container(
-                                                                                                padding: const EdgeInsets.all(10),
-                                                                                                child: ElevatedButton(
-                                                                                                  style: ElevatedButton.styleFrom(
-                                                                                                    backgroundColor:
-                                                                                                    const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  ),
-                                                                                                  onPressed: () async {
-                                                                                                    await ServicioSeguimientoTickets(
-                                                                                                      comentarioController.text,
-                                                                                                      base64Images_B,
-                                                                                                      event.pnGestion.toString(),
-                                                                                                    ).listadoSeguimientoTickets();
-
-                                                                                                    comentarioController.clear();
-                                                                                                    Navigator.of(context).pop();
-                                                                                                  },
-                                                                                                  child: Text(
-                                                                                                    "Ingresar seguimiento",
-                                                                                                    style: TextStyle(
-                                                                                                      fontWeight: FontWeight.bold,
-                                                                                                      color: Colors.white,
-                                                                                                      fontSize:
-                                                                                                      MediaQuery.of(context).size.width * 0.03,
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ],
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-
-                                                                              );
-                                                                            },
-                                                                          );
-                                                                        },
-                                                                      );
-                                                                    }
-                                                                  else{
-                                                                    msgxToast("no hay seguimiento disponible");
+                                                                  for (var img in imagenesSeleccionadas_B) {
+                                                                    List<int> imageBytes = await img.readAsBytes();
+                                                                    base64Images_B.add(base64Encode(imageBytes));
                                                                   }
 
+                                                                  msgxToast("Cargando imágenes...");
                                                                 },
-                                                                child: Text("Seguimiento",style: TextStyle(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.white,
-                                                                  fontSize:
-                                                                  MediaQuery.of(context).size.width * 0.05,
+                                                                child: Text(
+                                                                  "Elegir Fotografías de Galería",
+                                                                  style: TextStyle(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color: Colors.white,
+                                                                    fontSize:
+                                                                    MediaQuery.of(context).size.width * 0.03,
                                                                   ),
                                                                 ),
                                                               ),
+                                                            ),
+                                                            const SizedBox(height: 10),
+                                                            // ---------- LISTADO DE IMÁGENES ----------
+                                                            imagenesSeleccionadas_B.isNotEmpty
+                                                                ? SizedBox(
+                                                              height:
+                                                              MediaQuery.of(context).size.width * 0.4,
+                                                              width: MediaQuery.of(context).size.width * 0.4,
+                                                              child: CarouselSlider(
+                                                                options: CarouselOptions(
+                                                                  height:
+                                                                  MediaQuery.of(context).size.width * 0.4,
+                                                                  enableInfiniteScroll: false,
+                                                                  enlargeCenterPage: true,
+                                                                  viewportFraction: 1.0,
+                                                                  autoPlay: true,
+                                                                ),
+                                                                items: imagenesSeleccionadas_B.map((imgFile) {
+                                                                  return Builder(
+                                                                    builder: (BuildContext context) {
+                                                                      return SizedBox(
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                            0.4,
+                                                                        child: ClipRRect(
+                                                                          borderRadius:
+                                                                          BorderRadius.circular(12),
+                                                                          child: Image.file(
+                                                                            imgFile,
+                                                                            fit: BoxFit.cover,
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                }).toList(),
+                                                              ),
                                                             )
+                                                                : const Text("Seleccione una imagen como mínimo"),
+                                                            const SizedBox(height: 10),
+                                                            // ---------- CREAR TICKET ----------
+                                                            Container(
+                                                              padding: const EdgeInsets.all(10),
+                                                              child: ElevatedButton(
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor:
+                                                                  const Color.fromRGBO(6, 78, 116, 1),
+                                                                ),
+                                                                onPressed: () async {
+                                                                  await ServicioSeguimientoTickets(
+                                                                    comentarioController.text,
+                                                                    base64Images_B,
+                                                                    event.pnGestion.toString(),
+                                                                  ).listadoSeguimientoTickets();
+
+                                                                  comentarioController.clear();
+                                                                  Navigator.of(context).pop();
+                                                                  imagenesSeleccionadas_B.clear();
+                                                                  base64Images_B.clear();
+                                                                  setState(() {
+                                                                    _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                                  });
+                                                                },
+                                                                child: Text(
+                                                                  "Ingresar seguimiento",
+                                                                  style: TextStyle(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color: Colors.white,
+                                                                    fontSize:
+                                                                    MediaQuery.of(context).size.width * 0.03,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ],
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
-                                              );
-                                            },
-                                          );
-                                        }
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
                                     );
                                   },
+                                  child: Text("Seguimiento",style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width * 0.05,
+                                  ),
+                                  ),
                                 ),
+                              ):Center(),
+                              event.pnPermiteEnProceso == 1 ? SizedBox(
+                                width: MediaQuery.of(context).size.width*0.35,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                    // set the background color
+                                  ),
+                                  onPressed: ()
+                                  {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (BuildContext context, StateSetter setStateDialog) {
+                                            return AlertDialog(
+                                              title:  Text("Ticket en ${event.pvEstadoDescripcion.toString()}",maxLines: 3,),
+                                              content: Column(
+                                                children: [
+                                                  Text("La gestion: ${event.pvDescripcion.toString()}"),
+                                                  Text("Cambiará a estado: En Proceso. "),
+                                                  TextButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                      // set the background color
+                                                    ),
+                                                    child: const Text('Confirmar '),
+                                                    onPressed: () async{
+                                                      ServicioProcesoTickets(event.pnGestion.toString()).listadoProcesoTickets();
+                                                      setState(() {
+                                                        _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                      });
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              )
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Text("En Proceso",style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width * 0.05,
+                                  ),
+                                  ),
+                                ),
+                              ):Center(),
+                             event.pnPermiteFinalizar == 1 ? SizedBox(
+                                width: MediaQuery.of(context).size.width*0.35,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                    // set the background color
+                                  ),
+                                  onPressed: ()
+                                  {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (BuildContext context, StateSetter setStateDialog) {
+                                            return AlertDialog(
+                                                title:  Text("Finalizar la Gestión ",maxLines: 3,),
+                                                content: Column(
+                                                  children: [
+                                                    Text("La gestion: ${event.pvDescripcion.toString()}"),
+                                                    Text("Cambiará a estado: Finalizada."),
+                                                    TextButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                        // set the background color
+                                                      ),
+                                                      child: const Text('Confirmar'),
+                                                      onPressed: () async{
+                                                        ServicioFinalizarTickets(event.pnGestion.toString()).listadoFinalizarTickets();
+                                                        setState(() {
+                                                          _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                        });
+                                                        Navigator.of(context).pop();
+                                                        },
+                                                    ),
+                                                  ],
+                                                )
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Text("Finalizar",style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width * 0.05,
+                                  ),
+                                  ),
+                                ),
+                              ):Center(),
+                            event.pnPermiteCerrar == 1 ?  SizedBox(
+                                width: MediaQuery.of(context).size.width*0.35,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                    // set the background color
+                                  ),
+                                  onPressed: ()
+                                  {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (BuildContext context, StateSetter setStateDialog) {
+                                            return AlertDialog(
+                                                title:  Text("Cerrar la Gestión ",maxLines: 3,),
+                                                content: Column(
+                                                  children: [
+                                                    Text("La gestion: ${event.pvDescripcion.toString()}"),
+                                                    Text("Cambiará a estado: Finalizada. "),
+                                                    TextButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                        // set the background color
+                                                      ),
+                                                      child: const Text('Confirmar '),
+                                                      onPressed: () async{
+                                                        ServicioCerrarTickets(event.pnGestion.toString(),event.pnCalificacion.toString()).listadoCerrarTickets();
+                                                        setState(() {
+                                                          _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                        });
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                )
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Text("Cerrar",style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize:
+                                    MediaQuery.of(context).size.width * 0.05,
+                                  ),
+                                  ),
+                                ),
+                              ):Center(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
                                 17.height,
                               ]
                           )
@@ -1721,3 +1950,13 @@ void msgxToast(String msxg){
   );
 }
 
+void showImageDialog2(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      content: Image.memory(base64Decode(imageUrl),
+
+      ),
+    ),
+  );
+}

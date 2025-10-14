@@ -511,6 +511,7 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                         fontSize: MediaQuery.of(context).size.width*0.035,)
                                                                   ),
                                                                   TextFormField(
+
                                                                     controller: descripcionController,
                                                                     onChanged: (value)
                                                                     {
@@ -535,6 +536,7 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                             fontSize: MediaQuery.of(context).size.width*0.035,)
                                                                       ),
                                                                       DropdownButtonFormField<String>(
+
                                                                         isExpanded: true,
                                                                         value: tipoSelect,
                                                                         hint: const Text("Seleccione renta o venta"),
@@ -775,23 +777,33 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                         backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
                                                                       ),
                                                                       onPressed: () async{
-
+                                                                        if (!_formKey.currentState!.validate()) {
+                                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                                            const SnackBar(
+                                                                              content: Text("Por favor complete todos los campos requeridos."),
+                                                                            ),
+                                                                          );
+                                                                          return;
+                                                                        }
                                                                           debugPrint(tipoSet);
                                                                           debugPrint(descripcionController.text);
                                                                           debugPrint(precioController.text);
                                                                           debugPrint(infoContactoController.text);
                                                                           debugPrint(monedaSet);
                                                                           devLog.log(base64Images.toString());
-                                                                          //await RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Images,monedaSet);
+                                                                          await RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Images,monedaSet);
                                                                           RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Images,monedaSet).listadoCreacionRentas6B();
                                                                           Future.delayed(const Duration(milliseconds: 400), () {
                                                                             _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
                                                                             Navigator.of(context).pop();
+                                                                            imagenesSeleccionadas.clear();
+                                                                            base64Images.clear();
+                                                                            descripcionController.text ="";
+                                                                            precioController.text = "";
+                                                                            infoContactoController.text = "";
                                                                           }
                                                                           );
-                                                                          descripcionController.text ="";
-                                                                          precioController.text = "";
-                                                                          infoContactoController.text = "";
+
 
                                                                           },
                                                                           child: Text(

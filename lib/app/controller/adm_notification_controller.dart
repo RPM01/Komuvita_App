@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
 
+import '../../route/my_route.dart';
 import '../modal/adm_notification_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
@@ -94,6 +95,13 @@ class AdmNotificationController extends GetxController{
     catch(e)
     {
       //Get.back();
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,

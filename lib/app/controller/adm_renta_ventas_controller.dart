@@ -114,6 +114,13 @@ class RentaVentasSetE5
     catch(e)
     {
       //Get.back();
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -221,6 +228,13 @@ class listaDeMonedas
     catch(e)
     {
       //Get.back();
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -336,6 +350,12 @@ class RentaVentasSetE7
     catch(e)
     {
       //Get.back();
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,

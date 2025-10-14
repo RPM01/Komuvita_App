@@ -101,6 +101,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
 
   DateTime fechaSelecionada  = DateTime.now();
   final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
   final _formKeyB = GlobalKey<FormState>();
 
   String formatMoneyWithoutSymbol(double amount) {
@@ -164,6 +165,10 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
 
   GestionTickets2();
 }
+  void reloadreserva()
+  {
+    _futureReservas = homeController.amenidadesReservadas5B();
+  }
   int currentIndex = 0;
   String admincheck = "";
   bool tickets = true;
@@ -1358,8 +1363,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                       ),
                                                       Column(
                                                         children: [
-                                                          IconButton(onPressed: (){
+                                                       event.pnPermiteAplicaPago == 1 ? IconButton(onPressed: (){
                                                             debugPrint("Boton4");
+
                                                             setState(() {
                                                               formaPagoController.text = formaPago[0].toString();
                                                               montoPagarController.text = "${event.pmValorPendiente!}";
@@ -1375,7 +1381,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                       content: SingleChildScrollView(
                                                                         scrollDirection: Axis .vertical,
                                                                         child: Form(
-                                                                          key: _formKey,
+                                                                          key: _formKey1,
                                                                           child: Column(
                                                                             children: [
                                                                               Title(color: Colors.black, child: Text(
@@ -1417,6 +1423,14 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
 
                                                                                   Text(
                                                                                       event.pvPropiedadDescripcion!,
+                                                                                      maxLines: 1,
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          color:Color.fromRGBO(167,167,132,1),
+                                                                                          fontSize: titleFontSize)),
+                                                                                  Text(
+                                                                                      event.pnDocumento.toString()!,
                                                                                       maxLines: 1,
                                                                                       overflow: TextOverflow.ellipsis,
                                                                                       style: theme.textTheme.headlineSmall?.copyWith(
@@ -1549,6 +1563,12 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                                   fontSize: titleFontSize)),
                                                                                           10.height,
                                                                                           DropdownButtonFormField<String>(
+                                                                                            validator: (String? value) {
+                                                                                              if (value == null || value.isEmpty) {
+                                                                                                return 'Información requerida'; // Error message if empty
+                                                                                              }
+                                                                                              return null; // Return null if the input is valid
+                                                                                            },
                                                                                             isExpanded: true,
                                                                                             value: formaPago[0].toString(),
                                                                                             hint: const Text("Seleccione una empresa"),
@@ -1734,7 +1754,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                               ),
                                                                                               onPressed: () async{
 
-                                                                                                if (!_formKey.currentState!.validate()) {
+                                                                                                if (!_formKey1.currentState!.validate()) {
                                                                                                   ScaffoldMessenger.of(context).showSnackBar(
                                                                                                     const SnackBar(
                                                                                                       content: Text("Por favor complete todos los campos requeridos."),
@@ -1761,9 +1781,10 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                                 debugPrint(numeroAutorizacionController.text);
                                                                                                 debugPrint(formaPagoController.text);
                                                                                                 debugPrint(base64Image.toString());
-                                                                                                makeApiCall(event.pnDocumento.toString(),montoPagarController.text,formaPagoController.text,formattedDate,numeroAutorizacionController.text,base64Image.toString());
+                                                                                                makeApiCall(event.pnDocumento.toString(),montoPagarController.text,formaPagoController.text,
+                                                                                                    formattedDate,numeroAutorizacionController.text,base64Image.toString(),"-1");
 
-                                                                                               },
+                                                                                              },
                                                                                               child: Text(
                                                                                                 "Realizar pago",
                                                                                                 style: TextStyle(
@@ -1798,13 +1819,16 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                 );
                                                               },
                                                             );
-                                                          }, icon: Icon(Icons.account_balance_wallet_rounded,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.05),),
-                                                          Text("Aplicar Pagos",
+                                                          }, icon: Icon(Icons.account_balance_wallet_rounded,
+                                                              color: const Color.fromRGBO(6, 78, 116, 1),
+                                                              size: constraints.maxWidth * 0.05),
+                                                          ):Center(),
+                                                          event.pnPermiteAplicaPago == 1 ?  Text("Aplicar Pagos",
                                                               style: TextStyle(
                                                                 fontWeight: FontWeight.bold,
                                                                 color: const Color.fromRGBO(6, 78, 116, 1),
                                                                 fontSize: constraints.maxWidth * 0.03,
-                                                              )),
+                                                              )):Center(),
                                                         ],
                                                       )
                                                     ],
@@ -1928,146 +1952,115 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
 
                             17.height,
                             FutureBuilder(
-                              future:_futureNoticias,
+                              future: _futureNoticias,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return  Center(
-                                      child: Title(color: Color.fromRGBO(6,78,116,1),
-                                        child: Text("No hay noticias del día de hoy",style: theme.textTheme.bodyMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width*0.035,
-                                          color: Color.fromRGBO(6,78,116,1),
-                                        ),
-                                        ),
-                                      ));
-                                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return  Center(
-                                      child: Title(color: Color.fromRGBO(6,78,116,1),
-                                        child: Text("No hay noticias del día de hoy",style: theme.textTheme.bodyMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context).size.width*0.035,
-                                          color: Color.fromRGBO(6,78,116,1),
-                                        ),
-                                        ),
-                                      )
+                                } else if (snapshot.hasError ||
+                                    !snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return Center(
+                                    child: Text(
+                                      "No hay noticias del día de hoy",
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                                        color: const Color.fromRGBO(6, 78, 116, 1),
+                                      ),
+                                    ),
                                   );
                                 }
-                                final events = snapshot.data!;
-                                //debugPrint(events.toString());
-                                return SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height*0.65,
-                                  child: LayoutBuilder(
-                                      builder: (context, constraints) {
-                                        final cardWidth = constraints.maxWidth * 0.9;
-                                        final cardHeight = constraints.maxHeight * 0.65;
-                                        final titleFontSize = constraints.maxWidth * 0.035;
-                                        final subtitleFontSize = constraints.maxWidth * 0.03;
-                                      return ListView.builder(
-                                        padding: EdgeInsets.zero,
-                                        physics: ClampingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: events.length,
-                                        itemBuilder: (context, index) {
-                                          final event = events[index];
-                                          return Container(
-                                            width: constraints.maxWidth*0.5,
-                                            height: constraints.maxHeight,
-                                            child: Card(
-                                                elevation: 3,
-                                                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: constraints.maxWidth * 0.8,
-                                                      height: constraints.maxHeight * 0.4,
-                                                      child: (event["pl_fotografias"] == null || (event["pl_fotografias"] as List).isEmpty)
-                                                          ? const Center(child: Text("Sin fotos"))
-                                                          : CarouselSlider(
-                                                        options: CarouselOptions(
-                                                          height: constraints.maxHeight * 0.4,
-                                                          viewportFraction: 1.0,
-                                                          enableInfiniteScroll: false,
-                                                          enlargeCenterPage: true,
-                                                        ),
-                                                        items: (event["pl_fotografias"] as List<dynamic>)
-                                                            .map((foto) {
-                                                          final base64Img = foto["pv_fotografiab64"]?.toString();
-                                                          if (base64Img == null || base64Img.isEmpty) {
-                                                            return const Center(child: Text("Imagen inválida"));
-                                                          }
-                                                          final bytes = base64Decode(base64Img);
-                                                          return ClipRRect(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                            child: Image.memory(
-                                                              bytes,
-                                                              fit: BoxFit.cover,
-                                                              width: double.infinity,
-                                                            ),
-                                                          );
-                                                        })
-                                                            .toList(),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.all(12),
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(event["pv_descripcion"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
-                                                            fontWeight: FontWeight.bold,
-                                                            color:Color.fromRGBO(167,167,132,1),
-                                                            fontSize: constraints.maxWidth * 0.05,
-                                                          )),
-                                                          /*Padding(
-                                                            padding: const EdgeInsets.all(12),
-                                                            child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text("Noticia | ",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color:Color.fromRGBO(6,78,116,1),
-                                                                  fontSize: constraints.maxWidth * 0.050,)),
-                                                                Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event["pf_fecha"].toString())),style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                    color:Color.fromRGBO(167,167,132,1),//color: Colors.grey[600],
-                                                                  fontSize: constraints.maxWidth * 0.050,)),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                           */
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              SizedBox(
-                                                                width: constraints.maxWidth*0.8,
-                                                                child: Text(event["pl_comentarios"][0]["pv_descripcion"],style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                    color:Color.fromRGBO(167,167,132,1),//color: Colors.grey[600],
-                                                                  fontSize: constraints.maxWidth * 0.028,
-                                                                ),maxLines: 5,),
-                                                              ),
 
-                                                            ],
-                                                          )
-                                                        ],
-                                                      ),
+                                final events = snapshot.data!;
+
+                                return LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final screenWidth = constraints.maxWidth;
+                                    final titleFontSize = screenWidth * 0.045;
+                                    final subtitleFontSize = screenWidth * 0.03;
+
+                                    return ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      physics: const NeverScrollableScrollPhysics(), // so it expands naturally inside parent
+                                      shrinkWrap: true, // allows automatic height based on content
+                                      itemCount: events.length,
+                                      itemBuilder: (context, index) {
+                                        final event = events[index];
+                                        final fotos = event["pl_fotografias"] as List?;
+
+                                        return Card(
+                                          elevation: 3,
+                                          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // 🖼 Carousel section
+                                                if (fotos == null || fotos.isEmpty)
+                                                  const Center(child: Text("Sin fotos"))
+                                                else
+                                                  CarouselSlider(
+                                                    options: CarouselOptions(
+                                                      aspectRatio: 16 / 9, // auto adjusts to screen size
+                                                      viewportFraction: 1.0,
+                                                      enableInfiniteScroll: false,
+                                                      enlargeCenterPage: true,
                                                     ),
-                                                  ],
-                                                )
+                                                    items: fotos.map((foto) {
+                                                      final base64Img = foto["pv_fotografiab64"]?.toString();
+                                                      if (base64Img == null || base64Img.isEmpty) {
+                                                        return const Center(child: Text("Imagen inválida"));
+                                                      }
+                                                      final bytes = base64Decode(base64Img);
+                                                      return ClipRRect(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        child: Image.memory(
+                                                          bytes,
+                                                          fit: BoxFit.cover,
+                                                          width: double.infinity,
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+
+                                                const SizedBox(height: 12),
+
+                                                // 📰 Title
+                                                Text(
+                                                  event["pv_descripcion"].toString(),
+                                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: const Color.fromRGBO(167, 167, 132, 1),
+                                                    fontSize: titleFontSize,
+                                                  ),
+                                                ),
+
+                                                const SizedBox(height: 8),
+
+                                                // 💬 Description
+                                                if (event["pl_comentarios"] != null &&
+                                                    event["pl_comentarios"].isNotEmpty)
+                                                  Text(
+                                                    event["pl_comentarios"][0]["pv_descripcion"].toString(),
+                                                    maxLines: 5,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                                      fontWeight: FontWeight.w500,
+                                                      color: const Color.fromRGBO(167, 167, 132, 1),
+                                                      fontSize: subtitleFontSize,
+                                                    ),
+                                                  ),
+                                              ],
                                             ),
-                                          );
-                                        },
-                                      );
-                                    }
-                                  )
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
                                 );
                               },
                             ),
@@ -2078,156 +2071,153 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
                             17.height,
-                          FutureBuilder(
-                            future:_futurePerdidos,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return  Center(
-                                    child: Title(color: Color.fromRGBO(6,78,116,1),
-                                      child: Text("No se han reportado objetos perdidos",style: theme.textTheme.bodyMedium?.copyWith(
+                            FutureBuilder(
+                              future: _futurePerdidos,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const Center(child: CircularProgressIndicator());
+                                } else if (snapshot.hasError ||
+                                    !snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return Center(
+                                    child: Text(
+                                      "No se han reportado objetos perdidos",
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width*0.035,
-                                        color: Color.fromRGBO(6,78,116,1),
+                                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                                        color: const Color.fromRGBO(6, 78, 116, 1),
                                       ),
-                                      ),
-                                    )
-                                );
-                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return  Center(
-                                    child: Title(color: Color.fromRGBO(6,78,116,1),
-                                      child: Text("No se han reportado objetos perdidos",style: theme.textTheme.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width*0.035,
-                                        color: Color.fromRGBO(6,78,116,1),
-                                      ),
-                                      ),
-                                    )
-                                );
-                              }
-
-                              final events = snapshot.data!;
-                              return LayoutBuilder(
-                                builder: (context, constraints) {
-                                  // decide number of columns depending on width
-                                  int crossAxisCount = constraints.maxWidth > 900
-                                      ? 4
-                                      : constraints.maxWidth > 600
-                                      ? 3
-                                      : 2;
-
-                                  return GridView.builder(
-                                    itemCount: events.length,
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      mainAxisSpacing: crossAxisCount*2.toDouble(),
-                                      crossAxisSpacing: 8*2.toDouble(),
-
+                                      textAlign: TextAlign.center,
                                     ),
-                                    itemBuilder: (context, index) {
-                                      final event = events[index];
-                                      double cardWidth = constraints.maxWidth / crossAxisCount;
+                                  );
+                                }
 
-                                      return Card(
-                                        elevation: 3,
-                                        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                width:constraints.maxWidth < 400
-                                                    ? cardWidth * 0.2:cardWidth * 0.3,
-                                                height:constraints.maxWidth < 400
-                                                    ? cardWidth * 0.2:cardWidth * 0.3,
-                                                child: GestureDetector(
-                                                  onTap: () => showImageDialog3(context,event["pl_fotografias"][0]["pv_fotografiab64"]
-                                                      .toString(),),
-                                                  child: ClipRRect(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    child: Image.memory(
-                                                      base64Decode(
-                                                        event["pl_fotografias"][0]["pv_fotografiab64"]
-                                                            .toString(),
+                                final events = snapshot.data!;
+                                return LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    double width = constraints.maxWidth;
+
+                                    // 🧮 Always at least 2 columns
+                                    int crossAxisCount;
+                                    if (width > 1000) {
+                                      crossAxisCount = 4;
+                                    } else if (width > 700) {
+                                      crossAxisCount = 3;
+                                    } else {
+                                      crossAxisCount = 2; // 👈 minimum 2
+                                    }
+
+                                    // 📐 Calcular relación de aspecto dinámica
+                                    //   aspectRatio = width / height → menor valor = más alta
+                                    //   Ajustamos para que el contenido no se vea estirado
+                                    double cardWidth = width / crossAxisCount;
+                                    double cardHeight;
+
+                                    // 💡 Estimar altura según contenido típico
+                                    if (cardWidth > 500) {
+                                      cardHeight = cardWidth * 1.5;
+                                    } else if (cardWidth > 300) {
+                                      cardHeight = cardWidth * 1.7;
+                                    } else {
+                                      cardHeight = cardWidth * 2.2;
+                                    }
+
+                                    double aspectRatio = cardWidth / cardHeight;
+
+                                    return GridView.builder(
+                                      itemCount: events.length,
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: crossAxisCount,
+                                        mainAxisSpacing: 16,
+                                        crossAxisSpacing: 16,
+                                        childAspectRatio: aspectRatio, // ✅ correcto y dinámico
+                                      ),
+                                      itemBuilder: (context, index) {
+                                        final event = events[index];
+
+                                        return Card(
+                                          elevation: 4,
+                                          shape:
+                                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: GestureDetector(
+                                                    onTap: () => showImageDialog3(
+                                                      context,
+                                                      event["pl_fotografias"][0]["pv_fotografiab64"].toString(),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      child: Image.memory(
+                                                        base64Decode(
+                                                          event["pl_fotografias"][0]["pv_fotografiab64"]
+                                                              .toString(),
+                                                        ),
+                                                        fit: BoxFit.contain,
                                                       ),
-                                                      fit: BoxFit.contain,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              AutoSizeText(
-                                                event["pv_descripcion"].toString(),
-                                                textAlign: TextAlign.center,
-                                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: const Color.fromRGBO(6, 78, 116, 1),
-                                                  fontSize: constraints.maxWidth < 400 ?cardWidth * 0.07:cardWidth * 0.1,
+                                                const SizedBox(height: 8),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      AutoSizeText(
+                                                        event["pv_descripcion"].toString(),
+                                                        textAlign: TextAlign.center,
+                                                        maxLines: 3,
+                                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                          color: const Color.fromRGBO(6, 78, 116, 1),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      AutoSizeText(
+                                                        event["pn_permite_reclamar"] == "1"
+                                                            ? "No Reclamada"
+                                                            : "Reclamada",
+                                                        textAlign: TextAlign.center,
+                                                        style:
+                                                        Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                          color: event["pn_permite_reclamar"] == "1"
+                                                              ? Colors.red[900]
+                                                              : Colors.yellow[800],
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      AutoSizeText(
+                                                        "Reportado el ${DateFormat('dd MMM yyyy', "es_ES").format(
+                                                          DateTime.parse(event["pf_fecha"].toString()),
+                                                        )}",
+                                                        textAlign: TextAlign.center,
+                                                        style:
+                                                        Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                          color: Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                maxLines: 3,            // shrink if more than 2 lines
-                                                minFontSize: cardWidth * 0.07.floor(),
-                                              ),
-                                             event["pn_permite_reclamar"] == "1" ?
-                                              AutoSizeText(
-                                                "No Reclamada",
-                                                textAlign: TextAlign.center,
-                                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.red[900],
-                                                  fontSize: constraints.maxWidth < 400 ?cardWidth * 0.07:cardWidth * 0.1,
-                                                ),
-                                                maxLines: 3,            // shrink if more than 2 lines
-                                                minFontSize: cardWidth * 0.07.floor(),
-                                              ):AutoSizeText(
-                                               "Reclamada",
-                                               textAlign: TextAlign.center,
-                                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                 fontWeight: FontWeight.bold,
-                                                 color: Colors.yellow,
-                                                 fontSize: constraints.maxWidth < 400 ?cardWidth * 0.07:cardWidth * 0.1,
-                                               ),
-                                               maxLines: 3,            // shrink if more than 2 lines
-                                               minFontSize: cardWidth * 0.07.floor(),
-                                             ),
-                                              AutoSizeText(
-                                                "Reportado el ${DateFormat('dd MMMM yyyy', "es_ES").format(
-                                                  DateTime.parse(event["pf_fecha"].toString()),
-                                                )}",
-                                                textAlign: TextAlign.center,
-                                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.grey,
-                                                  fontSize: constraints.maxWidth < 400 ?cardWidth * 0.04:cardWidth * 0.06,
-                                                ),
-                                                maxLines: 2,            // shrink if more than 2 lines
-                                                minFontSize: cardWidth * 0.04.floor(),
-                                              ),
-                                              AutoSizeText(
-                                                "Reclamado el ${DateFormat('dd MMMM yyyy', "es_ES").format(
-                                                  DateTime.parse(event["pf_fecha_reclamada"].toString()),
-                                                )}",
-                                                textAlign: TextAlign.center,
-                                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.grey,
-                                                  fontSize: constraints.maxWidth < 400 ?cardWidth * 0.04:cardWidth * 0.06,
-                                                ),
-                                                maxLines: 2,            // shrink if more than 2 lines
-                                                minFontSize: cardWidth * 0.04.floor(),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           17.height,
                             Text("Rentas y Ventas",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -2562,7 +2552,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                               IconButton(onPressed:()
                                               async {
                                                 setState(() {
-                                                  _futureReservas = homeController.amenidadesReservadas5B();
+                                                  reloadreserva();
                                                 });
                                               },
                                                   icon: Icon(AntDesign.reload_outline,color:Color.fromRGBO(167,167,132,1),size: MediaQuery.of(context).size.width*0.06,)),
@@ -2662,7 +2652,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                   return   Center(
 
                                       child: Title(color: Color.fromRGBO(6,78,116,1),
-                                        child: Text("No hay amenidades reservadas 1 ${snapshot.hasError.toString()}",style: theme.textTheme.bodyMedium?.copyWith(
+                                        child: Text("No hay amenidades reservadas",style: theme.textTheme.bodyMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context).size.width*0.05,
                                           color: Color.fromRGBO(6,78,116,1),
@@ -2673,7 +2663,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                                   return   Center(
                                       child: Title(color: Color.fromRGBO(6,78,116,1),
-                                        child: Text("No hay amenidades reservadas 2",style: theme.textTheme.bodyMedium?.copyWith(
+                                        child: Text("No hay amenidades reservadas",style: theme.textTheme.bodyMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context).size.width*0.05,
                                           color: Color.fromRGBO(6,78,116,1),
@@ -2726,8 +2716,8 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               )
                                                               ),
                                                             )
-
                                                           ),
+
                                                           SizedBox(
                                                             width:constraints.maxWidth*0.4,
                                                             child: ListTile(
@@ -2815,6 +2805,8 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                         //pago de amenidad
                                                       setState(() {
                                                         montoPagarControllerB.text = "${event.pmValor!}";
+                                                        fechaPagoController.text = DateFormat('dd/MM/yyyy').format(DateTime.now()).toString();
+                                                        formaPagoController.text =formaPago[0].toString();
                                                       });
                                                          showDialog<void>(
                                                         context: context,
@@ -2856,6 +2848,14 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                   fontSize: MediaQuery.of(context).size.width * 0.045)),
                                                                           Text(
                                                                               event.pvPropiedadDescripcion!,
+                                                                              maxLines: 3,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  color:Color.fromRGBO(167,167,132,1),
+                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                          Text(
+                                                                              event.pnDocumento.toString()!,
                                                                               maxLines: 3,
                                                                               overflow: TextOverflow.ellipsis,
                                                                               style: theme.textTheme.headlineSmall?.copyWith(
@@ -2953,6 +2953,12 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                               fontSize: MediaQuery.of(context).size.width * 0.045)),
                                                                                       10.height,
                                                                                       DropdownButtonFormField<String>(
+                                                                                        validator: (String? value) {
+                                                                                          if (value == null || value.isEmpty) {
+                                                                                            return 'Información requerida'; // Error message if empty
+                                                                                          }
+                                                                                          return null; // Return null if the input is valid
+                                                                                        },
                                                                                         isExpanded: true,
                                                                                         value: formaPago[0].toString(),
                                                                                         hint: const Text("Seleccione una empresa"),
@@ -3157,7 +3163,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
 
                                                                                             //msgxToast("Cargando imagen...");
                                                                                             debugPrint("Cargando imagen...");
-                                                                                            debugPrint(montoPagarController.text);
+                                                                                            debugPrint(event.pnDocumento.toString());
+                                                                                            debugPrint(event.pnReserva.toString());
+                                                                                            debugPrint(formaPagoController.text);
                                                                                             DateTime fecha = DateFormat('dd/MM/yyyy').parse(fechaPagoController.text);
                                                                                             String formattedDate = DateFormat('yyyyMMdd').format(fecha);
                                                                                             debugPrint(fechaPagoController.text);
@@ -3165,8 +3173,12 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                             debugPrint(numeroAutorizacionController.text);
                                                                                             debugPrint(formaPagoController.text);
                                                                                             debugPrint(base64Image.toString());
-                                                                                            makeApiCall(event.pnDocumento.toString(),montoPagarControllerB.text,formaPagoController.text,formattedDate,numeroAutorizacionController.text,base64Image.toString());
 
+                                                                                            makeApiCall(event.pnDocumento.toString(),montoPagarControllerB.text,
+                                                                                                formaPagoController.text,formattedDate,numeroAutorizacionController.text,
+                                                                                                base64Image.toString(),event.pnReserva.toString());
+                                                                                            iamgenSelect = null;
+                                                                                            base64Image ="" ;
                                                                                           },
                                                                                           child: Text(
                                                                                             "Realizar pago",
@@ -3243,7 +3255,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                             fontSize: constraints.maxWidth * 0.05,
                                                           )):Center(),
 
-                                                      event.pnPermiteVerCobro == 1 ? Text("Imprimir pago",
+                                                      event.pnPermiteVerCobro == 1 ? Text("Ver cobro",
                                                           style: TextStyle(
                                                             fontWeight: FontWeight.bold,
                                                             color: const Color.fromRGBO(6, 78, 116, 1),
@@ -3263,7 +3275,11 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                     children: [
                                                     event.pnPermiteAutorizar == 1 ?  IconButton(onPressed:()
                                                      async {
-                                                       AutorizarClass(event.pnDocumento.toString()).amenidadesReservadas7B();
+                                                       AutorizarClass(event.pnReserva.toString()).amenidadesReservadas7B();
+                                                       setState(() async{
+                                                         reloadreserva();
+                                                         Navigator.of(context).pop();
+                                                       });
                                                       },
                                                       icon: Icon(Icons.check_box_outlined,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
 
@@ -3321,9 +3337,19 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                         );
                                                                         return;
                                                                       }
-                                                                      await RechazarClass(event.pnDocumento.toString(),observacionesRechazoController.text);
-                                                                      RechazarClass(event.pnDocumento.toString(),observacionesRechazoController.text).amenidadesReservadas8B();
-                                                                    },
+                                                                      debugPrint("Info de reserva2");
+                                                                      debugPrint(event.pnDocumento.toString());
+                                                                      debugPrint(event.pnReserva.toString());
+                                                                      debugPrint(observacionesRechazoController.text);
+                                                                      RechazarClass(event.pnReserva.toString(),observacionesRechazoController.text).amenidadesReservadas8B();
+                                                                      setState(() {
+                                                                        observacionesRechazoController.text = "";
+                                                                        Navigator.of(context).pop();
+                                                                      });
+                                                                      setState(() {
+                                                                        reloadreserva();
+                                                                      });
+                                                                      },
                                                                     child: Text(
                                                                         'Rechazar'),
                                                                   ),
@@ -3470,185 +3496,151 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                     itemCount: documentos.length,
                                     itemBuilder: (context, index) {
                                       final event = documentos[index];
+                                      final screenWidth = MediaQuery.of(context).size.width;
+                                      final screenHeight = MediaQuery.of(context).size.height;
 
-                                      return Container(
-                                        width: MediaQuery.of(context).size.width*0.75,
-                                        height: constraints.maxWidth < 400? constraints.maxWidth*1.2: constraints.maxWidth*1.2,
-                                        child: Center(
-                                          child: Card(
-                                              color: Color.fromRGBO(237, 237, 237,1),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Container(
-                                                width: MediaQuery.of(context).size.width*0.75,
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      height: MediaQuery.of(context).size.height*0.03,
-                                                      width: MediaQuery.of(context).size.width*0.01,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        Text(event.pvEstadoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:Colors.grey[500],
-                                                          fontSize:constraints.maxWidth*0.04,)),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        SizedBox(
-                                                          width: constraints.maxWidth*0.40,
-                                                          height: constraints.maxWidth*0.30,
-                                                          child: event.plFotografias[0].pvFotografiaB64 != null  ? ClipRRect(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                            child: Image.memory(base64Decode(event.plFotografias[0].pvFotografiaB64!),
-                                                              fit: BoxFit.fill,
-                                                              width: double.infinity,),
-                                                          ):Center(),
-                                                        ),
-                                                        Column(
-                                                          children: [
-                                                            SizedBox(
-                                                              width: constraints.maxWidth*0.40,
-                                                              child: Text("Ticket ${ event.pnGestion}",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
-                                                                fontSize: constraints.maxWidth*0.045,),maxLines: 2,textAlign: TextAlign.center,),
-                                                            ),
-                                                            SizedBox(
-                                                              width: constraints.maxWidth*0.40,
-                                                              child: Text(event.pvDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
-                                                                fontSize: constraints.maxWidth*0.045),maxLines: 2,textAlign: TextAlign.center,),
-                                                            ),
-                                                            SizedBox(
-                                                              width: constraints.maxWidth*0.40,
-                                                              child: Text(event.pvPropiedadDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
-                                                                fontSize: constraints.maxWidth*0.045,),maxLines: 2,textAlign: TextAlign.center,),
-                                                            ),
-                                                            SizedBox(
-                                                              width: constraints.maxWidth*0.40,
-                                                              child: Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event.pfFecha!)),style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
-                                                                fontSize: constraints.maxWidth*0.045,),maxLines: 2,textAlign: TextAlign.center,),
-                                                            ),
-                                                            ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: MediaQuery.of(context).size.height*0.03,
-                                                      width: MediaQuery.of(context).size.width*0.03,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Text("CREACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color:Color.fromRGBO(167,167,132,1),
-                                                              fontSize:constraints.maxWidth*0.04,)),
-                                                            Text(
-                                                                  () {
-                                                                    final raw = event.pvTiempoCreacion;
-                                                                    if (raw == null || raw == 0) return 'Sin atender';
-                                                                    Duration duration = Duration(seconds: raw);
-                                                                    int days = duration.inDays;
-                                                                    int hours = duration.inHours % 24;
-                                                                    int minutes = duration.inMinutes % 60;
-                                                                    return "${days}d ${hours}h ${minutes}m";
-                                                                  }(),
-                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Colors.grey[500],
-                                                                fontSize: constraints.maxWidth * 0.04,
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: screenHeight * 0.008,
+                                          horizontal: screenWidth * 0.04,
+                                        ),
+                                        child: Card(
+                                                color: Color.fromRGBO(237, 237, 237,1),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Container(
+                                                  width: MediaQuery.of(context).size.width*0.75,
+                                                  child: Column(
+                                                    children: [
+                                                      SizedBox(
+                                                        height: MediaQuery.of(context).size.height*0.03,
+                                                        width: MediaQuery.of(context).size.width*0.01,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Text(event.pvEstadoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                            color:Colors.grey[500],
+                                                            fontSize:constraints.maxWidth*0.04,)),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: constraints.maxWidth*0.40,
+                                                            height: constraints.maxWidth*0.30,
+                                                            child: event.plFotografias[0].pvFotografiaB64 != null  ? ClipRRect(
+                                                              borderRadius: BorderRadius.circular(10),
+                                                              child: Image.memory(base64Decode(event.plFotografias[0].pvFotografiaB64!),
+                                                                fit: BoxFit.fill,
+                                                                width: double.infinity,),
+                                                            ):Center(),
+                                                          ),
+                                                          Column(
+                                                            children: [
+                                                              SizedBox(
+                                                                width: constraints.maxWidth*0.40,
+                                                                child: Text("Ticket ${ event.pnGestion}",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Color.fromRGBO(167,167,132,1),
+                                                                  fontSize: constraints.maxWidth*0.045,),maxLines: 2,textAlign: TextAlign.center,),
                                                               ),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Text("ATENCIÓN",style: theme.textTheme.headlineSmall?.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color:Color.fromRGBO(167,167,132,1),
-                                                              fontSize:constraints.maxWidth*0.04,)),
-
-                                                            Text(
-                                                                  () {
-                                                                final raw = event.pvTiempoAtencion;
-                                                                if (raw == null || raw.isEmpty) return 'Sin atender';
-                                                                Duration duration = Duration(seconds: int.parse(raw));
-                                                                    int days = duration.inDays;
-                                                                    int hours = duration.inHours % 24;
-                                                                    int minutes = duration.inMinutes % 60;
-                                                                return "${days}d ${hours}h ${minutes}m";
-                                                              }(),
-                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Colors.grey[500],
-                                                                fontSize: constraints.maxWidth * 0.04,
+                                                              SizedBox(
+                                                                width: constraints.maxWidth*0.40,
+                                                                child: Text(event.pvDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Color.fromRGBO(167,167,132,1),
+                                                                  fontSize: constraints.maxWidth*0.045),maxLines: 2,textAlign: TextAlign.center,),
                                                               ),
-                                                            )
-                                                          ],
-                                                        ),
-
-                                                        /*
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Text("CLASIFICACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color:Color.fromRGBO(167,167,132,1),
-                                                              fontSize: constraints.maxWidth*0.04,)),
-                                                            Text(event.pvGestionTipoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color:Colors.grey[500],
-                                                              fontSize: constraints.maxWidth*0.04,))
-                                                          ],
-                                                        )
-                                                         */
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: MediaQuery.of(context).size.height*0.03,
-                                                      width: MediaQuery.of(context).size.width*0.03,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      children: [
-                                                        /*Column(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Text("ESTADO",style: theme.textTheme.headlineSmall?.copyWith(
-                                                              fontWeight: FontWeight.bold,
-                                                              color:Color.fromRGBO(167,167,132,1),
-                                                              fontSize:constraints.maxWidth*0.04,)),
-
-                                                          ],
-                                                        ),*/
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width*0.35,
-                                                          child: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                              SizedBox(
+                                                                width: constraints.maxWidth*0.40,
+                                                                child: Text(event.pvPropiedadDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Color.fromRGBO(167,167,132,1),
+                                                                  fontSize: constraints.maxWidth*0.045,),maxLines: 2,textAlign: TextAlign.center,),
+                                                              ),
+                                                              SizedBox(
+                                                                width: constraints.maxWidth*0.40,
+                                                                child: Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event.pfFecha!)),style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Color.fromRGBO(167,167,132,1),
+                                                                  fontSize: constraints.maxWidth*0.045,),maxLines: 2,textAlign: TextAlign.center,),
+                                                              ),
+                                                              ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: MediaQuery.of(context).size.height*0.03,
+                                                        width: MediaQuery.of(context).size.width*0.03,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Column(
                                                             crossAxisAlignment: CrossAxisAlignment.center,
                                                             children: [
-                                                              Text("GESTIÓN",style: theme.textTheme.headlineSmall?.copyWith(
+                                                              Text("CREACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                color:Color.fromRGBO(167,167,132,1),
+                                                                fontSize:constraints.maxWidth*0.04,)),
+                                                              Text(
+                                                                    () {
+                                                                      final raw = event.pvTiempoCreacion;
+                                                                      if (raw == null || raw == 0) return 'Sin atender';
+                                                                      Duration duration = Duration(seconds: raw);
+                                                                      int days = duration.inDays;
+                                                                      int hours = duration.inHours % 24;
+                                                                      int minutes = duration.inMinutes % 60;
+                                                                      return "${days}d ${hours}h ${minutes}m";
+                                                                    }(),
+                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Colors.grey[500],
+                                                                  fontSize: constraints.maxWidth * 0.04,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              Text("ATENCIÓN",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                color:Color.fromRGBO(167,167,132,1),
+                                                                fontSize:constraints.maxWidth*0.04,)),
+
+                                                              Text(
+                                                                    () {
+                                                                  final raw = event.pvTiempoAtencion;
+                                                                  if (raw == null || raw.isEmpty) return 'Sin atender';
+                                                                  Duration duration = Duration(seconds: int.parse(raw));
+                                                                      int days = duration.inDays;
+                                                                      int hours = duration.inHours % 24;
+                                                                      int minutes = duration.inMinutes % 60;
+                                                                  return "${days}d ${hours}h ${minutes}m";
+                                                                }(),
+                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Colors.grey[500],
+                                                                  fontSize: constraints.maxWidth * 0.04,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+
+                                                          /*
+                                                          Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              Text("CLASIFICACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
                                                                 fontWeight: FontWeight.bold,
                                                                 color:Color.fromRGBO(167,167,132,1),
                                                                 fontSize: constraints.maxWidth*0.04,)),
@@ -3657,56 +3649,92 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                 color:Colors.grey[500],
                                                                 fontSize: constraints.maxWidth*0.04,))
                                                             ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width*0.35,
-                                                          child: Column(
+                                                          )
+                                                           */
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: MediaQuery.of(context).size.height*0.03,
+                                                        width: MediaQuery.of(context).size.width*0.03,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                          /*Column(
                                                             mainAxisAlignment: MainAxisAlignment.center,
                                                             crossAxisAlignment: CrossAxisAlignment.center,
                                                             children: [
-                                                              Text("CALIFICACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
+                                                              Text("ESTADO",style: theme.textTheme.headlineSmall?.copyWith(
                                                                 fontWeight: FontWeight.bold,
                                                                 color:Color.fromRGBO(167,167,132,1),
-                                                                fontSize: MediaQuery.of(context).size.width*0.04,)),
-                                                              Center(child: RatingBar.builder(
-                                                                initialRating: event.pnCalificacion!.toDouble(), // Initial rating value
-                                                                minRating: 1,
-                                                                direction: Axis.horizontal,
-                                                                allowHalfRating: true,
-                                                                itemCount: 5,
-                                                                itemSize: constraints.maxWidth < 400 ? 15: 30,
-                                                                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                                itemBuilder: (context, _) => Icon(
-                                                                  Icons.star,
-                                                                  color: Colors.amber,
-                                                                ),
-                                                                onRatingUpdate: (rating) {
-                                                                  debugPrint(rating.toString()); // Handle rating changes
-                                                                },
-                                                              ),)
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      width: MediaQuery.of(context).size.width*0.35,
-                                                      child: TextButton(onPressed: ()
-                                                      {
+                                                                fontSize:constraints.maxWidth*0.04,)),
 
-                                                      }, child: Text("Seguimiento",style: theme.textTheme.headlineSmall?.copyWith(
-                                                        fontWeight: FontWeight.bold,
-                                                        color:Color.fromRGBO(167,167,132,1),
-                                                        fontSize: constraints.maxWidth*0.04,)),),
-                                                    ),
-                                                  ],
+                                                            ],
+                                                          ),*/
+                                                          SizedBox(
+                                                            width: MediaQuery.of(context).size.width*0.35,
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              children: [
+                                                                Text("GESTIÓN",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Color.fromRGBO(167,167,132,1),
+                                                                  fontSize: constraints.maxWidth*0.04,)),
+                                                                Text(event.pvGestionTipoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Colors.grey[500],
+                                                                  fontSize: constraints.maxWidth*0.04,))
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: MediaQuery.of(context).size.width*0.35,
+                                                            child: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              children: [
+                                                                Text("CALIFICACIÓN",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Color.fromRGBO(167,167,132,1),
+                                                                  fontSize: MediaQuery.of(context).size.width*0.04,)),
+                                                                Center(child: RatingBar.builder(
+                                                                  initialRating: event.pnCalificacion!.toDouble(), // Initial rating value
+                                                                  minRating: 1,
+                                                                  direction: Axis.horizontal,
+                                                                  allowHalfRating: true,
+                                                                  itemCount: 5,
+                                                                  itemSize: constraints.maxWidth < 400 ? 15: 30,
+                                                                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                                  itemBuilder: (context, _) => Icon(
+                                                                    Icons.star,
+                                                                    color: Colors.amber,
+                                                                  ),
+                                                                  onRatingUpdate: (rating) {
+                                                                    debugPrint(rating.toString()); // Handle rating changes
+                                                                  },
+                                                                ),)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: MediaQuery.of(context).size.width*0.35,
+                                                        child: TextButton(onPressed: ()
+                                                        {
+
+                                                        }, child: Text("Seguimiento",style: theme.textTheme.headlineSmall?.copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                          color:Color.fromRGBO(167,167,132,1),
+                                                          fontSize: constraints.maxWidth*0.04,)),),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                      );
+                                        );
                                     },
                                   );
                                 }
@@ -4134,22 +4162,25 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
 
   }
 
-  Future<void> makeApiCall(String numeroDocumento,String montoPago,String formaPago,String fechaPago,String numeroAutorizacion,String imagen,)
+  Future<void> makeApiCall(String numeroDocumento,String montoPago,String formaPago,String fechaPago,String numeroAutorizacion,String imagen,String reserva)
   async {
     // Example API call
     debugPrint("crear pago");
-    ServicioListadoCargoClienteCargar(numeroDocumento,montoPago,formaPago,fechaPago,numeroDocumento,imagen);
-    await ServicioListadoCargoClienteCargar(numeroDocumento,montoPago,formaPago,fechaPago,numeroDocumento,imagen)
+    ServicioListadoCargoClienteCargar(numeroDocumento,montoPago,formaPago,fechaPago,numeroAutorizacion,imagen,reserva);
+    await ServicioListadoCargoClienteCargar(numeroDocumento,montoPago,formaPago,fechaPago,numeroAutorizacion,imagen,reserva)
         .hacerPago();
+
     setState(() {
-      montoPagarController.clear();
+      Navigator.of(context).pop();
+      _futureDocumentos = homeController.documentosListados5B();
+      _futureDocumentos = homeController.documentosListados5B();
+      reloadreserva();
+      _futureReservas = homeController.amenidadesReservadas5B();
+      montoPagarControllerB.clear();
       fechaPagoController.clear();
       numeroAutorizacionController.clear();
       formaPagoController.clear();
-      Navigator.of(context).pop();
-      _futureDocumentos = homeController.documentosListados5B();
     });
-
     //Navigator.of(context).pop();
     //msgxToast("Pago realizado correctamente");
   }
@@ -4447,6 +4478,16 @@ void showImageDialog2(BuildContext context, String imageUrl) {
   );
 }
 void showImageDialog3(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      content: Image.memory(base64Decode(imageUrl),
+
+      ),
+    ),
+  );
+}
+void showImageDialog4(BuildContext context, String imageUrl) {
   showDialog(
     context: context,
     builder: (_) => AlertDialog(

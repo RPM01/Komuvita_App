@@ -76,7 +76,6 @@ class AdmCrearReservaController extends GetxController {
           {
             debugPrint("Si funciona verificar el mensaje");
             Get.offAllNamed(MyRoute.loginScreen);
-
           }
 
         // Si no hay datos
@@ -97,13 +96,15 @@ class AdmCrearReservaController extends GetxController {
         throw Exception("❌ HTTP ${response.statusCode}");
       }
     } catch (e) {
+
+
       if(e.toString() == "Exception: El token ha expirado")
       {
-        debugPrint("Si funciona verificar el mensaje");
         msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
         Get.offAllNamed(MyRoute.loginScreen);
       }
-      debugPrint(e.toString());
+
       debugPrint("❌ Exception: $e");
 
       return [];
@@ -116,6 +117,7 @@ class reservaAmenidadCreacion
     String clienteNombre="";
     String propiedadID="";
     String porpiedadNombre="";
+    String propiedadDireccion ="";
     String amenidad="";
     String fecha="";
     String horaInicio = "";
@@ -125,7 +127,7 @@ class reservaAmenidadCreacion
     String observaciones = "";
 
 
-  reservaAmenidadCreacion(this.clienteNombre,this.propiedadID,this.porpiedadNombre,this.amenidad,
+  reservaAmenidadCreacion(this.clienteNombre,this.propiedadID,this.porpiedadNombre,this.propiedadDireccion,this.amenidad,
       this.fecha,this.horaInicio,this.horaFin,this.moneda,this.valorA_Cobrar,this.observaciones);
 
     Future<List<Map<String, dynamic>>>reservaAmenidadCreacionF6()async
@@ -157,8 +159,8 @@ class reservaAmenidadCreacion
           "pv_cliente": clienteIDset,
           "pv_cliente_nombre":clienteNombre,
           "pv_propiedad": propiedadID,
-          "pv_propiedad_nombre": porpiedadNombre,
-          "pv_propiedad_direccion": porpiedadNombre,
+          "pv_propiedad_nombre": propiedadDireccion,
+          "pv_propiedad_direccion": propiedadDireccion,
           "pn_amenidad": amenidad,
           "pf_fecha": fecha,
           "pv_hora_inicio": horaInicio,
@@ -172,7 +174,7 @@ class reservaAmenidadCreacion
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
 
-      debugPrint("Creacion reservas");
+      debugPrint("Creacion_reservas6");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
@@ -184,17 +186,20 @@ class reservaAmenidadCreacion
         final datos = json["datos"];
 
         if (datos == null) {
+          msgxToast(json["resultado"]["pv_error_descripcion"] );
           debugPrint("⚠️ 'datos' is null in response");
           return [];
         }
 
         if (datos is List) {
+          msgxToast(json["resultado"]["pv_error_descripcion"] );
           var list = List<Map<String, dynamic>>.from(datos);
           debugPrint("✅ 'datos' is a List with ${list.length} items");
           return list;
         }
 
         if (datos is Map) {
+          msgxToast(json["resultado"]["pv_error_descripcion"] );
           debugPrint("✅ 'datos' is a single Map, wrapping it in a List");
           return [Map<String, dynamic>.from(datos)];
         }
@@ -203,16 +208,21 @@ class reservaAmenidadCreacion
         return [];
         }
         else
-        {
+        {msgxToast(json["resultado"]["pv_error_descripcion"]);
+
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
         }
       }
     }
     catch(e)
     {
-      //Get.back();
-      debugPrint(e.toString());
-      msgxToast(e.toString());
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       //Get.back();
       return [];
     }

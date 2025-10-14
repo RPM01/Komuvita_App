@@ -53,8 +53,8 @@ class ForgotPasswordController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          "https://apidesa.komuvita.com/administracion/usuarios/restablecer_clave"
-          //"http://api.komuvita.com/administracion/usuarios/restablecer_clave"
+          //"https://apidesa.komuvita.com/administracion/usuarios/restablecer_clave"
+          "http://api.komuvita.com/administracion/usuarios/restablecer_clave"
       );
       Map body = {
         "autenticacion":
@@ -86,7 +86,13 @@ class ForgotPasswordController extends GetxController {
     }
     catch(e)
     {
-      Get.back();
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       showDialog(
           context: Get.context!,
           builder: (context)

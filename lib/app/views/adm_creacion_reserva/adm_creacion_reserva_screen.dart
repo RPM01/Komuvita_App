@@ -67,9 +67,15 @@ class _AdmCreacionResrvaScreenState extends State<AdmCreacionReservaScreen> {
   Key _pageKey = UniqueKey();
   bool  isChecked = false;
 String terminosCondiciones = "";
+
+  String propiedadNombre = "";
+  String propiedadDireccion = "";
+
   @override
   void initState() {
     super.initState();
+    _futureReservas = adm_reservaController.amenidadesReservadasListaF1();
+
     getUserInfo();
     theme = adm_reservaController.themeController.isDarkMode
         ? AdmTheme.admDarkTheme
@@ -95,7 +101,6 @@ String terminosCondiciones = "";
       debugPrint("cliente!!");
       debugPrint(prefs.getString("cliente"));
        userName = prefs.getString("NombreUser")!;
-      _futureReservas = adm_reservaController.amenidadesReservadasListaF1();
       admincheck = prefs.getString("Admin")!;
       if(admincheck == "1")
       {
@@ -124,6 +129,126 @@ String terminosCondiciones = "";
 
     return numberFormat.format(amount);
   }
+
+
+  Widget _buildDateField({
+    required String label,
+    required TextEditingController controller,
+    required ThemeData theme,
+    required BuildContext context,
+    required double width,
+  }) {
+    return SizedBox(
+      width: width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: const Color.fromRGBO(6, 78, 116, 1),
+                fontWeight: FontWeight.bold,
+              )),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            readOnly: true,
+            decoration: InputDecoration(
+              hintText: label,
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            ),
+            onTap: () async {
+              DateTime? fechaSelect = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(3000),
+                builder: (BuildContext context, Widget? child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: const ColorScheme.light(
+                        primary: Color.fromRGBO(6, 78, 116, 1),
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+
+              if (fechaSelect != null) {
+                setState(() {
+                  controller.text = DateFormat('dd/MM/yyyy').format(fechaSelect);
+                });
+              }
+            },
+            validator: (value) =>
+            (value == null || value.isEmpty) ? 'Información requerida' : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeField({
+    required String label,
+    required TextEditingController controller,
+    required ThemeData theme,
+    required BuildContext context,
+    required double width,
+  }) {
+    return SizedBox(
+      width: width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: const Color.fromRGBO(6, 78, 116, 1),
+                fontWeight: FontWeight.bold,
+              )),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            readOnly: true,
+            decoration: InputDecoration(
+              hintText: label,
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            ),
+            onTap: () async {
+              TimeOfDay? timePicked = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+                builder: (BuildContext context, Widget? child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: const ColorScheme.light(
+                        primary: Color.fromRGBO(6, 78, 116, 1),
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+
+              if (timePicked != null) {
+                final now = DateTime.now();
+                final parsedTime = DateTime(now.year, now.month, now.day, timePicked.hour, timePicked.minute);
+                final formatted = DateFormat('HH:mm').format(parsedTime);
+                setState(() {
+                  controller.text = formatted;
+                });
+              }
+            },
+            validator: (value) =>
+            (value == null || value.isEmpty) ? 'Información requerida' : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -382,7 +507,7 @@ String terminosCondiciones = "";
                       } else if (snapshot.hasError) {
                         return Center(
                           child: Text(
-                            "Error cargando reservas",
+                            "No hay reservas disponibles",
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: MediaQuery.of(context).size.width * 0.035,
@@ -393,7 +518,7 @@ String terminosCondiciones = "";
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Center(
                           child: Text(
-                            "No hay documentos Pendientes",
+                            "No hay reservas disponibles",
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: MediaQuery.of(context).size.width * 0.035,
@@ -675,8 +800,13 @@ String terminosCondiciones = "";
 
 
                                                     setState(() {
-                                                      propiedadAcobrar = clientesIdsSet[0].toString();
-                                                      observacionesController.text = "";
+                                                      propiedadAcobrar = propiedadesInternasIdsSetB[0].toString();
+                                                      observacionesController.text = " ";
+                                                      propiedadNombre =  propiedadesInternaNombresSetB[0].toString();
+                                                      propiedadDireccion = propiedadesDireccionNombresSetB[0].toString();
+                                                      debugPrint(propiedadAcobrar);
+                                                      debugPrint(propiedadNombre);
+                                                      debugPrint(propiedadDireccion);
                                                     });
                                                     if(documentos[setAmenidad].pnBloqueada == 1)
                                                       {
@@ -705,6 +835,7 @@ String terminosCondiciones = "";
                                                         builder: (BuildContext context) {
                                                           return  StatefulBuilder(
                                                               builder: (BuildContext context, StateSetter setStateDialog) {
+                                                                final fieldWidth = constraints.maxWidth * 0.4;
                                                                 return AlertDialog(
                                                                   title: const Text("Agregar un nuevo evento"),
                                                                   content: SingleChildScrollView(
@@ -741,7 +872,7 @@ String terminosCondiciones = "";
                                                                               return null; // Return null if the input is valid
                                                                             },
                                                                             isExpanded: true,
-                                                                            value: clientesIdsSet[0].toString(),
+                                                                            value: clientesIdsSetB[0].toString(),
                                                                             hint: const Text("Seleccione una empresa"),
                                                                             decoration: InputDecoration(
                                                                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -760,10 +891,10 @@ String terminosCondiciones = "";
                                                                               color: Colors.black87,
                                                                             ),
                                                                             icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                                                            items: List.generate(clientesIdsSet.length, (index) {
+                                                                            items: List.generate(clientesIdsSetB.length, (index) {
                                                                               return DropdownMenuItem<String>(
-                                                                                value: clientesIdsSet[index],
-                                                                                child: Text("${propiedadesInternaNombresSet[index]} ${propiedadesDireccionNombresSet[index]}",
+                                                                                value: clientesIdsSetB[index],
+                                                                                child: Text("${propiedadesInternaNombresSetB[index]} ${propiedadesDireccionNombresSetB[index]}",
                                                                                   style: const TextStyle(
                                                                                     fontSize:  20,
                                                                                     color: Colors.black,
@@ -773,10 +904,16 @@ String terminosCondiciones = "";
                                                                             }),
                                                                             onChanged: (value) {
                                                                               setState(() {
-                                                                                int index = propiedadesInternasIdsSet.indexOf(value!);
-                                                                                propiedadAcobrar = value;
+                                                                                int index = clientesIdsSetB.indexOf(value!);
+                                                                                //propiedadAcobrar = value;
+                                                                                debugPrint(index.toString());
+                                                                                propiedadAcobrar = propiedadesInternasIdsSetB[index].toString();
+                                                                                propiedadNombre =  propiedadesInternaNombresSetB[index].toString();
+                                                                                propiedadDireccion = propiedadesDireccionNombresSetB[index].toString();
                                                                                 clienteIDset = value;
                                                                                 debugPrint(propiedadAcobrar);
+                                                                                debugPrint(propiedadNombre);
+                                                                                debugPrint(propiedadDireccion);
 
                                                                               });
                                                                             },
@@ -794,12 +931,6 @@ String terminosCondiciones = "";
                                                                               setStateDialog(() {
                                                                                 eventoUbicacionController.text = value;
                                                                               });
-                                                                            },
-                                                                            validator: (String? value) {
-                                                                              if (value == null || value.isEmpty) {
-                                                                                return 'Información requerida'; // Error message if empty
-                                                                              }
-                                                                              return null; // Return null if the input is valid
                                                                             },
                                                                           ),
                                                                           10.height,
@@ -937,269 +1068,55 @@ String terminosCondiciones = "";
                                                                                 ],
                                                                               ),
                                                                               10.height,
-                                                                              Row(
+                                                                              Column(
+                                                                                mainAxisSize: MainAxisSize.min,
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: [
-                                                                                  SizedBox(
-                                                                                      width:constraints.maxWidth*0.35,
-                                                                                      child: Column(
-                                                                                        children: [
-                                                                                          Title(color:  Color.fromRGBO(6, 78, 116, 1), child: Text("Fecha de Inicio")),
-                                                                                          TextFormField(
-                                                                                            validator: (String? value) {
-                                                                                              if (value == null || value.isEmpty) {
-                                                                                                return 'Información requerida'; // Error message if empty
-                                                                                              }
-                                                                                              return null; // Return null if the input is valid
-                                                                                            },
-
-                                                                                            decoration:   const InputDecoration(
-                                                                                              hintText: "fecha de inicio",
-                                                                                            ),
-                                                                                            textInputAction: TextInputAction.next,
-                                                                                            controller: fechaController,
-                                                                                            readOnly: true,
-                                                                                            onTap: () async {
-                                                                                              DateTime ? fechaSelect = await showDatePicker(
-                                                                                                context: context,
-                                                                                                initialDate: DateTime.now(),
-                                                                                                firstDate: DateTime(2000),
-                                                                                                lastDate: DateTime(3000),
-                                                                                                builder: (BuildContext context, Widget? child) {
-                                                                                                  return Theme(
-                                                                                                    data: Theme.of(context).copyWith(
-                                                                                                      colorScheme: ColorScheme.light(
-                                                                                                        primary: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                      ),
-                                                                                                      textButtonTheme: TextButtonThemeData(
-                                                                                                        style: TextButton.styleFrom(
-                                                                                                          textStyle:theme.textTheme.bodyMedium?.copyWith(
-                                                                                                            fontWeight: FontWeight.bold,
-                                                                                                            fontSize: MediaQuery.of(context).size.width*0.035,
-                                                                                                            color: Color.fromRGBO(6,78,116,1),
-                                                                                                          ),
-                                                                                                          minimumSize: Size(1.5 ,1.5),
-                                                                                                          foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                    child: child!,
-                                                                                                  );
-                                                                                                },
-                                                                                              );
-
-                                                                                              if (fechaSelect != null) {
-                                                                                                setState(() {
-                                                                                                  // Format as yyyy-MM-dd
-                                                                                                  fechaController.text = DateFormat('dd/MM/yyyy').format(fechaSelect!);
-                                                                                                });
-                                                                                              }
-                                                                                            },
-
-                                                                                          ),
-                                                                                        ],
-                                                                                      )
+                                                                                  // === Row 1 ===
+                                                                                  Wrap(
+                                                                                    spacing: 16,
+                                                                                    runSpacing: 16,
+                                                                                    alignment: WrapAlignment.spaceBetween,
+                                                                                    children: [
+                                                                                      _buildDateField(
+                                                                                        label: "Fecha de Inicio",
+                                                                                        controller: fechaController,
+                                                                                        theme: theme,
+                                                                                        context: context,
+                                                                                        width: fieldWidth,
+                                                                                      ),
+                                                                                      _buildTimeField(
+                                                                                        label: "Hora de Inicio",
+                                                                                        controller: horaInicioController,
+                                                                                        theme: theme,
+                                                                                        context: context,
+                                                                                        width: fieldWidth,
+                                                                                      ),
+                                                                                    ],
                                                                                   ),
-                                                                                  SizedBox(
-                                                                                      width:constraints.maxWidth*0.35,
-                                                                                      child: Column(
-                                                                                        children: [
-                                                                                          Title(color:  Color.fromRGBO(6, 78, 116, 1), child: Text("Hora de Inicio")),
-                                                                                          TextFormField(
-                                                                                            textInputAction: TextInputAction.next,
-                                                                                            controller: horaInicioController,
-                                                                                            readOnly: true,
-                                                                                            onTap: () async {
-                                                                                              TimeOfDay? horaInicioSelect = await showTimePicker(
-                                                                                                context: context,
-                                                                                                initialTime: TimeOfDay.now(),
-                                                                                                initialEntryMode: TimePickerEntryMode.dial,
-                                                                                                builder: (BuildContext context, Widget? child) {
-                                                                                                  return Theme(
-                                                                                                    data: Theme.of(context).copyWith(
-                                                                                                      colorScheme: const ColorScheme.light(
-                                                                                                        primary: Color.fromRGBO(6, 78, 116, 1),
-                                                                                                      ),
-                                                                                                      textButtonTheme: TextButtonThemeData(
-                                                                                                        style: TextButton.styleFrom(
-                                                                                                          textStyle:theme.textTheme.bodyMedium?.copyWith(
-                                                                                                            fontWeight: FontWeight.bold,
-                                                                                                            fontSize: MediaQuery.of(context).size.width*0.035,
-                                                                                                            color: Color.fromRGBO(6,78,116,1),
-                                                                                                          ),
-                                                                                                          minimumSize: Size(1.5 ,1.5),
-                                                                                                          foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                    child: child!,
-                                                                                                  );
-                                                                                                },
-                                                                                              );
-
-                                                                                              if (horaInicioSelect != null) {
-                                                                                                final now = DateTime.now();
-                                                                                                final parsedDateTime = DateTime(
-                                                                                                  now.year,
-                                                                                                  now.month,
-                                                                                                  now.day,
-                                                                                                  horaInicioSelect.hour,
-                                                                                                  0,
-                                                                                                );
-                                                                                                final formattedTime = DateFormat('HH:mm').format(parsedDateTime);
-                                                                                                setState(() {
-                                                                                                  horaInicioController.text = formattedTime;
-                                                                                                });
-                                                                                              }
-                                                                                            },
-                                                                                            decoration: const InputDecoration(
-                                                                                              labelText: 'Hora de Inicio',
-                                                                                              border: OutlineInputBorder(),
-                                                                                            ),
-                                                                                            validator: (String? value) {
-                                                                                              if (value == null || value.isEmpty) {
-                                                                                                return 'Información requerida'; // Error message if empty
-                                                                                              }
-                                                                                              return null; // Return null if the input is valid
-                                                                                            },
-                                                                                          ),
-                                                                                        ],
-                                                                                      )
-                                                                                  )
-                                                                                ],
-                                                                              ),
-                                                                              10.height,
-                                                                              Row(
-                                                                                children: [
-                                                                                  SizedBox(
-                                                                                      width:constraints.maxWidth*0.35,
-                                                                                      child: Column(
-                                                                                        children: [
-                                                                                          Title(color:  Color.fromRGBO(6, 78, 116, 1), child: Text("Fecha de  Finalización")),
-                                                                                          TextFormField(
-                                                                                            textInputAction: TextInputAction.next,
-                                                                                            controller: fechaController,
-                                                                                            readOnly: true,
-                                                                                            onTap: () async {
-                                                                                              DateTime ? fechaSelect = await showDatePicker(
-                                                                                                context: context,
-                                                                                                initialDate: DateTime.now(),
-                                                                                                firstDate: DateTime(2000),
-                                                                                                lastDate: DateTime(3000),
-                                                                                                builder: (BuildContext context, Widget? child) {
-                                                                                                  return Theme(
-                                                                                                    data: Theme.of(context).copyWith(
-                                                                                                      colorScheme: ColorScheme.light(
-                                                                                                        primary: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                      ),
-                                                                                                      textButtonTheme: TextButtonThemeData(
-                                                                                                        style: TextButton.styleFrom(
-                                                                                                          textStyle:theme.textTheme.bodyMedium?.copyWith(
-                                                                                                            fontWeight: FontWeight.bold,
-                                                                                                            fontSize: MediaQuery.of(context).size.width*0.035,
-                                                                                                            color: Color.fromRGBO(6,78,116,1),
-                                                                                                          ),
-                                                                                                          minimumSize: Size(1.5 ,1.5),
-                                                                                                          foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                    child: child!,
-                                                                                                  );
-                                                                                                },
-                                                                                              );
-
-                                                                                              if (fechaSelect != null) {
-                                                                                                setState(() {
-                                                                                                  // Format as yyyy-MM-dd
-                                                                                                  fechaController.text = DateFormat('dd/MM/yyyy').format(fechaSelect!);
-                                                                                                });
-                                                                                              }
-                                                                                            },
-                                                                                            decoration: InputDecoration(
-                                                                                              labelText: 'Fecha de  Finalización',
-                                                                                              border: OutlineInputBorder(),
-                                                                                            ),
-                                                                                            validator: (String? value) {
-                                                                                              if (value == null || value.isEmpty) {
-                                                                                                return 'Información requerida'; // Error message if empty
-                                                                                              }
-                                                                                              return null; // Return null if the input is valid
-                                                                                            },
-                                                                                          ),
-                                                                                        ],
-                                                                                      )
+                                                                                  const SizedBox(height: 20),
+                                                                                  // === Row 2 ===
+                                                                                  Wrap(
+                                                                                    spacing: 16,
+                                                                                    runSpacing: 16,
+                                                                                    alignment: WrapAlignment.spaceBetween,
+                                                                                    children: [
+                                                                                      _buildDateField(
+                                                                                        label: "Fecha de Finalización",
+                                                                                        controller: fechaController,
+                                                                                        theme: theme,
+                                                                                        context: context,
+                                                                                        width: fieldWidth,
+                                                                                      ),
+                                                                                      _buildTimeField(
+                                                                                        label: "Hora de Finalización",
+                                                                                        controller: horaFinalController,
+                                                                                        theme: theme,
+                                                                                        context: context,
+                                                                                        width: fieldWidth,
+                                                                                      ),
+                                                                                    ],
                                                                                   ),
-                                                                                  SizedBox(
-                                                                                      width:constraints.maxWidth*0.35,
-                                                                                      child: Column(
-                                                                                        children: [
-                                                                                          Title(color:  Color.fromRGBO(6, 78, 116, 1), child: Text("Hora de  Finalización")),
-                                                                                          TextFormField(
-                                                                                            validator: (String? value) {
-                                                                                              if (value == null || value.isEmpty) {
-                                                                                                return 'Información requerida'; // Error message if empty
-                                                                                              }
-                                                                                              return null; // Return null if the input is valid
-                                                                                            },
-                                                                                            textInputAction: TextInputAction.next,
-                                                                                            controller: horaFinalController,
-                                                                                            readOnly: true,
-                                                                                            onTap: () async {
-                                                                                              TimeOfDay? horaInicioSelect = await showTimePicker(
-                                                                                                context: context,
-                                                                                                initialTime: TimeOfDay.now(),
-                                                                                                initialEntryMode: TimePickerEntryMode.dial,
-                                                                                                builder: (BuildContext context, Widget? child) {
-                                                                                                  return Theme(
-                                                                                                    data: Theme.of(context).copyWith(
-                                                                                                      colorScheme: const ColorScheme.light(
-                                                                                                        primary: Color.fromRGBO(6, 78, 116, 1),
-                                                                                                      ),
-                                                                                                      textButtonTheme: TextButtonThemeData(
-                                                                                                        style: TextButton.styleFrom(
-                                                                                                          textStyle:theme.textTheme.bodyMedium?.copyWith(
-                                                                                                            fontWeight: FontWeight.bold,
-                                                                                                            fontSize: MediaQuery.of(context).size.width*0.035,
-                                                                                                            color: Color.fromRGBO(6,78,116,1),
-                                                                                                          ),
-                                                                                                          minimumSize: Size(1.5 ,1.5),
-                                                                                                          foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                    child: child!,
-                                                                                                  );
-                                                                                                },
-                                                                                              );
-
-                                                                                              if (horaInicioSelect != null) {
-                                                                                                final now = DateTime.now();
-                                                                                                final parsedDateTime = DateTime(
-                                                                                                    now.year,
-                                                                                                    now.month,
-                                                                                                    now.day,
-                                                                                                    horaInicioSelect.hour,
-                                                                                                    0
-                                                                                                );
-
-
-                                                                                                final formattedTime = DateFormat('HH:mm').format(parsedDateTime);
-
-                                                                                                setState(() {
-                                                                                                  horaFinalController.text = formattedTime;
-                                                                                                });
-                                                                                              }
-                                                                                            },
-                                                                                            decoration: const InputDecoration(
-                                                                                              labelText: 'Hora de  Finalización',
-                                                                                              border: OutlineInputBorder(),
-                                                                                            ),
-                                                                                          ),
-
-                                                                                        ],
-                                                                                      )
-                                                                                  ),
-
                                                                                 ],
                                                                               ),
 
@@ -1216,12 +1133,7 @@ String terminosCondiciones = "";
                                                                                           observacionesController.text = value;
                                                                                         });
                                                                                       },
-                                                                                      validator: (String? value) {
-                                                                                        if (value == null || value.isEmpty) {
-                                                                                          return 'Información requerida'; // Error message if empty
-                                                                                        }
-                                                                                        return null; // Return null if the input is valid
-                                                                                      },
+
                                                                                     ),
                                                                                   ],
                                                                                 ),
@@ -1277,6 +1189,7 @@ String terminosCondiciones = "";
                                                                                   onPressed:()
                                                                                   {
                                                                                     if (!_formKey.currentState!.validate()) {
+                                                                                      msgxToast("Por favor complete todos los campos requeridos.");
                                                                                       ScaffoldMessenger.of(context).showSnackBar(
                                                                                         const SnackBar(
                                                                                           content: Text("Por favor complete todos los campos requeridos."),
@@ -1286,6 +1199,7 @@ String terminosCondiciones = "";
                                                                                     }
 
                                                                                     if (!isChecked) {
+                                                                                      msgxToast("Debe aceptar los términos y condiciones");
                                                                                       ScaffoldMessenger.of(context).showSnackBar(
                                                                                         const SnackBar(
                                                                                           content: Text("Debe aceptar los términos y condiciones."),
@@ -1293,11 +1207,19 @@ String terminosCondiciones = "";
                                                                                       );
                                                                                       return;
                                                                                     }
+                                                                                    if(observacionesController.text == ""||observacionesController.text == " "||observacionesController.text == null)
+                                                                                      {
+                                                                                        setStateDialog(() {
+                                                                                          observacionesController.text = "Observacion";
+                                                                                        });
+                                                                                      }
 
                                                                                     debugPrint("Info para reserva");
                                                                                     debugPrint(userName);
                                                                                     debugPrint(edificioID);
                                                                                     debugPrint(edificioDescripcion);
+                                                                                    debugPrint(propiedadNombre);
+                                                                                    debugPrint(propiedadDireccion);
                                                                                     debugPrint(documentos[setAmenidad].pvAmenidadDescripcion);
                                                                                     debugPrint(documentos[setAmenidad].pnAmenidad.toString());
                                                                                     DateTime fecha = DateFormat('dd/MM/yyyy').parse(fechaController.text);
@@ -1307,19 +1229,21 @@ String terminosCondiciones = "";
                                                                                     debugPrint(horaFinalController.text);
                                                                                     debugPrint(documentos[setAmenidad].pvMonedaDescripcion);
                                                                                     debugPrint(documentos[setAmenidad].pmValor.toString());
-                                                                                    reservaAmenidadCreacion(userName,propiedadAcobrar,edificioDescripcion, documentos[setAmenidad].pnAmenidad.toString(),formattedDate,horaInicioController.text, horaFinalController.text,documentos[setAmenidad].pvMonedaDescripcion, documentos[setAmenidad].pmValor.toString(),observacionesController.text).reservaAmenidadCreacionF6();
+                                                                                    reservaAmenidadCreacion(userName,propiedadAcobrar,propiedadNombre,propiedadDireccion,documentos[setAmenidad].pnAmenidad.toString(),formattedDate,horaInicioController.text, horaFinalController.text,documentos[setAmenidad].pvMonedaDescripcion, documentos[setAmenidad].pmValor.toString(),observacionesController.text).reservaAmenidadCreacionF6();
 
                                                                                     setState(() {
+                                                                                      Future.delayed(const Duration(milliseconds: 250), ()
+                                                                                      {
                                                                                       _futureReservas = adm_reservaController.amenidadesReservadasListaF1();
+                                                                                      reloadPage();
                                                                                       Navigator.of(context).pop();
-                                                                                      Future.delayed(const Duration(milliseconds: 250), () {
-                                                                                        reloadPage();
                                                                                       });
-                                                                                      //eventoController.clear();
-                                                                                      //fechaController.clear();
-                                                                                      //horaInicioController.clear();
-                                                                                      //horaFinalController.clear();
+                                                                                      eventoController.clear();
+                                                                                      fechaController.clear();
+                                                                                      horaInicioController.clear();
+                                                                                      horaFinalController.clear();
                                                                                     });
+
                                                                                     ScaffoldMessenger.of(context).showSnackBar(
                                                                                       const SnackBar(content: Text('Actualizando reservas...')),
                                                                                     );
@@ -1638,3 +1562,17 @@ void showImageDialog(BuildContext context, String imageUrl) {
     ),
   );
 }
+
+void msgxToast(String msxg){
+
+  Fluttertoast.showToast(
+    msg: msxg,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.CENTER,
+    timeInSecForIosWeb: 1,
+    backgroundColor: Colors.blue,
+    textColor: Colors.white,
+    fontSize: 20,
+  );
+}
+

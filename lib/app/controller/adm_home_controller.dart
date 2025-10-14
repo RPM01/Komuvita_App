@@ -115,7 +115,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       return [];
     }
@@ -195,7 +201,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -273,7 +285,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -354,7 +372,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -433,7 +457,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       return [];
     }
@@ -503,7 +533,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -587,7 +623,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       debugPrint("Amenidades reservadas 2");
       showDialog(
@@ -672,7 +714,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -769,6 +817,13 @@ class AdmHomeController extends GetxController {
         }
       }
     } catch (e) {
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint("❌ Exception: $e");
       showDialog(
         context: Get.context!,
@@ -860,7 +915,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -940,7 +1001,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -1019,7 +1086,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       return [];
     }
@@ -1110,7 +1183,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       return [];
     }
@@ -1182,7 +1261,13 @@ class AdmHomeController extends GetxController {
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -1291,6 +1376,13 @@ class AdmHomeController extends GetxController {
       }
 
     } catch (e) {
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
         context: Get.context!,
@@ -1351,9 +1443,9 @@ class ServicioListadoCargoClienteCargar{
   String fechaPago="";
   String numeroAutorizacion="";
   String imagen = "";
+  String reserva = "";
 
-
-  ServicioListadoCargoClienteCargar(this.numeroDocumento, this.montoPago,this.formaPago,this.fechaPago,this.numeroAutorizacion,this.imagen);
+  ServicioListadoCargoClienteCargar(this.numeroDocumento, this.montoPago,this.formaPago,this.fechaPago,this.numeroAutorizacion,this.imagen,this.reserva);
 
   Future<bool> hacerPago() async {
 
@@ -1368,92 +1460,6 @@ class ServicioListadoCargoClienteCargar{
     debugPrint("Empresa");
     debugPrint(empresa);
 
-
-    if(imagen == "" || imagen.isEmpty)
-    {
-      debugPrint("Aqui debe de ir Null");
-      try{
-        var headers = {
-          'Content-Type': 'application/json'
-        };
-        Map<String,dynamic> data =
-        {
-          "autenticacion": {
-            "pv_token": token
-          },
-          "parametros": {
-            "pn_empresa": empresaID,
-            "pn_documento": numeroDocumento,
-            "pn_forma_pago": formaPago,
-            "pf_fecha_pago":fechaPago,
-            "pm_monto":montoPago,
-            "pn_autorizacion": numeroAutorizacion,
-            "pv_comprobanteb64":null
-          }
-        };
-
-        var dio = Dio();
-        var response = await dio.request(
-          //"https://apidesa.komuvita.com/portal/cuentas/documento_aplicar_pago",
-           "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
-          options: Options(
-            method: 'POST',
-            headers: headers,
-          ),
-          data: data,
-        );
-        debugPrint(response.statusCode.toString());
-        debugPrint(data.toString());
-        if (response.statusCode == 200 && response.data['datos'] != []) {
-
-          String lista = json.encode(response.data);
-          // debugPrint(data.toString());
-          devLog.log(data.toString());
-          debugPrint(lista);
-          debugPrint("!!#####!!!!""######");
-          CargoLecturaClienteCrearListadoList = List<Map<String, dynamic>>.from(response.data['datos']!);
-
-           devLog.log(CargoLecturaClienteCrearListadoList.toString());
-          debugPrint(response.statusMessage);
-
-          verificacionClienteCrearCargoListado = response.data["resultado"]["pn_error"].toString();
-          mensajeErrorClienteCrearCargoListado = response.data["resultado"]["pv_error_descripcion"].toString();
-          recibo = response.data["datos"]["pn_recibo"].toString();
-          debugPrint(verificacionClienteCrearCargoListado);
-          msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
-
-          debugPrint("!!#####!!!!""######");
-          debugPrint("Funciono sin imagen !!!");
-
-          if(verificacionClienteCrearCargoListado == "0")
-          {
-            status =  true;
-            msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
-            debugPrint(status.toString());
-
-          }
-          else
-          {
-            status = false;
-            debugPrint(status.toString());
-          }        debugPrint(status.toString());
-        }
-        else {
-          debugPrint("SIN INGORMACION");
-          debugPrint(response.statusMessage);
-          debugPrint("???*");
-          status =  false;
-        }
-      }
-      catch (ex, stacktrace){
-        status =  false;
-        debugPrint("???/+/");
-        debugPrint("Request failed: $ex");
-        debugPrint("Stacktrace: $stacktrace");
-      }
-    }
-    else
-    {
       try{var headers = {
         'Content-Type': 'application/json'
       };
@@ -1464,6 +1470,7 @@ class ServicioListadoCargoClienteCargar{
         },
         "parametros": {
           "pn_empresa": empresaID,
+          "pn_reserva": reserva,
           "pn_documento": numeroDocumento,
           "pn_forma_pago": formaPago,
           "pf_fecha_pago":fechaPago,
@@ -1485,14 +1492,13 @@ class ServicioListadoCargoClienteCargar{
           data: data,
         );
 
-        debugPrint("Realizando pago....");
+      devLog.log("Realizando pago....");
+        devLog.log(data.toString());
+        debugPrint(response.data.toString());
         debugPrint(response.statusCode.toString());
-        debugPrint(data.toString());
-        debugPrint(response.data["datos"].toString());
-        debugPrint(response.data["datos"]["pv_recibo_url"].toString()!);
-        debugPrint(response.data["datos"]["pn_recibo"].toString());
 
 
+        debugPrint(response.data["resultado"]["pv_error_descripcion"]);
       if (response.statusCode == 200 && response.data['datos'] != []) {
 
           String lista = json.encode(response.data);
@@ -1502,8 +1508,6 @@ class ServicioListadoCargoClienteCargar{
           debugPrint("!!!!!");
           //CargoLecturaClienteCrearListadoList = List<Map<String, dynamic>>.from(response.data['datos']!);
 
-           devLog.log(CargoLecturaClienteCrearListadoList.toString());
-          debugPrint(response.statusMessage);
 
           verificacionClienteCrearCargoListado = response.data["resultado"]["pn_error"].toString();
           mensajeErrorClienteCrearCargoListado = response.data["resultado"]["pv_error_descripcion"].toString();
@@ -1511,22 +1515,9 @@ class ServicioListadoCargoClienteCargar{
           debugPrint(verificacionClienteCrearCargoListado);
           debugPrint("Aplicando pago");
           debugPrint("Funciono!!!");
-          debugPrint(response.data["datos"].toString());
-          debugPrint(response.data["datos"]["pv_recibo_url"].toString()!);
-          debugPrint(response.data["datos"]["pn_recibo"].toString());
           msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
 
-          if(verificacionClienteCrearCargoListado == "0")
-          {
-            status =  true;
-            msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
-            debugPrint(status.toString());
-          }
-          else
-          {
-            status = false;
-            debugPrint(status.toString());
-          }        debugPrint(status.toString());
+             debugPrint(status.toString());
         }
         else {
           debugPrint("SIN INGORMACION");
@@ -1541,7 +1532,7 @@ class ServicioListadoCargoClienteCargar{
         debugPrint("Request failed: $ex");
         debugPrint("Stacktrace: $stacktrace");
       }
-    }
+
     debugPrint(status.toString());
     return status;
   }
@@ -1619,7 +1610,13 @@ class AutorizarClass
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       msgxToast(e.toString());
       debugPrint("Amenidades reservadas 2");
@@ -1665,9 +1662,9 @@ class RechazarClass
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_rechaza");
-      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_rechaza");
-      Map body = {
+      //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_rechazar");
+      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_rechazar");
+      Map<String,dynamic> body = {
         "autenticacion":
         {
           "pv_token":token
@@ -1683,7 +1680,8 @@ class RechazarClass
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
       //debugPrint("Objetos Perdidos");
-      debugPrint("Amenidades Rechazadas");
+      debugPrint("Amenidades_Rechazadas");
+      debugPrint("123");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
@@ -1713,7 +1711,13 @@ class RechazarClass
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       msgxToast(e.toString());
       debugPrint("Amenidades reservadas 2");

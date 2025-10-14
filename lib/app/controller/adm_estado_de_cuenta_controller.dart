@@ -118,6 +118,13 @@ class ServicioListadoCuenta{
 
     } catch (e) {
       debugPrint(e.toString());
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       showDialog(
         context: Get.context!,
         builder: (context) {

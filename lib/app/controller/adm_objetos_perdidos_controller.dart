@@ -59,7 +59,7 @@ Future<List<Map<String, dynamic>>>objetosPerdidos5()async
       'Content-Type': 'application/json'
     };
     var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+      //"https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
     "http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
     Map body = {
       "autenticacion":
@@ -107,6 +107,13 @@ Future<List<Map<String, dynamic>>>objetosPerdidos5()async
   {
     //Get.back();
     debugPrint(e.toString());
+    if(e.toString() == "Exception: El token ha expirado")
+    {
+      msgxToast(e.toString());
+      debugPrint("Si funciona verificar el mensaje");
+
+      Get.offAllNamed(MyRoute.loginScreen);
+    }
     showDialog(
         context: Get.context!,
         builder: (context)
@@ -197,6 +204,13 @@ class objetosPerdidosSetReporteE6
     {
       //Get.back();
       debugPrint(e.toString());
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       showDialog(
           context: Get.context!,
           builder: (context)

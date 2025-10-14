@@ -77,6 +77,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
 
    Future<List<CuentasH7>> ? _futureCuentasH7;
 
+
   String? selectedValueA;
   String? selectedValueB;
   String? selectedValueC;
@@ -85,15 +86,15 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     getUserInfo();
-
     setState(() {
       theme = admEstadoDeCuentaController.themeController.isDarkMode
           ? AdmTheme.admDarkTheme
           : AdmTheme.admLightTheme;
-      propiedadCuentaID = clientesIdsSet[0];
+      propiedadCuentaID = propiedadesInternasIdsSetB[0];
       periodoCuentaID = periodeDeCuentaID[0].toString();
-    }
-    );
+
+    });
+    startFilter();
   }
 
 
@@ -109,9 +110,21 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
       pago = instrucionesPago.split('|');
       debugPrint(pago.toString());
        */
+
     });
-    _futureCuentasH7 = ServicioListadoCuenta(clienteIDset,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
   }
+
+  startFilter()
+  async
+  {
+    debugPrint("si filtra");
+    setState(() {
+      _futureCuentasH7 = ServicioListadoCuenta(clienteIDset,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
+
+    });
+
+  }
+
 
   String formatMoneyWithoutSymbol(double amount) {
     final numberFormat = NumberFormat.decimalPattern('en_US')
@@ -119,6 +132,27 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
       ..maximumFractionDigits = 2;
 
     return numberFormat.format(amount);
+  }
+
+
+  TextStyle _labelStyle(ThemeData theme, double width) {
+    return theme.textTheme.bodyMedium!.copyWith(
+      fontWeight: FontWeight.bold,
+      color: const Color.fromRGBO(6, 78, 116, 1),
+      fontSize: width * 0.032,
+    );
+  }
+
+  Widget _valueText(double? value, String? currency, ThemeData theme, double width) {
+    if (value == null || value == 0) return const SizedBox.shrink();
+    return Text(
+      "${currency ?? ""}${formatMoneyWithoutSymbol(value)}",
+      style: theme.textTheme.bodyLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: const Color.fromRGBO(167, 167, 132, 1),
+        fontSize: width * 0.032,
+      ),
+    );
   }
 
   @override
@@ -410,7 +444,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                         width: MediaQuery.of(context).size.width*0.45,
                                         child: DropdownButtonFormField<String>(
                                           isExpanded: true,
-                                          value: clientesIdsSet[0].toString(),
+                                          value: clientesIdsSetB[0].toString(),
                                           hint: const Text("Seleccione una empresa"),
                                           decoration: InputDecoration(
                                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -429,10 +463,10 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                             color: Colors.black87,
                                           ),
                                           icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                          items: List.generate(clientesIdsSet.length, (index) {
+                                          items: List.generate(clientesIdsSetB.length, (index) {
                                             return DropdownMenuItem<String>(
-                                              value: clientesIdsSet[index],
-                                              child: Text("${propiedadesInternaNombresSet[index]} ${propiedadesDireccionNombresSet[index]}",
+                                              value: clientesIdsSetB[index],
+                                              child: Text("${propiedadesInternaNombresSetB[index]} ${propiedadesDireccionNombresSetB[index]}",
                                                 style: const TextStyle(
                                                   fontSize:  20,
                                                   color: Colors.black,
@@ -442,11 +476,11 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                           }),
                                           onChanged: (value) {
                                             setState(() {
-                                              int index = propiedadesInternaNombresSet.indexOf(value!);
+                                              int index = clientesIdsSetB.indexOf(value!);
                                               debugPrint("setcuenta");
                                               debugPrint(index.toString());
-                                              propiedadCuentaID = "1";
-                                              clienteIDset = value;
+                                              propiedadCuentaID = propiedadesInternasIdsSetB[index].toString();
+                                              //clienteIDset = value;
                                               debugPrint(propiedadCuentaID);
                                             });
                                           },
@@ -485,7 +519,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                           onPressed: () async{
                                             final prefs = await SharedPreferences.getInstance();
                                             setState(() {
-                                              _futureCuentasH7 = ServicioListadoCuenta(prefs.getString("cliente")!,"1",periodoCuentaID).estadoDeCuentaH7();
+                                              _futureCuentasH7 = ServicioListadoCuenta(clienteIDset,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
                                             });
                                             },
                                           child: Text(
@@ -507,6 +541,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                             FutureBuilder<List<CuentasH7>>(
                               future: _futureCuentasH7,
                               builder: (context, snapshot) {
+                                final theme = Theme.of(context);
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
@@ -542,140 +577,128 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                   itemCount: documentos.length,
                                   itemBuilder: (context, index) {
                                     final event = documentos[index];
+                                    final screenWidth = MediaQuery.of(context).size.width;
+                                    final screenHeight = MediaQuery.of(context).size.height;
 
-                                    return LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          final cardWidth = constraints.maxWidth * 0.9;
-                                          final cardHeight = constraints.maxHeight * 0.65;
-                                          final titleFontSize = constraints.maxWidth * 0.035;
-                                          final subtitleFontSize = constraints.maxWidth * 0.03;
-
-                                          double noticiaSize = constraints.maxHeight;
-                                        return Container(
-                                            padding: const EdgeInsets.all(12),
-                                            //width: MediaQuery.of(context).size.width,
-                                            height: constraints.maxWidth > 400 ? MediaQuery.of(context).size.height * 0.40: MediaQuery.of(context).size.height * 0.30,
-                                          child: Card(
-                                            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                                            elevation: 4,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            child: Container(
-                                              padding: const EdgeInsets.all(12),
-                                              height: cardHeight * 0.30, // FIXED HEIGHT
-                                              child: Card(
-                                                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                                                elevation: 4,
-                                                color: Colors.grey[200],
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      height: constraints.maxWidth*0.03,
-                                                    ),
-                                                    event.pvTransaccion == "Cargo"? Text(event.pvTransaccion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color:Colors.blue,
-                                                      fontSize: constraints.maxWidth * 0.04,
-                                                    )
-                                                    ):Text(event.pvTransaccion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color:Colors.amber,
-                                                      fontSize:  constraints.maxWidth * 0.04,
-                                                    )),
-                                                    Center(
-                                                      child: SizedBox(
-                                                        width: constraints.maxWidth*0.80,
-                                                        child: Text(event.pvDescripcionMovimiento!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:Color.fromRGBO(167,167,132,1),
-                                                          fontSize: constraints.maxWidth * 0.035,
-                                                        )),
-                                                      ),
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                      children: [
-                                                        Text(
-                                                          DateFormat('dd/MM/yyyy').format(DateTime.parse(event.pfFecha!)),
-                                                          style: theme.textTheme.bodyMedium?.copyWith(
-                                                            fontWeight: FontWeight.bold,
-                                                            fontSize: constraints.maxWidth *0.03,
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                        if (event.pnPermiteVerComprobante == 1)
-                                                          IconButton(
-                                                            icon:  FaIcon(FontAwesomeIcons.fileInvoice,size: constraints.maxWidth *0.05,),
-                                                            color: const Color.fromRGBO(6, 78, 116, 1),
-                                                            onPressed: () async {
-                                                              final rawUrl = event.pvVerComprobante!;
-                                                              final uri = Uri.tryParse(rawUrl);
-                                                              final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
-                                                              if (await canLaunchUrl(safeUri)) {
-                                                                await launchUrl(
-                                                                  safeUri,
-                                                                  mode: LaunchMode.externalApplication,
-                                                                );
-                                                              } else {
-                                                                debugPrint("Could not launch $safeUri");
-                                                              }
-                                                            },
-                                                          ),
-
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Text("Débito",style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:  Color.fromRGBO(6, 78, 116, 1),
-                                                          fontSize:  constraints.maxWidth * 0.03,
-                                                        )),
-                                                        Text("Crédito",style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:  Color.fromRGBO(6, 78, 116, 1),
-                                                          fontSize:  constraints.maxWidth * 0.03,
-                                                        )),
-                                                        Text("Saldo Actual",style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:  Color.fromRGBO(6, 78, 116, 1),
-                                                          fontSize:  constraints.maxWidth * 0.03,
-                                                        ))
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        event.pmDebito != 0 ? Text(event.pvMonedaAbreviatura! + formatMoneyWithoutSymbol(event.pmDebito!).toString(),style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:Color.fromRGBO(167,167,132,1),
-                                                          fontSize:  constraints.maxWidth * 0.03,
-                                                        )):Center(),
-                                                        event.pmCredito != 0 ?  Text(event.pvMonedaAbreviatura! + formatMoneyWithoutSymbol(event.pmCredito!).toString(),style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:Color.fromRGBO(167,167,132,1),
-                                                          fontSize:  constraints.maxWidth * 0.03,
-                                                        )):Center(),
-                                                        Text(event.pvMonedaAbreviatura! + formatMoneyWithoutSymbol(event.pmSaldoActual!).toString(),style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:Color.fromRGBO(167,167,132,1),
-                                                          fontSize:  constraints.maxWidth * 0.03,
-                                                        )),
-                                                      ],
-                                                    ),
-
-                                                  ],
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: screenHeight * 0.008,
+                                        horizontal: screenWidth * 0.04,
+                                      ),
+                                      child: Card(
+                                        elevation: 4,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        color: Colors.grey[200],
+                                        child: Padding(
+                                          padding: EdgeInsets.all(screenWidth * 0.04),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min, // 🔹 Deja que el contenido defina la altura
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              // 🔹 Título (tipo de transacción)
+                                              Center(
+                                                child: Text(
+                                                  event.pvTransaccion ?? "",
+                                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: event.pvTransaccion == "Cargo"
+                                                        ? Colors.blue
+                                                        : Colors.amber,
+                                                    fontSize: screenWidth * 0.045,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
+
+                                              SizedBox(height: screenHeight * 0.01),
+
+                                              // 🔹 Descripción del movimiento
+                                              Center(
+                                                child: Text(
+                                                  event.pvDescripcionMovimiento ?? "",
+                                                  textAlign: TextAlign.center,
+                                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: const Color.fromRGBO(167, 167, 132, 1),
+                                                    fontSize: screenWidth * 0.038,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              SizedBox(height: screenHeight * 0.015),
+
+                                              // 🔹 Fecha y comprobante
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                children: [
+                                                  Text(
+                                                    DateFormat('dd/MM/yyyy')
+                                                        .format(DateTime.parse(event.pfFecha ?? "")),
+                                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: screenWidth * 0.032,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                  if (event.pnPermiteVerComprobante == 1)
+                                                    IconButton(
+                                                      icon: FaIcon(
+                                                        FontAwesomeIcons.fileInvoice,
+                                                        size: screenWidth * 0.05,
+                                                      ),
+                                                      color: const Color.fromRGBO(6, 78, 116, 1),
+                                                      onPressed: () async {
+                                                        final rawUrl = event.pvVerComprobante!;
+                                                        final uri = Uri.tryParse(rawUrl);
+                                                        final safeUri =
+                                                            uri ?? Uri.parse(Uri.encodeFull(rawUrl));
+                                                        if (await canLaunchUrl(safeUri)) {
+                                                          await launchUrl(
+                                                            safeUri,
+                                                            mode: LaunchMode.externalApplication,
+                                                          );
+                                                        } else {
+                                                          debugPrint("Could not launch $safeUri");
+                                                        }
+                                                      },
+                                                    ),
+                                                ],
+                                              ),
+
+                                              SizedBox(height: screenHeight * 0.01),
+
+                                              // 🔹 Encabezado de valores
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text("Débito",
+                                                      style: _labelStyle(theme, screenWidth)),
+                                                  Text("Crédito",
+                                                      style: _labelStyle(theme, screenWidth)),
+                                                  Text("Saldo Actual",
+                                                      style: _labelStyle(theme, screenWidth)),
+                                                ],
+                                              ),
+
+                                              SizedBox(height: screenHeight * 0.005),
+
+                                              // 🔹 Valores monetarios
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  _valueText(event.pmDebito, event.pvMonedaAbreviatura,
+                                                      theme, screenWidth),
+                                                  _valueText(event.pmCredito, event.pvMonedaAbreviatura,
+                                                      theme, screenWidth),
+                                                  _valueText(event.pmSaldoActual, event.pvMonedaAbreviatura,
+                                                      theme, screenWidth),
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                        );
-                                      }
+                                        ),
+                                      ),
                                     );
                                   },
                                 );

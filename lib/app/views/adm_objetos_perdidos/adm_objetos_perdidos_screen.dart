@@ -412,296 +412,314 @@ class _AdmNoticiasScreenState extends State<AdmObjetosPerdidsoScreen>
                                 ),
                                 17.height,
                                 17.height,
-                                FutureBuilder(
-                                  future:_futurePerdidos,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return const Center(child: CircularProgressIndicator());
-                                    } else if (snapshot.hasError) {
-                                      return  Center(
-                                          child: Title(color: Color.fromRGBO(6,78,116,1),
-                                            child: Text("No se han reportado objetos perdidos",style: theme.textTheme.bodyMedium?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context).size.width*0.035,
-                                              color: Color.fromRGBO(6,78,116,1),
-                                            ),
-                                            ),
-                                          )
-                                      );
-                                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                      return  Center(
-                                          child: Title(color: Color.fromRGBO(6,78,116,1),
-                                            child: Text("No se han reportado objetos perdidos",style: theme.textTheme.bodyMedium?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context).size.width*0.035,
-                                              color: Color.fromRGBO(6,78,116,1),
-                                            ),
-                                            ),
-                                          )
-                                      );
-                                    }
+                FutureBuilder(
+                  future: _futurePerdidos,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError ||
+                        !snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text(
+                          "No se han reportado objetos perdidos",
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width * 0.035,
+                            color: const Color.fromRGBO(6, 78, 116, 1),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }
 
-                                    final events = snapshot.data!;
-                                    return LayoutBuilder(
-                                      builder: (context, constraints) {
-                                        // decide number of columns depending on width
-                                        int crossAxisCount = constraints.maxWidth > 900
-                                            ? 4
-                                            : constraints.maxWidth > 600
-                                            ? 3
-                                            : 2;
+                    final events = snapshot.data!;
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        double width = constraints.maxWidth;
 
-                                        return GridView.builder(
-                                          itemCount: events.length,
-                                          shrinkWrap: true,
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: crossAxisCount,
-                                            mainAxisSpacing: crossAxisCount*2.toDouble(),
-                                            crossAxisSpacing: 8*2.toDouble(),
+                        // 🧮 Always at least 2 columns
+                        int crossAxisCount;
+                        if (width > 1000) {
+                          crossAxisCount = 4;
+                        } else if (width > 700) {
+                          crossAxisCount = 3;
+                        } else {
+                          crossAxisCount = 2; // 👈 minimum 2
+                        }
 
+                        // 📐 Calcular relación de aspecto dinámica
+                        //   aspectRatio = width / height → menor valor = más alta
+                        //   Ajustamos para que el contenido no se vea estirado
+                        double cardWidth = width / crossAxisCount;
+                        double cardHeight;
+
+                        // 💡 Estimar altura según contenido típico
+                        if (cardWidth > 500) {
+                          cardHeight = cardWidth * 1.5;
+                        } else if (cardWidth > 300) {
+                          cardHeight = cardWidth * 1.7;
+                        } else {
+                          cardHeight = cardWidth * 2.2;
+                        }
+
+                        double aspectRatio = cardWidth / cardHeight;
+
+                        return GridView.builder(
+                          itemCount: events.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: aspectRatio, // ✅ correcto y dinámico
+                          ),
+                          itemBuilder: (context, index) {
+                            final event = events[index];
+
+                            return Card(
+                              elevation: 4,
+                              shape:
+                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: GestureDetector(
+                                        onTap: () => showImageDialog3(
+                                          context,
+                                          event["pl_fotografias"][0]["pv_fotografiab64"].toString(),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: Image.memory(
+                                            base64Decode(
+                                              event["pl_fotografias"][0]["pv_fotografiab64"]
+                                                  .toString(),
+                                            ),
+                                            fit: BoxFit.contain,
                                           ),
-                                          itemBuilder: (context, index) {
-                                            final event = events[index];
-                                            double cardWidth = constraints.maxWidth / crossAxisCount;
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          AutoSizeText(
+                                            event["pv_descripcion"].toString(),
+                                            textAlign: TextAlign.center,
+                                            maxLines: 3,
+                                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color.fromRGBO(6, 78, 116, 1),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          AutoSizeText(
+                                            event["pn_permite_reclamar"] == "1"
+                                                ? "No Reclamada"
+                                                : "Reclamada",
+                                            textAlign: TextAlign.center,
+                                            style:
+                                            Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: event["pn_permite_reclamar"] == "1"
+                                                  ? Colors.red[900]
+                                                  : Colors.yellow[800],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          AutoSizeText(
+                                            "Reportado el ${DateFormat('dd MMM yyyy', "es_ES").format(
+                                              DateTime.parse(event["pf_fecha"].toString()),
+                                            )}",
+                                            textAlign: TextAlign.center,
+                                            style:
+                                            Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                          Admin == "1" ? Center(
+                                            child:  SizedBox(
+                                              height: constraints.maxWidth*0.05,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                  // set the background color
+                                                ),
+                                                onPressed: () async{
+                                                  showDialog<void>(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return  StatefulBuilder(
+                                                          builder: (BuildContext context, StateSetter setStateDialog) {
+                                                            return AlertDialog(
+                                                              title: const Text('Nueva Renta o Venta'),
+                                                              content: SingleChildScrollView(
+                                                                scrollDirection: Axis .vertical,
+                                                                child: Form(
+                                                                  key: _formKey,
+                                                                  child:  Column(
+                                                                    children: <Widget>[
+                                                                      Text("Reclamado por:",maxLines: 1,
+                                                                          overflow: TextOverflow.ellipsis,
+                                                                          style: theme.textTheme.headlineSmall?.copyWith(
+                                                                            fontWeight: FontWeight.bold,
+                                                                            color: Color.fromRGBO(6, 78, 116, 1),
+                                                                            fontSize: MediaQuery.of(context).size.width*0.035,)
+                                                                      ),
+                                                                      TextFormField(
+                                                                        controller: encontradoPorController,
+                                                                        onChanged: (value)
+                                                                        {
+                                                                          setStateDialog(() {
+                                                                            encontradoPorController.text = value;
+                                                                          });
+                                                                        },
+                                                                        validator: (String? value) {
+                                                                          if (value == null || value.isEmpty) {
+                                                                            return 'Información requerida'; // Error message if empty
+                                                                          }
+                                                                          return null; // Return null if the input is valid
+                                                                        },
+                                                                      ),
+                                                                      10.height,
+                                                                      Text("Fecha de reporte encontrado ",maxLines: 1,
+                                                                          overflow: TextOverflow.ellipsis,
+                                                                          style: theme.textTheme.headlineSmall?.copyWith(
+                                                                            fontWeight: FontWeight.bold,
+                                                                            color: Color.fromRGBO(6, 78, 116, 1),
+                                                                            fontSize: MediaQuery.of(context).size.width*0.035,)
+                                                                      ),
 
-                                            return Card(
-                                              elevation: 3,
-                                              margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width:constraints.maxWidth < 400
-                                                          ? cardWidth * 0.2:cardWidth * 0.3,
-                                                      height:constraints.maxWidth < 400
-                                                          ? cardWidth * 0.2:cardWidth * 0.3,
-                                                      child: GestureDetector(
-                                                        onTap: () => showImageDialog2(context,event["pl_fotografias"][0]["pv_fotografiab64"].toString(),),
-                                                        child: ClipRRect(
-                                                          borderRadius: BorderRadius.circular(10),
-                                                          child: Image.memory(
-                                                            base64Decode(
-                                                              event["pl_fotografias"][0]["pv_fotografiab64"]
-                                                                  .toString(),
-                                                            ),
-                                                            fit: BoxFit.contain,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    AutoSizeText(
-                                                      event["pv_descripcion"].toString(),
-                                                      textAlign: TextAlign.center,
-                                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                        fontWeight: FontWeight.bold,
-                                                        color: const Color.fromRGBO(6, 78, 116, 1),
-                                                        fontSize: constraints.maxWidth < 400 ?cardWidth * 0.07:cardWidth * 0.1,
-                                                      ),
-                                                      maxLines: 3,            // shrink if more than 2 lines
-                                                      minFontSize: cardWidth * 0.07.floor(),
-                                                    ),
-                                                    AutoSizeText(
-                                                      "Reportado el ${DateFormat('dd MMMM yyyy', "es_ES").format(
-                                                        DateTime.parse(event["pf_fecha"].toString()),
-                                                      )}",
-                                                      textAlign: TextAlign.center,
-                                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                        fontWeight: FontWeight.w500,
-                                                        color: Colors.grey,
-                                                        fontSize: constraints.maxWidth < 400 ?cardWidth * 0.04:cardWidth * 0.06,
-                                                      ),
-                                                      maxLines: 2,            // shrink if more than 2 lines
-                                                      minFontSize: cardWidth * 0.04.floor(),
-                                                    ),
-                                                    AutoSizeText(
-                                                      "Reclamado el ${DateFormat('dd MMMM yyyy', "es_ES").format(
-                                                        DateTime.parse(event["pf_fecha_reclamada"].toString()),
-                                                      )}",
-                                                      textAlign: TextAlign.center,
-                                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                        fontWeight: FontWeight.w500,
-                                                        color: Colors.grey,
-                                                        fontSize: constraints.maxWidth < 400 ?cardWidth * 0.04:cardWidth * 0.06,
-                                                      ),
-                                                      maxLines: 2,            // shrink if more than 2 lines
-                                                      minFontSize: cardWidth * 0.04.floor(),
-                                                    ),
-                                                    8.height,
-                                                    Admin == "1" ? Center(
-                                                      child:  SizedBox(
-                                                        height: constraints.maxWidth*0.05,
-                                                        child: ElevatedButton(
-                                                          style: ElevatedButton.styleFrom(
-                                                            backgroundColor: Color.fromRGBO(6, 78, 116, 1),
-                                                            // set the background color
-                                                          ),
-                                                          onPressed: () async{
-                                                            showDialog<void>(
-                                                              context: context,
-                                                              builder: (BuildContext context) {
-                                                                return  StatefulBuilder(
-                                                                    builder: (BuildContext context, StateSetter setStateDialog) {
-                                                                      return AlertDialog(
-                                                                        title: const Text('Nueva Renta o Venta'),
-                                                                        content: SingleChildScrollView(
-                                                                          scrollDirection: Axis .vertical,
-                                                                          child: Form(
-                                                                            key: _formKey,
-                                                                            child:  Column(
-                                                                              children: <Widget>[
-                                                                                Text("Reclamado por:",maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                    style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                      fontSize: MediaQuery.of(context).size.width*0.035,)
-                                                                                ),
-                                                                                TextFormField(
-                                                                                  controller: encontradoPorController,
-                                                                                  onChanged: (value)
-                                                                                  {
-                                                                                    setStateDialog(() {
-                                                                                      encontradoPorController.text = value;
-                                                                                    });
-                                                                                  },
-                                                                                  validator: (String? value) {
-                                                                                    if (value == null || value.isEmpty) {
-                                                                                      return 'Información requerida'; // Error message if empty
-                                                                                    }
-                                                                                    return null; // Return null if the input is valid
-                                                                                  },
-                                                                                ),
-                                                                                10.height,
-                                                                                Text("Fecha de reporte encontrado ",maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                    style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                      fontSize: MediaQuery.of(context).size.width*0.035,)
-                                                                                ),
-
-                                                                                10.height,
-                                                                                TextFormField(
-                                                                                  textInputAction: TextInputAction.next,
-                                                                                  controller: fechaReporteController,
-                                                                                  readOnly: true,
-                                                                                  validator: (String? value) {
-                                                                                    if (value == null || value.isEmpty) {
-                                                                                      return 'Información requerida'; // Error message if empty
-                                                                                    }
-                                                                                    return null; // Return null if the input is valid
-                                                                                  },
-                                                                                  onTap: () async {
-                                                                                    DateTime? fechaSelect = await showDatePicker(
-                                                                                      context: context,
-                                                                                      initialDate: DateTime.now(),
-                                                                                      firstDate: DateTime(2000),
-                                                                                      lastDate: DateTime(3000),
-                                                                                      builder: (BuildContext context, Widget? child) {
-                                                                                        return Theme(
-                                                                                          data: Theme.of(context).copyWith(
-                                                                                            colorScheme: ColorScheme.light(
-                                                                                              primary: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                            ),
-                                                                                            textButtonTheme: TextButtonThemeData(
-                                                                                              style: TextButton.styleFrom(
-                                                                                                minimumSize: Size(2  ,2 ),
-                                                                                                foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                textStyle:   TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontWeight: FontWeight.bold),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                          child: child!,
-                                                                                        );
-                                                                                      },
-                                                                                    );
-
-                                                                                    if (fechaSelect != null) {
-                                                                                      setState(() {
-                                                                                        fechaReporteController.text = DateFormat('yyyyMMdd').format(fechaSelect);
-                                                                                      });
-                                                                                    }
-                                                                                  },
-                                                                                  decoration: InputDecoration(
-                                                                                    labelText: 'Fecha de pago',
-                                                                                    border: OutlineInputBorder(),
+                                                                      10.height,
+                                                                      TextFormField(
+                                                                        textInputAction: TextInputAction.next,
+                                                                        controller: fechaReporteController,
+                                                                        readOnly: true,
+                                                                        validator: (String? value) {
+                                                                          if (value == null || value.isEmpty) {
+                                                                            return 'Información requerida'; // Error message if empty
+                                                                          }
+                                                                          return null; // Return null if the input is valid
+                                                                        },
+                                                                        onTap: () async {
+                                                                          DateTime? fechaSelect = await showDatePicker(
+                                                                            context: context,
+                                                                            initialDate: DateTime.now(),
+                                                                            firstDate: DateTime(2000),
+                                                                            lastDate: DateTime(3000),
+                                                                            builder: (BuildContext context, Widget? child) {
+                                                                              return Theme(
+                                                                                data: Theme.of(context).copyWith(
+                                                                                  colorScheme: ColorScheme.light(
+                                                                                    primary: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                  ),
+                                                                                  textButtonTheme: TextButtonThemeData(
+                                                                                    style: TextButton.styleFrom(
+                                                                                      minimumSize: Size(2  ,2 ),
+                                                                                      foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                      textStyle:   TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontWeight: FontWeight.bold),
+                                                                                    ),
                                                                                   ),
                                                                                 ),
-
-                                                                                10.height,
-
-                                                                                Container(
-                                                                                  padding: const EdgeInsets.all(10),
-                                                                                  child: ElevatedButton(
-                                                                                    style: ElevatedButton.styleFrom(
-                                                                                      backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
-                                                                                    ),
-                                                                                    onPressed: () async{
-                                                                                      debugPrint(event["pn_cosa_perdida"].toString());
-                                                                                      debugPrint("Reporte");
-                                                                                      debugPrint(encontradoPorController.text);
-                                                                                      debugPrint(fechaReporteController.text);
-                                                                                      String fecha = fechaReporteController.text;
-                                                                                      debugPrint(fecha);
-                                                                                      objetosPerdidosSetReporteE6(event["pn_cosa_perdida"].toString(),fecha,encontradoPorController.text).objetosPerdidosReclamo6();
-                                                                                      encontradoPorController.text = "";
-                                                                                      fechaReporteController.text = "";
-                                                                                      },
-                                                                                    child: Text(
-                                                                                      "Crear reporte",
-                                                                                      style: TextStyle(
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        color:   Colors.white,
-                                                                                        fontSize: MediaQuery.of(context).size.width* 0.03,
-                                                                                      ),
-                                                                                    ),),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        actions: <Widget>[
-                                                                          TextButton(
-                                                                            style: TextButton.styleFrom(
-                                                                              textStyle: Theme.of(context).textTheme.labelLarge,
-                                                                            ),
-                                                                            child:  Text('Cerrar'),
-                                                                            onPressed: () {
-                                                                              Navigator.of(context).pop();
+                                                                                child: child!,
+                                                                              );
                                                                             },
+                                                                          );
+
+                                                                          if (fechaSelect != null) {
+                                                                            setState(() {
+                                                                              fechaReporteController.text = DateFormat('yyyyMMdd').format(fechaSelect);
+                                                                            });
+                                                                          }
+                                                                        },
+                                                                        decoration: InputDecoration(
+                                                                          labelText: 'Fecha de pago',
+                                                                          border: OutlineInputBorder(),
+                                                                        ),
+                                                                      ),
+
+                                                                      10.height,
+
+                                                                      Container(
+                                                                        padding: const EdgeInsets.all(10),
+                                                                        child: ElevatedButton(
+                                                                          style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
                                                                           ),
-                                                                        ],
-                                                                      );
-                                                                    }
-                                                                );
-                                                              },
+                                                                          onPressed: () async{
+                                                                            debugPrint(event["pn_cosa_perdida"].toString());
+                                                                            debugPrint("Reporte");
+                                                                            debugPrint(encontradoPorController.text);
+                                                                            debugPrint(fechaReporteController.text);
+                                                                            String fecha = fechaReporteController.text;
+                                                                            debugPrint(fecha);
+                                                                            objetosPerdidosSetReporteE6(event["pn_cosa_perdida"].toString(),fecha,encontradoPorController.text).objetosPerdidosReclamo6();
+                                                                            encontradoPorController.text = "";
+                                                                            fechaReporteController.text = "";
+                                                                          },
+                                                                          child: Text(
+                                                                            "Crear reporte",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color:   Colors.white,
+                                                                              fontSize: MediaQuery.of(context).size.width* 0.03,
+                                                                            ),
+                                                                          ),),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              actions: <Widget>[
+                                                                TextButton(
+                                                                  style: TextButton.styleFrom(
+                                                                    textStyle: Theme.of(context).textTheme.labelLarge,
+                                                                  ),
+                                                                  child:  Text('Cerrar'),
+                                                                  onPressed: () {
+                                                                    Navigator.of(context).pop();
+                                                                  },
+                                                                ),
+                                                              ],
                                                             );
-                                                          },
-                                                          child: Text(
-                                                            "Reportadar",
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white,
-                                                              fontSize: MediaQuery.of(context).size.width*0.035,
-                                                            ),
-                                                          ),),
-                                                      ),
-                                                    ):Center(),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
+                                                          }
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Text(
+                                                  "Reportadar",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    fontSize: MediaQuery.of(context).size.width*0.035,
+                                                  ),
+                                                ),),
+                                            ),
+                                          ):Center(),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                17.height,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+                17.height,
                               ]
                           )
                       )

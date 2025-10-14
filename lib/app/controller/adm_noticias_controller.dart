@@ -114,7 +114,13 @@ class setNewsComentC7{
     }
     catch(e)
     {
-      //Get.back();
+        if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
       debugPrint(e.toString());
       showDialog(
           context: Get.context!,
@@ -213,7 +219,12 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
   }
   catch(e)
   {
-    //Get.back();
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
     debugPrint(e.toString());
     showDialog(
         context: Get.context!,
