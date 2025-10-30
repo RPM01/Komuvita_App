@@ -69,8 +69,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/importantes/datos_importantes_listado"
-           "http://api.komuvita.com/portal/importantes/datos_importantes_listado"
+          "https://apidesa.komuvita.com/portal/importantes/datos_importantes_listado"
+           //"http://api.komuvita.com/portal/importantes/datos_importantes_listado"
       );
       Map body = {
             "autenticacion":
@@ -147,8 +147,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/noticias/noticias_listado"
-           "http://api.komuvita.com/portal/noticias/noticias_listado"
+          "https://apidesa.komuvita.com/portal/noticias/noticias_listado"
+           //"http://api.komuvita.com/portal/noticias/noticias_listado"
         );
       Map body = {
         "autenticacion":
@@ -158,7 +158,7 @@ class AdmHomeController extends GetxController {
         "parametros":
         {
           "pn_empresa": empresaID,
-          "pn_periodo": 1,
+          "pn_periodo": 3,
           "pn_noticia_tipo": "-1",
           "pn_importante": "-1",
           "pv_criterio": ""
@@ -168,8 +168,7 @@ class AdmHomeController extends GetxController {
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
       debugPrint("Noticias");
-      debugPrint(body.toString());
-      debugPrint(response.body.toString());
+
 
       if(response.statusCode == 200)
       {
@@ -187,11 +186,14 @@ class AdmHomeController extends GetxController {
 
           if (json["resultado"]["pn_tiene_datos"] == 1) {
             debugPrint("Noticias con datos");
+            debugPrint(body.toString());
+            debugPrint(response.body.toString());
+            debugPrint(json["datos"].toString());
             return List<Map<String, dynamic>>.from(json["datos"]);
           } else {
             debugPrint("Noticias Sin datos");
             debugPrint("Noticias Error");
-            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            //debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             errorMensaje = json["resultado"]["pv_error_descripcion"].toString();
             // //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
             // //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
@@ -241,8 +243,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado"
-           "http://api.komuvita.com/portal/rentasventas/rentas_listado"
+          "https://apidesa.komuvita.com/portal/rentasventas/rentas_listado"
+           //"http://api.komuvita.com/portal/rentasventas/rentas_listado"
       );
       Map body = {
         "autenticacion":
@@ -325,8 +327,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
-           "http://api.komuvita.com/portal/rentasventas/rentas_listado");
+          "https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
+           //"http://api.komuvita.com/portal/rentasventas/rentas_listado");
       Map body = {
         "autenticacion":
         {
@@ -413,8 +415,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
-           "http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+          "https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+           //"http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
       Map body = {
         "autenticacion":
         {
@@ -487,8 +489,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
-           "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+          "https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+           //"http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
       Map body = {
         "autenticacion":
         {
@@ -575,8 +577,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
-           "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+          "https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+           //"http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
       Map body = {
         "autenticacion":
         {
@@ -664,8 +666,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-           "http://api.komuvita.com/portal/tickets/gestiones_listado");
+          "https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+           //"http://api.komuvita.com/portal/tickets/gestiones_listado");
       Map body = {
         "autenticacion":
         {
@@ -756,8 +758,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json',
       };
       var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-         "http://api.komuvita.com/portal/tickets/gestiones_listado");
+        "https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+         //"http://api.komuvita.com/portal/tickets/gestiones_listado");
 
 
       Map body = {
@@ -858,8 +860,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-           "http://api.komuvita.com/portal/tickets/gestiones_listado");
+          "https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+           //"http://api.komuvita.com/portal/tickets/gestiones_listado");
       Map body = {
         "autenticacion":
         {
@@ -957,8 +959,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
-           "http://api.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
+          "https://apidesa.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
+           //"http://api.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -1042,8 +1044,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/visitas/visita_pendiente_listado");
-           "http://api.komuvita.com/portal/visitas/visita_pendiente_listado");
+          "https://apidesa.komuvita.com/portal/visitas/visita_pendiente_listado");
+           //"http://api.komuvita.com/portal/visitas/visita_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -1117,8 +1119,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/cuentas/forma_pago_listado");
-           "http://api.komuvita.com/portal/cuentas/forma_pago_listado");
+          "https://apidesa.komuvita.com/portal/cuentas/forma_pago_listado");
+           //"http://api.komuvita.com/portal/cuentas/forma_pago_listado");
       Map body = {
         "autenticacion":
         {
@@ -1215,8 +1217,8 @@ class AdmHomeController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
-           "http://api.komuvita.com/portal/cuentas/documentos_listado");
+          "https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
+           //"http://api.komuvita.com/portal/cuentas/documentos_listado");
       Map body = {
         "autenticacion":
         {
@@ -1324,8 +1326,8 @@ class AdmHomeController extends GetxController {
       };
 
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
-           "http://api.komuvita.com/portal/cuentas/documentos_listado");
+          "https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
+           //"http://api.komuvita.com/portal/cuentas/documentos_listado");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -1482,8 +1484,8 @@ class ServicioListadoCargoClienteCargar{
 
         var dio = Dio();
       var response = await dio.request(
-        //"https://apidesa.komuvita.com/portal/cuentas/documento_aplicar_pago",
-         "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
+        "https://apidesa.komuvita.com/portal/cuentas/documento_aplicar_pago",
+         //"http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
 
           options: Options(
             method: 'POST',
@@ -1563,8 +1565,8 @@ class AutorizarClass
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-      //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_autoriza");
-      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_autoriza");
+      "https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_autoriza");
+      //"http://api.komuvita.com/portal/amenidades/reserva_amenidad_autoriza");
       Map body = {
         "autenticacion":
         {
@@ -1662,8 +1664,8 @@ class RechazarClass
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-      //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_rechazar");
-      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_rechazar");
+      "https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_rechazar");
+      //"http://api.komuvita.com/portal/amenidades/reserva_amenidad_rechazar");
       Map<String,dynamic> body = {
         "autenticacion":
         {

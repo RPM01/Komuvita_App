@@ -47,8 +47,8 @@ class AdmNotificationController extends GetxController{
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/notificaciones/notificaciones_listado"
-          "http://api.komuvita.com/portal/notificaciones/notificaciones_listado"
+          "https://apidesa.komuvita.com/portal/notificaciones/notificaciones_listado"
+          //"http://api.komuvita.com/portal/notificaciones/notificaciones_listado"
       );
       Map body = {
         "autenticacion":

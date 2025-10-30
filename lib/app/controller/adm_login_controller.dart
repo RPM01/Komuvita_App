@@ -107,8 +107,8 @@ class LoginController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-            "http://api.komuvita.com/administracion/usuarios/login");
-          //"https://apidesa.komuvita.com/administracion/usuarios/login");
+            //"http://api.komuvita.com/administracion/usuarios/login");
+          "https://apidesa.komuvita.com/administracion/usuarios/login");
       Map body = {
         "autenticacion":
         {
@@ -211,8 +211,8 @@ class LoginController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
-          "http://api.komuvita.com/portal/tickets/propiedades_listado");
+          "https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
+          //"http://api.komuvita.com/portal/tickets/propiedades_listado");
       Map body = {
         "autenticacion":
         {
@@ -375,8 +375,8 @@ class LoginController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
-      "http://api.komuvita.com/portal/tickets/propiedades_listado");
+          "https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
+      //"http://api.komuvita.com/portal/tickets/propiedades_listado");
       Map body = {
         "autenticacion":
         {

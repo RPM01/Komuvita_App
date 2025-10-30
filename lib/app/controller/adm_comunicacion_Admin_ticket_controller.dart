@@ -75,8 +75,8 @@ Future<List<TickestG5>> GestionTickets5B_2() async {
       'Content-Type': 'application/json',
     };
     var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-        "http://api.komuvita.com/portal/tickets/gestiones_listado");
+        "https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+        //"http://api.komuvita.com/portal/tickets/gestiones_listado");
 
     Map body = {
       "autenticacion": {
@@ -198,8 +198,8 @@ class ServicioTickets
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/tickets/gestion_creacion",
-        "http://api.komuvita.com/portal/tickets/gestion_creacion",
+        "https://apidesa.komuvita.com/portal/tickets/gestion_creacion",
+        //"http://api.komuvita.com/portal/tickets/gestion_creacion",
       );
       Map<String,dynamic> data =
       {
@@ -311,8 +311,8 @@ class ServicioSeguimientoTickets
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/tickets/seguimiento_gestion_creacion",
-        "http://api.komuvita.com/portal/tickets/seguimiento_gestion_creacion",
+        "https://apidesa.komuvita.com/portal/tickets/seguimiento_gestion_creacion",
+        //"http://api.komuvita.com/portal/tickets/seguimiento_gestion_creacion",
       );
       Map<String,dynamic> data =
       {
@@ -401,8 +401,8 @@ Future<List<Map<String, dynamic>>>GestionTickets2()async
       'Content-Type': 'application/json'
     };
     var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/tickets/gestion_tipo_listado");
-    "http://api.komuvita.com/portal/tickets/gestion_tipo_listado");
+        "https://apidesa.komuvita.com/portal/tickets/gestion_tipo_listado");
+    //"http://api.komuvita.com/portal/tickets/gestion_tipo_listado");
     Map body = {
       "autenticacion":
       {
@@ -542,8 +542,8 @@ class ServicioProcesoTickets
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/tickets/gestion_en_proceso",
-        "http://api.komuvita.com/portal/tickets/gestion_en_proceso",
+        "https://apidesa.komuvita.com/portal/tickets/gestion_en_proceso",
+        //"http://api.komuvita.com/portal/tickets/gestion_en_proceso",
       );
       Map<String,dynamic> data =
       {
@@ -639,8 +639,8 @@ class ServicioFinalizarTickets
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/tickets/gestion_finalizar",
-        "http://api.komuvita.com/portal/tickets/gestion_finalizar",
+        "https://apidesa.komuvita.com/portal/tickets/gestion_finalizar",
+        //"http://api.komuvita.com/portal/tickets/gestion_finalizar",
       );
       Map<String,dynamic> data =
       {
@@ -735,8 +735,8 @@ class ServicioCerrarTickets
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/tickets/gestion_finalizar",
-        "http://api.komuvita.com/portal/tickets/gestion_finalizar",
+        "https://apidesa.komuvita.com/portal/tickets/gestion_finalizar",
+        //"http://api.komuvita.com/portal/tickets/gestion_finalizar",
       );
       Map<String,dynamic> data =
       {

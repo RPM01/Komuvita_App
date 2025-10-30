@@ -51,8 +51,8 @@ class AdmCrearReservaController extends GetxController {
     try {
       final headers = {'Content-Type': 'application/json'};
       final url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/amenidades/amenidades_listado");
-          "http://api.komuvita.com/portal/amenidades/amenidades_listado");
+        "https://apidesa.komuvita.com/portal/amenidades/amenidades_listado");
+          //"http://api.komuvita.com/portal/amenidades/amenidades_listado");
 
       final body = {
         "autenticacion": {"pv_token": token},
@@ -146,8 +146,8 @@ class reservaAmenidadCreacion
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_creacion");
-      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_creacion");
+          "https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_creacion");
+      //"http://api.komuvita.com/portal/amenidades/reserva_amenidad_creacion");
       Map body = {
         "autenticacion":
         {

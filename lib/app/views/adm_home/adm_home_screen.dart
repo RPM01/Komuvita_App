@@ -43,6 +43,8 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
  import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 
 String _EdificioPropiedadSelecionada = "";
 String edificioID = empresasIdsSet[0].toString();
@@ -110,6 +112,29 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
       ..maximumFractionDigits = 2;
 
     return numberFormat.format(amount);
+  }
+
+  Future<void> decodeBase64ToPdf(String base64String, String fileName) async {
+    try {
+      // Decode base64 string
+      final bytes = base64Decode(base64String);
+
+      // Get the temporary directory of the app
+      final dir = await getApplicationDocumentsDirectory();
+
+      // Create the full path
+      final file = File('${dir.path}/$fileName.pdf');
+
+      // Write the bytes to the file
+      await file.writeAsBytes(bytes);
+
+      // Optional: Open the PDF
+      await OpenFilex.open(file.path);
+
+      print('✅ PDF saved at: ${file.path}');
+    } catch (e) {
+      print('❌ Error decoding PDF: $e');
+    }
   }
 
   @override
@@ -1846,6 +1871,42 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             ),
 
                             17.height,
+                            Card(
+                              elevation: 3,
+                              margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+                              color: Colors.green,
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height * 0.12,
+                                child: Column(
+                                  children: [
+                                    Title(color: Colors.black, child: Text("Instrucciones de pago",style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: MediaQuery.of(context).size.width * 0.040,
+
+                                    ),),),
+                                    Wrap(
+                                      alignment: WrapAlignment.center, // centers the items horizontally
+                                      spacing: 8, // space between items
+                                      runSpacing: 4, // space between lines when wrapping
+                                      children: pago.map((String text) {
+                                        return Text(
+                                          text,
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: MediaQuery.of(context).size.width * 0.040,
+                                            color: Colors.white,
+                                          ),
+                                          maxLines: 4,
+                                          overflow: TextOverflow.ellipsis,
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            17.height,
                             Text("Información Importante",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
@@ -2012,10 +2073,47 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                     ),
                                                     items: fotos.map((foto) {
                                                       final base64Img = foto["pv_fotografiab64"]?.toString();
-                                                      if (base64Img == null || base64Img.isEmpty) {
-                                                        return const Center(child: Text("Imagen inválida"));
+                                                      if (foto["pn_adjunto"] == 1) {
+                                                        return Column(
+                                                          children: [
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            foto["pv_nombre"] == null ? Center(): Center(
+                                                              child: Text(foto["pv_nombre"],style: theme.textTheme.bodyMedium?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: MediaQuery.of(context).size.width * 0.035,
+                                                                color: Colors.black,
+                                                              ),),
+                                                            ),
+                                                            Center(
+                                                              child: SizedBox(
+                                                                width: MediaQuery.of(context).size.width * 0.60,
+                                                                child: ElevatedButton.icon(
+                                                                  icon: const Icon(Icons.download,color: Colors.white,),
+                                                                  label:  Text("Descargar",style: theme.textTheme.bodyMedium?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: MediaQuery.of(context).size.width * 0.035,
+                                                                    color: Colors.white,
+                                                                  ),),
+                                                                  style: ElevatedButton.styleFrom(
+                                                                    backgroundColor: const Color.fromRGBO(6, 78, 116, 1),
+                                                                    foregroundColor: Colors.white,
+                                                                    padding: const EdgeInsets.symmetric(vertical: 20),
+                                                                    shape:  RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.circular(20),
+                                                                    ),
+                                                                  ),
+                                                                  onPressed: () async{
+                                                                    await decodeBase64ToPdf(base64Img!, foto["pv_nombre"]);
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
                                                       }
-                                                      final bytes = base64Decode(base64Img);
+                                                      final bytes = base64Decode(base64Img!);
                                                       return ClipRRect(
                                                         borderRadius: BorderRadius.circular(10),
                                                         child: Image.memory(
@@ -2038,10 +2136,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                     fontSize: titleFontSize,
                                                   ),
                                                 ),
-
                                                 const SizedBox(height: 8),
-
-                                                // 💬 Description
                                                 if (event["pl_comentarios"] != null &&
                                                     event["pl_comentarios"].isNotEmpty)
                                                   Text(

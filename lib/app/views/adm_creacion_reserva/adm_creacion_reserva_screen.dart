@@ -772,7 +772,7 @@ String terminosCondiciones = "";
                                                       ),),
                                                       ),
                                                     );
-                                                }, child: Text("Reglamento de uso",style: theme.textTheme.headlineSmall?.copyWith(
+                                                }, child: Text("Condiciones y Reglamento de Uso",style: theme.textTheme.headlineSmall?.copyWith(
                                                   fontWeight: FontWeight.bold,
                                                   color:Color.fromRGBO(167,167,132,1))),
                                               ),
@@ -936,7 +936,7 @@ String terminosCondiciones = "";
                                                                           10.height,
                                                                           Text("Tiempo Máximo de Cupo:${documentos[setAmenidad].pnPeriodoTiempo}hrs"),
                                                                           10.height,
-                                                                          Title(color:  Color.fromRGBO(6, 78, 116, 1), child: Text("Horarios")),
+                                                                          Title(color:  Color.fromRGBO(6, 78, 116, 1), child: Text("Horarios Hábiles de Utilización")),
                                                                           documentos[setAmenidad].plHorario.isNotEmpty ? Column(
                                                                             children: [
                                                                               Row(
@@ -946,14 +946,18 @@ String terminosCondiciones = "";
                                                                                     child: Column(
                                                                                       mainAxisSize: MainAxisSize.min,
                                                                                       children: [
-                                                                                        ListTile(
+                                                                                        Text("${documentos[setAmenidad].plHorario[0].pvDia}"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[0].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[0].pvHorarioFin}"),
+                                                                                        Text("Descanso"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[0].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[0].pvHorarioFinDescanso}"),
+                                                                                        /*ListTile(
                                                                                           title: Text("${documentos[setAmenidad].plHorario[0].pvDia}"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[0].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[0].pvHorarioFin}"),
                                                                                         ),
                                                                                         ListTile(
                                                                                           title: Text("Descanso"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[0].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[0].pvHorarioFinDescanso}"),
-                                                                                        ),
+                                                                                        ),*/
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -962,14 +966,18 @@ String terminosCondiciones = "";
                                                                                     child: Column(
                                                                                       mainAxisSize: MainAxisSize.min,
                                                                                       children: [
-                                                                                        ListTile(
+                                                                                        Text("${documentos[setAmenidad].plHorario[1].pvDia}"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[1].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[1].pvHorarioFin}"),
+                                                                                        Text("Descanso"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[1].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[1].pvHorarioFinDescanso}"),
+                                                                                        /*ListTile(
                                                                                           title: Text("${documentos[setAmenidad].plHorario[1].pvDia}"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[1].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[1].pvHorarioFin}"),
                                                                                         ),
                                                                                         ListTile(
                                                                                           title: Text("Descanso"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[1].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[1].pvHorarioFinDescanso}"),
-                                                                                        ),
+                                                                                        ),*/
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -982,14 +990,18 @@ String terminosCondiciones = "";
                                                                                     child: Column(
                                                                                       mainAxisSize: MainAxisSize.min,
                                                                                       children: [
-                                                                                        ListTile(
+                                                                                        Text("${documentos[setAmenidad].plHorario[2].pvDia}"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[2].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[2].pvHorarioFin}"),
+                                                                                        Text("Descanso"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[2].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[2].pvHorarioFinDescanso}"),
+                                                                                        /*ListTile(
                                                                                           title: Text("${documentos[setAmenidad].plHorario[2].pvDia}"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[2].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[2].pvHorarioFin}"),
                                                                                         ),
                                                                                         ListTile(
                                                                                           title: Text("Descanso"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[2].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[2].pvHorarioFinDescanso}"),
-                                                                                        ),
+                                                                                        ),*/
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -998,14 +1010,18 @@ String terminosCondiciones = "";
                                                                                     child: Column(
                                                                                       mainAxisSize: MainAxisSize.min,
                                                                                       children: [
-                                                                                        ListTile(
+                                                                                        Text("${documentos[setAmenidad].plHorario[3].pvDia}"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[3].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[3].pvHorarioFin}"),
+                                                                                        Text("Descanso"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[3].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[3].pvHorarioFinDescanso}"),
+                                                                                      /*  ListTile(
                                                                                           title: Text("${documentos[setAmenidad].plHorario[3].pvDia}"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[3].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[3].pvHorarioFin}"),
                                                                                         ),
                                                                                         ListTile(
                                                                                           title: Text("Descanso"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[3].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[3].pvHorarioFinDescanso}"),
-                                                                                        ),
+                                                                                        ),*/
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -1018,14 +1034,18 @@ String terminosCondiciones = "";
                                                                                     child: Column(
                                                                                       mainAxisSize: MainAxisSize.min,
                                                                                       children: [
-                                                                                        ListTile(
+                                                                                        Text("${documentos[setAmenidad].plHorario[4].pvDia}"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[4].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[4].pvHorarioFin}"),
+                                                                                        Text("Descanso"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[4].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[4].pvHorarioFinDescanso}"),
+                                                                                        /*ListTile(
                                                                                           title: Text("${documentos[setAmenidad].plHorario[4].pvDia}"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[4].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[4].pvHorarioFin}"),
                                                                                         ),
                                                                                         ListTile(
                                                                                           title: Text("Descanso"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[4].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[4].pvHorarioFinDescanso}"),
-                                                                                        ),
+                                                                                        ),*/
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -1034,14 +1054,18 @@ String terminosCondiciones = "";
                                                                                     child: Column(
                                                                                       mainAxisSize: MainAxisSize.min,
                                                                                       children: [
-                                                                                        ListTile(
+                                                                                        Text("${documentos[setAmenidad].plHorario[5].pvDia}"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[5].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[5].pvHorarioFin}"),
+                                                                                        Text("Descanso"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[5].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[5].pvHorarioFinDescanso}"),
+                                                                                       /* ListTile(
                                                                                           title: Text("${documentos[setAmenidad].plHorario[5].pvDia}"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[5].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[5].pvHorarioFin}"),
                                                                                         ),
                                                                                         ListTile(
                                                                                           title: Text("Descanso"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[5].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[5].pvHorarioFinDescanso}"),
-                                                                                        ),
+                                                                                        ),*/
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -1054,14 +1078,18 @@ String terminosCondiciones = "";
                                                                                     child: Column(
                                                                                       mainAxisSize: MainAxisSize.min,
                                                                                       children: [
-                                                                                        ListTile(
+                                                                                        Text("${documentos[setAmenidad].plHorario[6].pvDia}"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[6].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[6].pvHorarioFin}"),
+                                                                                        Text("Descanso"),
+                                                                                        Text("${documentos[setAmenidad].plHorario[6].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[6].pvHorarioFinDescanso}"),
+                                                                                       /* ListTile(
                                                                                           title: Text("${documentos[setAmenidad].plHorario[6].pvDia}"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[6].pvHorarioInicio} - ${documentos[setAmenidad].plHorario[6].pvHorarioFin}"),
                                                                                         ),
                                                                                         documentos[setAmenidad].plHorario[6].pvHorarioInicioDescanso == "00:00" ? ListTile(
                                                                                           title: Text("Descanso"),
                                                                                           subtitle: Text("${documentos[setAmenidad].plHorario[6].pvHorarioInicioDescanso} - ${documentos[setAmenidad].plHorario[6].pvHorarioFinDescanso}"),
-                                                                                        ):Center(),
+                                                                                        ):Center(),*/
                                                                                       ],
                                                                                     ),
                                                                                   ),
