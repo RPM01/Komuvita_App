@@ -59,8 +59,8 @@ Future<List<Map<String, dynamic>>>objetosPerdidos5()async
       'Content-Type': 'application/json'
     };
     var url = Uri.parse(
-      //"https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
-    "http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+      "https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+    //"http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
     Map body = {
       "autenticacion":
       {
@@ -156,8 +156,8 @@ class objetosPerdidosSetReporteE6
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-       //"https://apidesa.komuvita.com/portal/cosasperdidas/cosa_perdida_reclamar");
-      "http://api.komuvita.com/portal/cosasperdidas/cosa_perdida_reclamar");
+       "https://apidesa.komuvita.com/portal/cosasperdidas/cosa_perdida_reclamar");
+      //"http://api.komuvita.com/portal/cosasperdidas/cosa_perdida_reclamar");
       Map body = {
         "autenticacion":
         {

@@ -103,7 +103,7 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
           : AdmTheme.admLightTheme;
 
       _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
-
+      msgxToast("Cargando Procesos");
     }
     );
   }

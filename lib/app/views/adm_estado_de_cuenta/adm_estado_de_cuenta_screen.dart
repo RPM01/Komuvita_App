@@ -570,137 +570,197 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
 
                                 final documentos = snapshot.data!;
 
-                                return ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: documentos.length,
-                                  itemBuilder: (context, index) {
-                                    final event = documentos[index];
-                                    final screenWidth = MediaQuery.of(context).size.width;
-                                    final screenHeight = MediaQuery.of(context).size.height;
+                                return Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            IconButton(onPressed:() async{
+                                              // 🔹 Add your refresh or custom logic here
+                                              final rawUrl =  documentos[0].pvEstadoCuentaUrl!;
+                                              final uri = Uri.tryParse(rawUrl);
+                                              final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
+                                              if (await canLaunchUrl(safeUri)) {
+                                                await launchUrl(safeUri, mode: LaunchMode.externalApplication);
+                                              }
 
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: screenHeight * 0.008,
-                                        horizontal: screenWidth * 0.04,
-                                      ),
-                                      child: Card(
-                                        elevation: 4,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        color: Colors.grey[200],
-                                        child: Padding(
-                                          padding: EdgeInsets.all(screenWidth * 0.04),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min, // 🔹 Deja que el contenido defina la altura
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              // 🔹 Título (tipo de transacción)
-                                              Center(
-                                                child: Text(
-                                                  event.pvTransaccion ?? "",
-                                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: event.pvTransaccion == "Cargo"
-                                                        ? Colors.blue
-                                                        : Colors.amber,
-                                                    fontSize: screenWidth * 0.045,
-                                                  ),
-                                                ),
-                                              ),
+                                              else
+                                              {
+                                                msgxToast("No se puede ver cobro");
+                                              }
+                                            },  icon: const Icon(Icons.document_scanner),color: Color.fromRGBO(6,78,116,1),),
+                                            Text("Ver estado de cuenta",
+                                                style: _labelStyle(theme, MediaQuery.of(context).size.width)),
+                                          ],
+                                        )
+                                        ],
+                                    ),
 
-                                              SizedBox(height: screenHeight * 0.01),
+                                    ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: documentos.length,
+                                      itemBuilder: (context, index) {
+                                        final event = documentos[index];
+                                        final screenWidth = MediaQuery.of(context).size.width;
+                                        final screenHeight = MediaQuery.of(context).size.height;
 
-                                              // 🔹 Descripción del movimiento
-                                              Center(
-                                                child: Text(
-                                                  event.pvDescripcionMovimiento ?? "",
-                                                  textAlign: TextAlign.center,
-                                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: const Color.fromRGBO(167, 167, 132, 1),
-                                                    fontSize: screenWidth * 0.038,
-                                                  ),
-                                                ),
-                                              ),
-
-                                              SizedBox(height: screenHeight * 0.015),
-
-                                              // 🔹 Fecha y comprobante
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                children: [
-                                                  Text(
-                                                    DateFormat('dd/MM/yyyy')
-                                                        .format(DateTime.parse(event.pfFecha ?? "")),
-                                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: screenWidth * 0.032,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  if (event.pnPermiteVerComprobante == 1)
-                                                    IconButton(
-                                                      icon: FaIcon(
-                                                        FontAwesomeIcons.fileInvoice,
-                                                        size: screenWidth * 0.05,
-                                                      ),
-                                                      color: const Color.fromRGBO(6, 78, 116, 1),
-                                                      onPressed: () async {
-                                                        final rawUrl = event.pvVerComprobante!;
-                                                        final uri = Uri.tryParse(rawUrl);
-                                                        final safeUri =
-                                                            uri ?? Uri.parse(Uri.encodeFull(rawUrl));
-                                                        if (await canLaunchUrl(safeUri)) {
-                                                          await launchUrl(
-                                                            safeUri,
-                                                            mode: LaunchMode.externalApplication,
-                                                          );
-                                                        } else {
-                                                          debugPrint("Could not launch $safeUri");
-                                                        }
-                                                      },
-                                                    ),
-                                                ],
-                                              ),
-
-                                              SizedBox(height: screenHeight * 0.01),
-
-                                              // 🔹 Encabezado de valores
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Text("Débito",
-                                                      style: _labelStyle(theme, screenWidth)),
-                                                  Text("Crédito",
-                                                      style: _labelStyle(theme, screenWidth)),
-                                                  Text("Saldo Actual",
-                                                      style: _labelStyle(theme, screenWidth)),
-                                                ],
-                                              ),
-
-                                              SizedBox(height: screenHeight * 0.005),
-
-                                              // 🔹 Valores monetarios
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  _valueText(event.pmDebito, event.pvMonedaAbreviatura,
-                                                      theme, screenWidth),
-                                                  _valueText(event.pmCredito, event.pvMonedaAbreviatura,
-                                                      theme, screenWidth),
-                                                  _valueText(event.pmSaldoActual, event.pvMonedaAbreviatura,
-                                                      theme, screenWidth),
-                                                ],
-                                              ),
-                                            ],
+                                        return Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: screenHeight * 0.008,
+                                            horizontal: screenWidth * 0.04,
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                          child: Card(
+                                            elevation: 4,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            color: Colors.grey[200],
+                                            child: Padding(
+                                              padding: EdgeInsets.all(screenWidth * 0.04),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min, // 🔹 Deja que el contenido defina la altura
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: [
+                                                      Center(
+                                                        child: Text(
+                                                          event.pvTransaccion ?? "",
+                                                          style: theme.textTheme.headlineSmall?.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: event.pvTransaccion == "Cargo"
+                                                                ? Colors.blue
+                                                                : Colors.amber,
+                                                            fontSize: screenWidth * 0.045,
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+
+                                                  SizedBox(height: screenHeight * 0.01),
+
+                                                  // 🔹 Descripción del movimiento
+                                                  Center(
+                                                    child: Text(
+                                                      event.pvDescripcionMovimiento ?? "",
+                                                      textAlign: TextAlign.center,
+                                                      style: theme.textTheme.bodyLarge?.copyWith(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: const Color.fromRGBO(167, 167, 132, 1),
+                                                        fontSize: screenWidth * 0.038,
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  SizedBox(height: screenHeight * 0.015),
+
+                                                  // 🔹 Fecha y comprobante
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                    children: [
+                                                      Text(
+                                                        DateFormat('dd/MM/yyyy')
+                                                            .format(DateTime.parse(event.pfFecha ?? "")),
+                                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: screenWidth * 0.032,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      if (event.pnPermiteVerComprobante == 1)
+                                                        Column(
+                                                          children: [
+                                                            IconButton(
+                                                              icon: FaIcon(
+                                                                FontAwesomeIcons.fileInvoice,
+                                                                size: screenWidth * 0.05,
+                                                              ),
+                                                              color: const Color.fromRGBO(6, 78, 116, 1),
+                                                              onPressed: () async {
+                                                                final rawUrl = event.pvVerComprobante!;
+                                                                final uri = Uri.tryParse(rawUrl);
+                                                                final safeUri =
+                                                                    uri ?? Uri.parse(Uri.encodeFull(rawUrl));
+                                                                if (await canLaunchUrl(safeUri)) {
+                                                                  await launchUrl(
+                                                                    safeUri,
+                                                                    mode: LaunchMode.externalApplication,
+                                                                  );
+                                                                } else {
+                                                                  debugPrint("Could not launch $safeUri");
+                                                                }
+                                                              },
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                      event.pvTransaccion == "Pago" ? Column(
+                                                        children: [
+                                                          IconButton(onPressed:()
+                                                          async{
+                                                            showImageDialog4(
+                                                              context,
+                                                              event.pvComprobantePagob64,
+                                                            );
+                                                          },
+                                                         icon: const Icon(Icons.attach_file),color: Color.fromRGBO(6,78,116,1),),
+                                                        ],
+                                                      ):Center(),
+                                                    ],
+                                                  ),
+
+                                                  SizedBox(height: screenHeight * 0.01),
+
+                                                  // 🔹 Encabezado de valores
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text("Débito",
+                                                          style: _labelStyle(theme, screenWidth)),
+                                                      Text("Crédito",
+                                                          style: _labelStyle(theme, screenWidth)),
+                                                      Text("Saldo Actual",
+                                                          style: _labelStyle(theme, screenWidth)),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: screenHeight * 0.005),
+
+                                                  // 🔹 Valores monetarios
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(event.pmDebito.toString()+ event.pvMonedaAbreviatura,
+                                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                                            fontWeight: FontWeight.w500,
+                                                            color: event.pnPositivo == -1 ? Colors.red[600]:Colors.blue[900],
+                                                          )),
+                                                      Text(event.pmCredito.toString()+ event.pvMonedaAbreviatura,
+                                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                                            fontWeight: FontWeight.w500,
+                                                            color: event.pnPositivo == -1 ? Colors.red[600]:Colors.blue[900],
+                                                          )),
+                                                      Text(event.pmSaldoActual.toString()+ event.pvMonedaAbreviatura,
+                                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                                          fontWeight: FontWeight.w500,
+                                                          color: event.pnPositivo == -1 ? Colors.red[600]:Colors.blue[900],
+                                                        )),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 );
                               },
                             ),
@@ -982,5 +1042,27 @@ void _showLogOutBottomSheet(BuildContext context,) {
         },
       );
     },
+  );
+}
+void msgxToast(String msxg){
+
+  Fluttertoast.showToast(
+    msg: msxg,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.CENTER,
+    timeInSecForIosWeb: 1,
+    backgroundColor: Colors.blue,
+    textColor: Colors.white,
+    fontSize: 20,
+  );
+}
+void showImageDialog4(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      content: Image.memory(base64Decode(imageUrl),
+
+      ),
+    ),
   );
 }

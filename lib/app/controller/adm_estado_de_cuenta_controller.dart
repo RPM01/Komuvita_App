@@ -66,8 +66,8 @@ class ServicioListadoCuenta{
       };
 
       var url = Uri.parse(
-        //"https://apidesa.komuvita.com/portal/cuentas/estado_cuenta");
-      "http://api.komuvita.com/portal/cuentas/estado_cuenta");
+        "https://apidesa.komuvita.com/portal/cuentas/estado_cuenta");
+      //"http://api.komuvita.com/portal/cuentas/estado_cuenta");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -95,7 +95,9 @@ class ServicioListadoCuenta{
 
       if (response.statusCode == 200)
       {
-        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0)
+        {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
           // Return an empty list instead of throwing
@@ -113,6 +115,15 @@ class ServicioListadoCuenta{
           //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           throw Exception(json["resultado"]["pv_error_descripcion"].toString());
         }
+        }
+        else
+        {
+          msgxToast(json["resultado"]["pv_error_descripcion"]);
+          debugPrint("Si funciona verificar el mensaje");
+          if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+            {
+              Get.offAllNamed(MyRoute.loginScreen);
+            }
         }
       }
 
