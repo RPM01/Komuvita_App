@@ -66,8 +66,8 @@ class RentaVentasSetE5
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          "https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
-      //"http://api.komuvita.com/portal/rentasventas/rentas_listado");
+          //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
+      "http://api.komuvita.com/portal/rentasventas/rentas_listado");
       Map body = {
         "autenticacion":
         {
@@ -159,8 +159,8 @@ class listaDeMonedas
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          "https://apidesa.komuvita.com/portal/general/monedas_listado");
-      //"http://api.komuvita.com/portal/general/monedas_listado");
+          //"https://apidesa.komuvita.com/portal/general/monedas_listado");
+      "http://api.komuvita.com/portal/general/monedas_listado");
       Map  body = {
         "autenticacion":
         {
@@ -289,8 +289,8 @@ class RentaVentasSetE7
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-      "https://apidesa.komuvita.com/portal/rentasventas/rentas_creacion");
-      //"http://api.komuvita.com/portal/rentasventas/rentas_creacion");
+      //"https://apidesa.komuvita.com/portal/rentasventas/rentas_creacion");
+      "http://api.komuvita.com/portal/rentasventas/rentas_creacion");
       Map<String,dynamic> body = {
         "autenticacion":
         {

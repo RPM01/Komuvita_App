@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../api_Clases/class_Document5.dart';
 import '../../../api_Clases/class_RentasVentas5.dart';
@@ -122,6 +123,96 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
     });
   }
 
+  Widget _buildDrawerHeader(BuildContext context, AdmMenuController controller, String userName) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      color: controller.themeController.isDarkMode ? admDarkPrimary : admLightGrey,
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              logoLogin,
+              height: MediaQuery.of(context).size.height * 0.30,
+              width: MediaQuery.of(context).size.width * 0.30,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              userName,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(6, 78, 116, 1),
+                fontSize: 25,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
+    if (isAdmin) {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return FontAwesomeIcons.boxesPacking;
+        case 8: return Icons.person;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;
+      }
+    } else if (jundaDir) {
+      switch (index) {
+        case 0: return FontAwesomeIcons.boxesPacking;
+        case 1: return FontAwesomeIcons.person;
+        default: return Icons.logout;
+      }
+    } else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return FontAwesomeIcons.boxesPacking;
+        case 8: return Icons.person;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;
+      }
+    }
+  }
+
+  Future<void> decodeBase64ToPdf(String base64String, String fileName) async {
+    try {
+      // Decode base64 string
+      final bytes = base64Decode(base64String);
+
+      // Get the temporary directory of the app
+      final dir = await getApplicationDocumentsDirectory();
+
+      // Create the full path
+      final file = File('${dir.path}/$fileName.pdf');
+
+      // Write the bytes to the file
+      await file.writeAsBytes(bytes);
+
+      // Optional: Open the PDF
+      await OpenFilex.open(file.path);
+
+      debugPrint('✅ PDF saved at: ${file.path}');
+    } catch (e) {
+      debugPrint('❌ Error decoding PDF: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -215,130 +306,103 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
         )
       ],
     ),
-    drawer: Drawer(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              color: menuController.themeController.isDarkMode
-                  ? admDarkPrimary
-                  : admLightGrey,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          logoLogin,
-                          height: MediaQuery.of(context).size.height*0.20,
-                          width: MediaQuery.of(context).size.width*0.20,
-                        ),
-                        const SizedBox(width: 10),
-                        /*
-                              CircleAvatar(
-                                radius: MediaQuery.of(context).size.width*0.09,
-                                  backgroundColor: Color.fromRGBO(220,227,234,1),
-                              ),
-                              const SizedBox(width: 10),
-                               */
-                        Text(
-                          userName, // Change to dynamic user name if available
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: menuController.themeController.isDarkMode
-                                ? admWhiteColor
-                                : admTextColor,
-                          ),
-                        ),
+        drawer: Drawer(
+          child: SafeArea(
+            child: Obx(() {
+              // 🧠 Get values reactively
+              if (!menuController.isMenuReady.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-                      ],
+              final isAdmin = menuController.isAdmin.value;
+              final jundaDir = menuController.jundaDir.value;
+              final helpAndSupport = menuController.helpAndSupport;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDrawerHeader(context, menuController, userName),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ListView.builder(
+                        itemCount: helpAndSupport.length,
+                        itemBuilder: (context, index) {
+                          final menuTitle = helpAndSupport[index];
+                          final isLast = index == helpAndSupport.length - 1;
+                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: InkWell(
+                              onTap: () async {
+                                if (isLast) {
+                                  Get.snackbar("Sesión", "Cerrando sesión...");
+                                  _showLogOutBottomSheet(context);
+                                  return;
+                                }
+
+                                // 👇 Handle "Paquetes pendientes"
+                                if (menuTitle == "Paquetes pendientes") {
+                                  Navigator.pop(context); // close drawer first
+                                  Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
+                                  return;
+                                }
+
+                                // 👇 Normal navigation
+                                Navigator.pop(context);
+                                await Future.delayed(const Duration(milliseconds: 200));
+                                Get.to(menuController.screens[index]);
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    iconData,
+                                    size: 22,
+                                    color: isLast
+                                        ? Colors.red
+                                        : (menuController.themeController.isDarkMode
+                                        ? admWhiteColor
+                                        : admDarkPrimary),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Text(
+                                      menuTitle,
+                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: isLast
+                                            ? Colors.red
+                                            : (menuController.themeController.isDarkMode
+                                            ? admWhiteColor
+                                            : admDarkPrimary),
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 15,
+                                    color: isLast
+                                        ? Colors.red
+                                        : (menuController.themeController.isDarkMode
+                                        ? admWhiteColor
+                                        : admDarkPrimary),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
-              ),
-            ),
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ListView.builder(
-                  itemCount: menuController.helpAndSupport.length,
-                  itemBuilder: (context, index) {
-                    final isLast = index == menuController.helpAndSupport.length - 1;
-
-                    IconData iconData;
-                    switch (index) {
-                      case 0: iconData = Icons.house; break;
-                      case 1: iconData = FontAwesomeIcons.clipboardList; break;
-                      case 2: iconData = FontAwesomeIcons.newspaper; break;
-                      case 3: iconData = FontAwesomeIcons.doorOpen; break;
-                      case 4: iconData = FontAwesomeIcons.boxesStacked; break;
-                      case 5: iconData = FontAwesomeIcons.calendarCheck; break;
-                      case 6: iconData = FontAwesomeIcons.phoneFlip; break;
-                      case 7: iconData = Icons.lock_reset; break;
-                      default: iconData = Icons.logout;
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 15),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            if(isLast)
-                            {
-                              _showLogOutBottomSheet(context);
-                            }
-                            Get.to(menuController.screens[index]);
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            Icon(
-                              iconData,
-                              size: 22,
-                              color: isLast ? Colors.red :
-                              (menuController.themeController.isDarkMode
-                                  ? admWhiteColor
-                                  : admDarkPrimary),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: Text(
-                                menuController.helpAndSupport[index],
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: isLast ? Colors.red :
-                                  (menuController.themeController.isDarkMode
-                                      ? admWhiteColor
-                                      : admDarkPrimary),
-                                ),
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 15,
-                              color: isLast ? Colors.red :
-                              (menuController.themeController.isDarkMode
-                                  ? admWhiteColor
-                                  : admDarkPrimary),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            )
-          ],
+              );
+            }),
+          ),
         ),
-      ),
-    ),
 
     body: GetBuilder<AdmNoticiasController>(
         init: newsController,
@@ -693,7 +757,9 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                             itemCount: events.length,
                                             itemBuilder: (context, index) {
                                               final event = events[index];
+                                              final fotos = event["pl_fotografias"] as List?;
                                               List<int> cantidadComentarios = [];
+                                              final carouselKey = GlobalKey<CarouselSliderState>();
 
                                                /*final images = event["plFotografias"]
                                                   ?.where((f) => f["pv_fotografiab64"] != null && f["pv_fotografiab64"]!.isNotEmpty)
@@ -751,104 +817,114 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                               fontSize: constraints.maxWidth * 0.035,)),
                                                           ],
                                                         ),
-                                                        StatefulBuilder(
-                                                          builder: (context, setLocalState) {
-                                                            return SizedBox(
-                                                              width: constraints.maxWidth * 0.85,
-                                                              height: constraints.maxWidth * 0.50,
-                                                              child: images.isNotEmpty
-                                                                  ? Stack(
-                                                                alignment: Alignment.center,
-                                                                children: [
-                                                                  CarouselSlider(
-                                                                    carouselController: _controllers[index],
-                                                                    options: CarouselOptions(
-                                                                      viewportFraction: 1.0,
-                                                                      enableInfiniteScroll: images.length > 1,
-                                                                      enlargeCenterPage: true,
-                                                                      height: constraints.maxWidth * 0.50, // ✅ match parent
-                                                                      onPageChanged: (page, reason) {
-                                                                        setLocalState(() {
-                                                                          _currentIndex[index] = page;
-                                                                        });
-                                                                      },
-                                                                    ),
-                                                                    items: images.map((base64Img) {
-                                                                      try {
-                                                                        final bytes = base64Decode(base64Img);
-                                                                        return GestureDetector(
-                                                                          onTap: () => showImageDialog(context,base64Img),
-                                                                          child: ClipRRect(
-                                                                            borderRadius: BorderRadius.circular(10),
-                                                                            child: Image.memory(
-                                                                              bytes,
-                                                                              fit: BoxFit.fill,
-                                                                              width: double.infinity,
+                                                        if (fotos == null || fotos.isEmpty)
+                                                          const Center(child: Text("Sin fotos"))
+                                                        else
+                                                          Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                              CarouselSlider(
+                                                                key: carouselKey,
+                                                                options: CarouselOptions(
+                                                                  aspectRatio: 16 / 9,
+                                                                  viewportFraction: 1.0,
+                                                                  enableInfiniteScroll: false,
+                                                                  enlargeCenterPage: true,
+                                                                ),
+                                                                items: fotos.map((foto) {
+                                                                  final base64Img = foto["pv_fotografiab64"]?.toString();
+                                                                  if (foto["pn_adjunto"] == 1) {
+                                                                    return Column(
+                                                                      children: [
+                                                                        const SizedBox(height: 10),
+                                                                        if (foto["pv_nombre"] != null)
+                                                                          Center(
+                                                                            child: Text(
+                                                                              foto["pv_nombre"],
+                                                                              style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: MediaQuery.of(context).size.width * 0.035,
+                                                                                color: Colors.black,
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        );
-                                                                      } catch (e) {
-                                                                        return const Center(child: Text("Imagen inválida"));
-                                                                      }
-                                                                    }).toList(),
-                                                                  ),
-
-                                                                  // ⬅️ Left arrow
-                                                                  if (images.length > 1)
-                                                                    Positioned(
-                                                                      left: 5,
-                                                                      child: IconButton(
-                                                                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-                                                                        onPressed: () {
-                                                                          _controllers[index]?.previousPage(
-                                                                            duration: const Duration(milliseconds: 300),
-                                                                            curve: Curves.easeInOut,
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ),
-
-                                                                  // ➡️ Right arrow
-                                                                  if (images.length > 1)
-                                                                    Positioned(
-                                                                      right: 5,
-                                                                      child: IconButton(
-                                                                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
-                                                                        onPressed: () {
-                                                                          _controllers[index]?.nextPage(
-                                                                            duration: const Duration(milliseconds: 300),
-                                                                            curve: Curves.easeInOut,
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ),
-
-                                                                  // 🔘 Indicator dots
-                                                                  if (images.length > 1)
-                                                                    Positioned(
-                                                                      bottom: 5,
-                                                                      child: Row(
-                                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                                        children: images.asMap().entries.map((entry) {
-                                                                          final isActive = _currentIndex[index] == entry.key;
-                                                                          return Container(
-                                                                            width: isActive ? 10 : 6,
-                                                                            height: isActive ? 10 : 6,
-                                                                            margin: const EdgeInsets.symmetric(horizontal: 2),
-                                                                            decoration: BoxDecoration(
-                                                                              shape: BoxShape.circle,
-                                                                              color: isActive ? Colors.white : Colors.grey,
+                                                                        Center(
+                                                                          child: SizedBox(
+                                                                            width: MediaQuery.of(context).size.width * 0.60,
+                                                                            child: ElevatedButton.icon(
+                                                                              icon: const Icon(Icons.download, color: Colors.white),
+                                                                              label: Text(
+                                                                                "Descargar",
+                                                                                style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                                                                                  color: Colors.white,
+                                                                                ),
+                                                                              ),
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                padding: const EdgeInsets.symmetric(vertical: 20),
+                                                                                shape: RoundedRectangleBorder(
+                                                                                  borderRadius: BorderRadius.circular(20),
+                                                                                ),
+                                                                              ),
+                                                                              onPressed: () async {
+                                                                                await decodeBase64ToPdf(base64Img!, foto["pv_nombre"]);
+                                                                              },
                                                                             ),
-                                                                          );
-                                                                        }).toList(),
-                                                                      ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  }
+
+                                                                  final bytes = base64Decode(base64Img!);
+                                                                  return ClipRRect(
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                    child: Image.memory(
+                                                                      bytes,
+                                                                      fit: BoxFit.cover,
+                                                                      width: double.infinity,
                                                                     ),
-                                                                ],
-                                                              )
-                                                                  : const Center(child: Text("Sin fotos")),
-                                                            );
-                                                          },
-                                                        ),
+                                                                  );
+                                                                }).toList(),
+                                                              ),
+
+                                                              // ⬅️ Left Arrow
+                                                              Positioned(
+                                                                left: 10,
+                                                                child: IconButton(
+                                                                  icon: const Icon(Icons.arrow_back_ios, color: Colors.black87, size: 30),
+                                                                  onPressed: () {
+                                                                    final controller = carouselKey.currentState?.pageController;
+                                                                    if (controller != null && controller.hasClients) {
+                                                                      controller.previousPage(
+                                                                        duration: const Duration(milliseconds: 300),
+                                                                        curve: Curves.easeInOut,
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ),
+
+                                                              // ➡️ Right Arrow
+                                                              Positioned(
+                                                                right: 10,
+                                                                child: IconButton(
+                                                                  icon: const Icon(Icons.arrow_forward_ios, color: Colors.black87, size: 30),
+                                                                  onPressed: () {
+                                                                    final controller = carouselKey.currentState?.pageController;
+                                                                    if (controller != null && controller.hasClients) {
+                                                                      controller.nextPage(
+                                                                        duration: const Duration(milliseconds: 300),
+                                                                        curve: Curves.easeInOut,
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         Padding(
                                                           padding: const EdgeInsets.all(12),
                                                           child:  Center(
@@ -1166,6 +1242,7 @@ void _showLogOutBottomSheet(BuildContext context,) {
                               onTap: () {
                                 // Get.offNamedUntil('/adm_login',
                                 //     ModalRoute.withName(MyRoute.loginScreen));
+                                Get.snackbar("Sesión", "Cerrando sesión...");
                                 Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
                               },
                               child: Container(

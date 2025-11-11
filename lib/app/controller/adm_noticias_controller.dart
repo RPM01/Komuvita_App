@@ -62,8 +62,8 @@ class setNewsComentC7{
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-        "https://apidesa.komuvita.com/portal/noticias/comentario_noticia_creacion"
-          //"http://api.komuvita.com/portal/noticias/comentario_noticia_creacion"
+        //"https://apidesa.komuvita.com/portal/noticias/comentario_noticia_creacion"
+          "http://api.komuvita.com/portal/noticias/comentario_noticia_creacion"
       );
       Map body = {
         "autenticacion":
@@ -165,8 +165,8 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
       'Content-Type': 'application/json'
     };
     var url = Uri.parse(
-       "https://apidesa.komuvita.com/portal/noticias/noticias_listado"
-        //"http://api.komuvita.com/portal/noticias/noticias_listado"
+       //"https://apidesa.komuvita.com/portal/noticias/noticias_listado"
+        "http://api.komuvita.com/portal/noticias/noticias_listado"
     );
     Map body = {
       "autenticacion":

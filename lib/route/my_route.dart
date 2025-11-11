@@ -26,6 +26,7 @@ import '../app/views/adm_onboaring/adm_onboarding_screen.dart';
 import '../app/views/adm_other_category/adm_other_category.dart';
 import '../app/views/adm_otp_code/adm_otp_code_screen.dart';
 import '../app/views/adm_owner_detail/adm_owner_detail_screen.dart';
+import '../app/views/adm_paquetes/adm_paquetes_screen.dart';
 import '../app/views/adm_password_creation/adm_password_creation_screen.dart';
 import '../app/views/adm_privacy_policy/adm_privacy_policy_screen.dart';
 import '../app/views/adm_profile/app_appearence.dart';
@@ -48,6 +49,7 @@ import '../app/views/adm_welcome/adm_welcome_screen.dart';
 class MyRoute {
   /*------------------------------ Adm Adoption App -------------------------------------------*/
   static const admEstadoCuenta = '/adm_estado_de_cuenta';
+  static const paquetesListado = "/adm_paquetes_screen.dart";
   static const admSplash = '/adm_splash';
   static const admOnboardingScreen = '/adm_onboarding';
   static const welcomeScreen = '/adm_welcome';
@@ -107,6 +109,12 @@ class MyRoute {
     GetPage(
       name: admEstadoCuenta,
       page: () => const AdmEstadoDeCuentaScreen(),
+      transition: Transition.leftToRight,
+      transitionDuration: const Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: paquetesListado,
+      page: () => const AdmPaquetesListadosScreen(),
       transition: Transition.leftToRight,
       transitionDuration: const Duration(milliseconds: 500),
     ),

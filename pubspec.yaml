@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.5+6
+version: 1.0.6+7
 
 environment:
   sdk: '>=3.4.4 <4.0.0'
@@ -77,6 +77,11 @@ dependencies:
   image_gallery_saver_plus: ^4.0.1
   multi_image_picker_view: ^3.0.0
   open_filex: ^4.7.0
+  mobile_scanner: ^7.1.3
+  flutter_barcode_scanner:
+    git:
+      url: https://github.com/decodevM/flutter_barcode_scanner.git
+      ref: flutter-3.29
   #image_gallery_saver: ^2.0.3
   #image_downloader: ^0.31.0
 

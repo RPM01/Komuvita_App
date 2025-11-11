@@ -6,8 +6,8 @@ class ApiClient {
   // The single shared Dio instance
   static final Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'https://apidesa.komuvita.com',
-      //baseUrl: 'http://api.komuvita.com/porta',
+      //baseUrl: 'https://apidesa.komuvita.com',
+      baseUrl: 'http://api.komuvita.com/porta',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
       sendTimeout: const Duration(seconds: 10),
