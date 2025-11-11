@@ -16,6 +16,7 @@ import 'package:http/http.dart' as http;
 import '../../route/my_route.dart';
 import 'dart:convert';
 
+import '../views/adm_paquetes/adm_paquetes_screen.dart';
 import 'adm_home_controller.dart';
 
 List<int> empresasIdsSet = [];
@@ -36,6 +37,7 @@ List<String> propiedadesInternaNombresSetB = [];
 List<String> propiedadesDireccionNombresSetB = [];
 String clienteIDset = "";
 String empresaID = "";
+String empresaNombreID = "";
 
 class LoginController extends GetxController {
   AdmHomeController homeController = Get.put(AdmHomeController());
@@ -107,8 +109,8 @@ class LoginController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-            //"http://api.komuvita.com/administracion/usuarios/login");
-          "https://apidesa.komuvita.com/administracion/usuarios/login");
+            "http://api.komuvita.com/administracion/usuarios/login");
+          //"https://apidesa.komuvita.com/administracion/usuarios/login");
       Map body = {
         "autenticacion":
         {
@@ -123,7 +125,6 @@ class LoginController extends GetxController {
       debugPrint("Info Login");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
-      debugPrint(response.body.toString());
 
 
       if(response.statusCode == 200)
@@ -135,13 +136,19 @@ class LoginController extends GetxController {
 
             prefs.setString("Token", json["datos"]["pv_token"].toString());
             prefs.setString("Admin", json["datos"]["pn_administrador"].toString());
+            prefs.setString("JuntaDirectiva", json["datos"]["pn_junta_directiva"].toString());
+            debugPrint(prefs.getString("JuntaDirectiva"));
             prefs.setString("Empresa", json["datos"]["pl_empresas"][0][0]["pn_empresa"].toString());
             prefs.setString("correo",emailControllerText);
             prefs.setString("intruciones de pago",json["datos"]["pl_empresas"][0][0]["pv_instrucciones_pago"].toString());
+            debugPrint("intruciones de pago");
+            debugPrint(prefs.getString("intruciones de pago"));
             prefs.setString("NombreUser",json["datos"]["pv_usuario_nombre"].toString());
             //prefs.setString("UserCode",json["datos"]["pv_token"].toString());
 
             empresaID = json["datos"]["pl_empresas"][0][0]["pn_empresa"].toString();
+            empresaNombreID = json["datos"]["pl_empresas"][0][0]["pv_empresa_nombre"].toString();
+
             final empresasList = json["datos"]["pl_empresas"] as List;
 
             debugPrint(empresasList.toString());
@@ -160,14 +167,30 @@ class LoginController extends GetxController {
             debugPrint(empresasIds.toString());
             debugPrint(empresasNombres.toString());
             debugPrint(empresasPropiedad.toString());
-            GestionTickets1();
+
+
+
+            if(json["datos"]["pn_junta_directiva"] == 2)
+            {
+              debugPrint("Es Un Agente");
+              GestionTickets1C();
+            }
+            else
+            {
+              GestionTickets1();
+            }
 
             if(json["datos"]["pn_clave_vencida"] == 1)
-              {
-                msgxToast("Su contraseña se encuentra vencida");
+            {
+              msgxToast("Su contraseña se encuentra vencida");
 
-                Get.toNamed(MyRoute.forgotPasswordScreen);
-              }
+              Get.toNamed(MyRoute.forgotPasswordScreen);
+
+            }
+            else
+            {
+              GestionTickets1();
+            }
           }
         else{
           errorMensaje = json["resultado"]["pv_error_descripcion"].toString();
@@ -211,8 +234,8 @@ class LoginController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          "https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
-          //"http://api.komuvita.com/portal/tickets/propiedades_listado");
+          //"https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
+          "http://api.komuvita.com/portal/tickets/propiedades_listado");
       Map body = {
         "autenticacion":
         {
@@ -226,14 +249,15 @@ class LoginController extends GetxController {
 
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
-      debugPrint("Objetos Perdidos");
-      //debugPrint(response.body.toString());
+      debugPrint("Lista Clientes");
+       debugPrint( body.toString());
       debugPrint("clientes");
 
       debugPrint(json["datos"][0]["pv_cliente"].toString());
       debugPrint("Set cliente");
       clienteIDset = json["datos"][0]["pv_cliente"].toString();
       prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+      debugPrint(prefs.getString("cliente"));
       String? clineteIDs = prefs.getString("cliente");
       debugPrint("$clineteIDs + LoL");
       //prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
@@ -375,8 +399,8 @@ class LoginController extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse(
-          "https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
-      //"http://api.komuvita.com/portal/tickets/propiedades_listado");
+          //"https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
+      "http://api.komuvita.com/portal/tickets/propiedades_listado");
       Map body = {
         "autenticacion":
         {
@@ -398,6 +422,7 @@ class LoginController extends GetxController {
       debugPrint("Set cliente");
       clienteIDset = json["datos"][0]["pv_cliente"].toString();
       prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+      debugPrint(prefs.getString("cliente"));
       String? clineteIDs = prefs.getString("cliente");
       debugPrint("$clineteIDs + LoL");
       //prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
@@ -492,6 +517,172 @@ class LoginController extends GetxController {
         debugPrint("Regreso correcto");
         if(json["resultado"]["pn_tiene_datos"] == 1)
         {
+          return List<Map<String, dynamic>>.from(json["datos"]);
+        }
+        else
+        {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        }
+      }
+    }
+    catch(e)
+    {
+      //Get.back();
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
+      debugPrint(e.toString());
+      return [];
+    }
+    throw Exception("Error en conexión");
+  }
+
+  Future<List<Map<String, dynamic>>>GestionTickets1C()async
+  {
+
+    debugPrint("**********G1C***********");
+
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String empresa = empresaID;
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+          //"https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
+      "http://api.komuvita.com/portal/tickets/propiedades_listado");
+      Map body = {
+        "autenticacion":
+        {
+          "pv_token": token
+        },
+        "parametros":
+        {
+          "pn_empresa": empresaID,
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+      debugPrint("Objetos Perdidos");
+      //debugPrint(response.body.toString());
+      debugPrint("clientes");
+
+      debugPrint(json["datos"][0]["pv_cliente"].toString());
+      debugPrint("Set cliente");
+      clienteIDset = json["datos"][0]["pv_cliente"].toString();
+      prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+      debugPrint(prefs.getString("cliente"));
+      String? clineteIDs = prefs.getString("cliente");
+      debugPrint("$clineteIDs + LoL");
+      //prefs.setString("cliente", json["datos"][0]["pv_cliente"].toString());
+
+      //prefs.setStringList('ListaPropiedad', json["datos"]["pv_descripcion"]);
+      // prefs.setStringList('ListaPropiedadID', json["datos"]["pn_propiedad"]);
+
+
+
+      final empresasList = json["datos"] as List;
+
+      debugPrint(empresasList.toString());
+
+
+      //final List<int> propiedadIds = flatList.map((e) => e["pn_propiedad"] as int).toList();
+      final List<String> clientesIds = empresasList.map((e) => e["pv_cliente"] as String).toList();
+      final List<String> propiedadIds = empresasList.map((e) => e["pn_propiedad"] as String).toList();
+      final List<String> propiedadDescripcion = empresasList.map((e) => e["pv_descripcion"] as String).toList();
+      final List<String> direccionDescripcion = empresasList.map((e) => e["pv_direccion"] as String).toList();
+
+      final List<String> clientesIdsB = empresasList.map((e) => e["pv_cliente"] as String).toList();
+      final List<String> propiedadIdsB = empresasList.map((e) => e["pn_propiedad"] as String).toList();
+      final List<String> propiedadDescripcionB = empresasList.map((e) => e["pv_descripcion"] as String).toList();
+      final List<String> direccionDescripcionB = empresasList.map((e) => e["pv_direccion"] as String).toList();
+
+      debugPrint("Propiedad_1");
+
+      prefs.setStringList("clientesInternos", clientesIds);
+
+
+      clientesIdsSet.clear();
+      propiedadesInternasIdsSet.clear();
+      propiedadesInternaNombresSet.clear();
+      propiedadesDireccionNombresSet.clear();
+
+      clientesIdsSetB.clear();
+      propiedadesInternasIdsSetB.clear();
+      propiedadesInternaNombresSetB.clear();
+      propiedadesDireccionNombresSetB.clear();
+
+      clientesIdsSetB = clientesIdsB;
+      propiedadesInternasIdsSetB = propiedadIdsB;
+      propiedadesInternaNombresSetB = propiedadDescripcionB;
+      propiedadesDireccionNombresSetB = direccionDescripcionB;
+
+
+      clientesIds.insert(0, "-1");
+      propiedadIds.insert(0, "-1");
+      propiedadDescripcion.insert(0, "Todos");
+      direccionDescripcion.insert(0, "");
+
+      clientesIdsSet = clientesIds;
+      propiedadesInternasIdsSet = propiedadIds;
+      propiedadesInternaNombresSet = propiedadDescripcion;
+      propiedadesDireccionNombresSet = direccionDescripcion;
+
+
+      debugPrint("clientes ID");
+      debugPrint(clientesIds.toString());
+      debugPrint(clientesIds.length.toString());
+      debugPrint("propiedadesInternasIdsSet");
+      debugPrint(propiedadesInternasIdsSet.toString());
+      debugPrint(propiedadesInternasIdsSet.length.toString());
+      debugPrint("propiedadesInternaNombresSet");
+      debugPrint(propiedadesInternaNombresSet.toString());
+      debugPrint(propiedadesInternaNombresSet.length.toString());
+      debugPrint("propiedadesDireccionNombresSet");
+      debugPrint(propiedadesDireccionNombresSet.toString());
+      debugPrint(propiedadesDireccionNombresSet.length.toString());
+
+      debugPrint("clientes IDB");
+      debugPrint(clientesIdsSetB.toString());
+      debugPrint(clientesIdsSetB.length.toString());
+      debugPrint("propiedadesInternasIdsSetB");
+      debugPrint(propiedadesInternasIdsSetB.toString());
+      debugPrint(propiedadesInternasIdsSetB.length.toString());
+      debugPrint("propiedadesInternaNombresSetB");
+      debugPrint(propiedadesInternaNombresSetB.toString());
+      debugPrint(propiedadesInternaNombresSetB.length.toString());
+      debugPrint("propiedadesDireccionNombresSetB");
+      debugPrint(propiedadesDireccionNombresSetB.toString());
+      debugPrint(propiedadesDireccionNombresSetB.length.toString());
+
+      prefs.setString("propiedad", json["datos"][0]["pn_propiedad"].toString());
+      debugPrint(json["datos"][0]["pv_propiedad"].toString());
+
+      debugPrint("Tickest100");
+      debugPrint(response.body.toString());
+      if(response.statusCode == 200)
+
+      {
+        debugPrint("Regreso correcto");
+        if(json["resultado"]["pn_tiene_datos"] == 1)
+        {
+          debugPrint("Debo ir a paquetes!!!");
+          Get.offNamedUntil(MyRoute.paquetesListado,(route) => route.isFirst,);
+          //Get.toNamed(MyRoute.paquetesListado);
           return List<Map<String, dynamic>>.from(json["datos"]);
         }
         else

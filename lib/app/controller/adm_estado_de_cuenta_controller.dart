@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:administra/adm_theme/theme_controller.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:nb_utils/nb_utils.dart';
+//import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../api_Clases/class_Cuentas7.dart';
 import '../../api_Clases/class_Document5.dart';
@@ -66,8 +67,8 @@ class ServicioListadoCuenta{
       };
 
       var url = Uri.parse(
-        "https://apidesa.komuvita.com/portal/cuentas/estado_cuenta");
-      //"http://api.komuvita.com/portal/cuentas/estado_cuenta");
+        //"https://apidesa.komuvita.com/portal/cuentas/estado_cuenta");
+      "http://api.komuvita.com/portal/cuentas/estado_cuenta");
 
       Map<String, dynamic> body = {
         "autenticacion": {

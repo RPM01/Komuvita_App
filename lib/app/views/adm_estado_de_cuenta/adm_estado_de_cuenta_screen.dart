@@ -155,6 +155,74 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
     );
   }
 
+
+  Widget _buildDrawerHeader(BuildContext context, AdmMenuController controller, String userName) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      color: controller.themeController.isDarkMode ? admDarkPrimary : admLightGrey,
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              logoLogin,
+              height: MediaQuery.of(context).size.height * 0.30,
+              width: MediaQuery.of(context).size.width * 0.30,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              userName,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(6, 78, 116, 1),
+                fontSize: 25,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
+    if (isAdmin) {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return FontAwesomeIcons.boxesPacking;
+        case 8: return Icons.person;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;
+      }
+    } else if (jundaDir) {
+      switch (index) {
+        case 0: return FontAwesomeIcons.boxesPacking;
+        case 1: return FontAwesomeIcons.person;
+        default: return Icons.logout;
+      }
+    } else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return FontAwesomeIcons.boxesPacking;
+        case 8: return Icons.person;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -250,125 +318,99 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
         ),
         drawer: Drawer(
           child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  color: menuController.themeController.isDarkMode
-                      ? admDarkPrimary
-                      : admLightGrey,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              logoLogin,
-                              height: MediaQuery.of(context).size.height*0.20,
-                              width: MediaQuery.of(context).size.width*0.20,
-                            ),
-                            const SizedBox(width: 10),
-                            /*
-                              CircleAvatar(
-                                radius: MediaQuery.of(context).size.width*0.09,
-                                  backgroundColor: Color.fromRGBO(220,227,234,1),
-                              ),
-                              const SizedBox(width: 10),
-                               */
-                            Text(
-                              userName, // Change to dynamic user name if available
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: menuController.themeController.isDarkMode
-                                    ? admWhiteColor
-                                    : admTextColor,
-                              ),
-                            ),
+            child: Obx(() {
+              // 🧠 Get values reactively
+              if (!menuController.isMenuReady.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ListView.builder(
-                      itemCount: menuController.helpAndSupport.length,
-                      itemBuilder: (context, index) {
-                        final isLast = index == menuController.helpAndSupport.length - 1;
+              final isAdmin = menuController.isAdmin.value;
+              final jundaDir = menuController.jundaDir.value;
+              final helpAndSupport = menuController.helpAndSupport;
 
-                        IconData iconData;
-                        switch (index) {
-                          case 0: iconData = Icons.house; break;
-                          case 1: iconData = FontAwesomeIcons.clipboardList; break;
-                          case 2: iconData = FontAwesomeIcons.newspaper; break;
-                          case 3: iconData = FontAwesomeIcons.doorOpen; break;
-                          case 4: iconData = FontAwesomeIcons.boxesStacked; break;
-                          case 5: iconData = FontAwesomeIcons.calendarCheck; break;
-                          case 6: iconData = FontAwesomeIcons.phoneFlip; break;
-                          case 7: iconData = Icons.lock_reset; break;
-                          default: iconData = Icons.logout;
-                        }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDrawerHeader(context, menuController, userName),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ListView.builder(
+                        itemCount: helpAndSupport.length,
+                        itemBuilder: (context, index) {
+                          final menuTitle = helpAndSupport[index];
+                          final isLast = index == helpAndSupport.length - 1;
+                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                if(isLast)
-                                {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: InkWell(
+                              onTap: () async {
+                                if (isLast) {
+                                  Get.snackbar("Sesión", "Cerrando sesión...");
                                   _showLogOutBottomSheet(context);
+                                  return;
                                 }
+
+                                // 👇 Handle "Paquetes pendientes"
+                                if (menuTitle == "Paquetes pendientes") {
+                                  Navigator.pop(context);
+                                  Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
+                                  return;
+                                }
+
+                                // 👇 Normal navigation
+                                Navigator.pop(context);
+                                await Future.delayed(const Duration(milliseconds: 200));
                                 Get.to(menuController.screens[index]);
-                              });
-                            },
-                            child: Row(
-                              children: [
-                                Icon(
-                                  iconData,
-                                  size: 22,
-                                  color: isLast ? Colors.red :
-                                  (menuController.themeController.isDarkMode
-                                      ? admWhiteColor
-                                      : admDarkPrimary),
-                                ),
-                                const SizedBox(width: 15),
-                                Expanded(
-                                  child: Text(
-                                    menuController.helpAndSupport[index],
-                                    style: theme.textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: isLast ? Colors.red :
-                                      (menuController.themeController.isDarkMode
-                                          ? admWhiteColor
-                                          : admDarkPrimary),
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    iconData,
+                                    size: 22,
+                                    color: isLast
+                                        ? Colors.red
+                                        : (menuController.themeController.isDarkMode
+                                        ? admWhiteColor
+                                        : admDarkPrimary),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Text(
+                                      menuTitle,
+                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: isLast
+                                            ? Colors.red
+                                            : (menuController.themeController.isDarkMode
+                                            ? admWhiteColor
+                                            : admDarkPrimary),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 15,
-                                  color: isLast ? Colors.red :
-                                  (menuController.themeController.isDarkMode
-                                      ? admWhiteColor
-                                      : admDarkPrimary),
-                                ),
-                              ],
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 15,
+                                    color: isLast
+                                        ? Colors.red
+                                        : (menuController.themeController.isDarkMode
+                                        ? admWhiteColor
+                                        : admDarkPrimary),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                )
-              ],
-            ),
+                ],
+              );
+            }),
           ),
         ),
 
@@ -736,17 +778,17 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      Text(event.pmDebito.toString()+ event.pvMonedaAbreviatura,
+                                                      Text(event.pvMonedaAbreviatura +event.pmDebito.toString(),
                                                           style: theme.textTheme.bodyMedium?.copyWith(
                                                             fontWeight: FontWeight.w500,
                                                             color: event.pnPositivo == -1 ? Colors.red[600]:Colors.blue[900],
                                                           )),
-                                                      Text(event.pmCredito.toString()+ event.pvMonedaAbreviatura,
+                                                      Text(event.pvMonedaAbreviatura +event.pmCredito.toString(),
                                                           style: theme.textTheme.bodyMedium?.copyWith(
                                                             fontWeight: FontWeight.w500,
                                                             color: event.pnPositivo == -1 ? Colors.red[600]:Colors.blue[900],
                                                           )),
-                                                      Text(event.pmSaldoActual.toString()+ event.pvMonedaAbreviatura,
+                                                      Text(event.pvMonedaAbreviatura +event.pmSaldoActual.toString(),
                                                         style: theme.textTheme.bodyMedium?.copyWith(
                                                           fontWeight: FontWeight.w500,
                                                           color: event.pnPositivo == -1 ? Colors.red[600]:Colors.blue[900],
@@ -1009,6 +1051,7 @@ void _showLogOutBottomSheet(BuildContext context,) {
                               onTap: () {
                                 // Get.offNamedUntil('/adm_login',
                                 //     ModalRoute.withName(MyRoute.loginScreen));
+                                Get.snackbar("Sesión", "Cerrando sesión...");
                                 Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
                               },
                               child: Container(

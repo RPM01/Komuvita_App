@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:administra/app/views/adm_login/adm_login_screen.dart';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:administra/app/views/adm_view_all/adm_view_all_screen.dart';
-import 'package:administra/widgets/common_progress.dart';
 import 'package:administra/route/my_route.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,29 +20,20 @@ import '../../../constant/adm_colors.dart';
 import '../../../constant/adm_images.dart';
 import '../../../constant/adm_strings.dart';
 import '../../../adm_theme/adm_theme.dart';
-import '../../../widgets/home_widgets.dart';
-import '../../../widgets/adm_detail_view.dart';
 import '../../controller/adm_comunicacion_Admin_ticket_controller.dart';
 import '../../controller/adm_home_controller.dart';
 import '../../controller/adm_login_controller.dart';
 import '../../controller/adm_menu_controller.dart';
-import '../../modal/adms_home_modal.dart';
-import 'package:flutter_rating/flutter_rating.dart';
-import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import '../adm_creacion_reserva/adm_creacion_reserva_screen.dart';
-import '../adm_menu/adm_menu.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+ import '../adm_creacion_reserva/adm_creacion_reserva_screen.dart';
+ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image/image.dart' as img;
-//import 'package:image_downloader/image_downloader.dart';
-import 'package:path_provider/path_provider.dart';
+ import 'package:path_provider/path_provider.dart';
  import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:open_filex/open_filex.dart';
+ import 'package:open_filex/open_filex.dart';
 
 String _EdificioPropiedadSelecionada = "";
 String edificioID = empresasIdsSet[0].toString();
@@ -59,7 +48,8 @@ class AdmHomeScreen extends StatefulWidget {
 
 class _AdmHomeScreenState extends State<AdmHomeScreen> {
   late ThemeData theme;
-  AdmHomeController homeController = Get.put(AdmHomeController());
+
+  final homeController = Get.put(AdmHomeController());
   AdmMenuController controller = Get.put(AdmMenuController());
   LoginController loadingContrller = Get.put(LoginController());
   var timeFormat = DateFormat("HH:mm");
@@ -106,6 +96,39 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
   final _formKey1 = GlobalKey<FormState>();
   final _formKeyB = GlobalKey<FormState>();
 
+  final scrollController = ScrollController();
+  final GlobalKey stopKey = GlobalKey(); // Add at class level
+
+  Future<void> scrollToBottom() async {
+    if (!scrollController.hasClients) return;
+
+    const step = 50.0; // scroll step in pixels
+    const delay = Duration(milliseconds: 16); // ~60fps for smoothness
+
+    while (scrollController.offset < scrollController.position.maxScrollExtent) {
+      // Check if target is visible
+      final RenderObject? renderObject = stopKey.currentContext?.findRenderObject();
+      if (renderObject is RenderBox) {
+        final position = renderObject.localToGlobal(Offset.zero);
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        if (position.dy > 0 && position.dy < screenHeight * 0.8) {
+          // 👇 stop scroll when the target widget becomes visible
+          debugPrint("Target text visible — stopping scroll");
+          break;
+        }
+      }
+
+      // Continue smooth scroll
+      double newOffset = (scrollController.offset + step).clamp(
+        0.0,
+        scrollController.position.maxScrollExtent,
+      );
+      scrollController.jumpTo(newOffset);
+
+      await Future.delayed(delay);
+    }}
+
   String formatMoneyWithoutSymbol(double amount) {
     final numberFormat = NumberFormat.decimalPattern('en_US')
       ..minimumFractionDigits = 2
@@ -140,6 +163,10 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
   @override
   void initState() {
     super.initState();
+
+     //homeController = Get.put(AdmHomeController());
+     //controller = Get.put(AdmMenuController());
+     //loadingContrller = Get.put(LoginController());
     getUserInfo();
     //futuros
     setState(() {
@@ -161,7 +188,16 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
     theme = homeController.themeController.isDarkMode
         ? AdmTheme.admDarkTheme
         : AdmTheme.admLightTheme;
-
+    final args = Get.arguments;
+    if (args != null && args['fromDrawer'] == true) {
+      msgxToast("Cargando a paquetes");
+      debugPrint("VOY A BAJAR!!!!");
+      Future.delayed(const Duration(seconds: 5), ()
+      {
+        irPorPAquetes();
+      }
+      );
+    }
   }
 
   @override
@@ -203,8 +239,8 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
     final prefs = await SharedPreferences.getInstance();
     edificioID = empresasIdsSet[0].toString();
     setState(() {
-       prefs.setString("cliente", clientesIdsSet[0].toString());
-       debugPrint("cliente!!");
+       //prefs.setString("cliente", clientesIdsSet[0].toString());
+       //debugPrint("cliente!!");
        debugPrint(prefs.getString("cliente"));
       userName = prefs.getString("NombreUser")!;
       instrucionesPago = prefs.getString("intruciones de pago")!;
@@ -218,12 +254,28 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
         {
           tickets = false;
         }
-      debugPrint("Intruciones");
+      debugPrint("Intruciones Intruciones 3");
       debugPrint(instrucionesPago);
       pago = instrucionesPago.split('|');
       debugPrint(pago.toString());
     });
+    final args = Get.arguments;
+    if (args != null && args['fromDrawer'] == true) {
+      msgxToast("Cargando a paquetes");
+      debugPrint("VOY A BAJAR!!!!");
+      Future.delayed(const Duration(seconds: 3), ()
+      {
+        irPorPAquetes();
+      }
+      );
+    }
   }
+
+  Future<void> irPorPAquetes()
+   async {
+    Future.delayed(const Duration(seconds: 60));
+    scrollToBottom();
+    }
 
  /* void nextImage() {
     setState(() {
@@ -288,6 +340,75 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
     Colors.purple,
   ];
 
+  Widget _buildDrawerHeader(BuildContext context, AdmMenuController controller, String userName) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      color: controller.themeController.isDarkMode ? admDarkPrimary : admLightGrey,
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              logoLogin,
+              height: MediaQuery.of(context).size.height * 0.30,
+              width: MediaQuery.of(context).size.width * 0.30,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              userName,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(6, 78, 116, 1),
+                fontSize: 25,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
+    if (isAdmin) {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return FontAwesomeIcons.boxesPacking;
+        case 8: return Icons.person;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;
+      }
+    } else if (jundaDir) {
+      switch (index) {
+        case 0: return FontAwesomeIcons.boxesPacking;
+        case 1: return FontAwesomeIcons.person;
+        default: return Icons.logout;
+      }
+    } else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return FontAwesomeIcons.boxesPacking;
+        case 8: return Icons.person;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;
+      }
+    }
+  }
+
+  final CarouselController _controller = CarouselController();
+  final GlobalKey<CarouselSliderState> _carouselKey = GlobalKey<CarouselSliderState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -346,7 +467,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                     },
                     child: Container(
                       height: 50,
-                      width: 50,
+                      width: 75,
                       decoration: BoxDecoration(
                           //color: Colors.yellow,
                           border: Border.all(
@@ -386,123 +507,113 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
         ),
         drawer: Drawer(
           child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  color: controller.themeController.isDarkMode
-                      ? admDarkPrimary
-                      : admLightGrey,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                logoLogin,
-                                height: MediaQuery.of(context).size.height*0.20,
-                                width: MediaQuery.of(context).size.width*0.20,
-                              ),
-                              const SizedBox(width: 10),
-                              /*
-                              CircleAvatar(
-                                radius: MediaQuery.of(context).size.width*0.09,
-                                  backgroundColor: Color.fromRGBO(220,227,234,1),
-                              ),
-                              const SizedBox(width: 10),
-                               */
+            child: Obx(() {
+              // 🚦 Wait until menu data is loaded
+              if (!controller.isMenuReady.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
+              // 🔥 Now build the real drawer because the data is ready
+              final isAdmin = controller.isAdmin.value;
+              final jundaDir = controller.jundaDir.value;
+              final helpAndSupport = controller.helpAndSupport;
 
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ListView.builder(
-                      itemCount: controller.helpAndSupport.length,
-                      itemBuilder: (context, index) {
-                        final isLast = index == controller.helpAndSupport.length - 1;
-                        IconData iconData;
-                        switch (index) {
-                          case 0: iconData = Icons.house; break;
-                          case 1: iconData = FontAwesomeIcons.clipboardList; break;
-                          case 2: iconData = FontAwesomeIcons.newspaper; break;
-                          case 3: iconData = FontAwesomeIcons.doorOpen; break;
-                          case 4: iconData = FontAwesomeIcons.boxesStacked; break;
-                          case 5: iconData = FontAwesomeIcons.calendarCheck; break;
-                          case 6: iconData = FontAwesomeIcons.phoneFlip; break;
-                          case 7: iconData = Icons.lock_reset; break;
-                          default: iconData = Icons.logout;
-                        }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDrawerHeader(context, controller, userName),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ListView.builder(
+                        itemCount: helpAndSupport.length,
+                        itemBuilder: (context, index) {
+                          final menuTitle = helpAndSupport[index];
+                          final isLast = index == helpAndSupport.length - 1;
+                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                if(isLast)
-                                {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 15),
+                            child: InkWell(
+                              onTap: () async {
+                                Navigator.pop(context); // close the drawer
+
+                                if (isLast) {
+                                  Get.snackbar("Sesión", "Cerrando sesión...");
                                   _showLogOutBottomSheet(context);
+                                  return;
                                 }
-                                Get.to(controller.screens[index]);
-                              });
-                            },
-                            child: Row(
-                              children: [
-                                Icon(
-                                  iconData,
-                                  size: 22,
-                                  color: isLast ? Colors.red :
-                                  (controller.themeController.isDarkMode
-                                      ? admWhiteColor
-                                      : admDarkPrimary),
-                                ),
-                                const SizedBox(width: 15),
-                                Expanded(
-                                  child: Text(
-                                    controller.helpAndSupport[index],
-                                    style: theme.textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: isLast ? Colors.red :
-                                      (controller.themeController.isDarkMode
-                                          ? admWhiteColor
-                                          : admDarkPrimary),
+
+                                if (tickets == false && menuTitle == "Paquetes pendientes") {
+                                  irPorPAquetes();
+                                  debugPrint("Valor del menu");
+                                  debugPrint(menuTitle.toString());
+
+                                  //controller.onScrollButtonPressed();
+                                  return;
+                                }
+
+                                await Future.delayed(const Duration(milliseconds: 200));
+                                Get.to(controller.screens[index]);},
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    iconData,
+                                    size: 22,
+                                    color: isLast
+                                        ? Colors.red
+                                        : (controller.themeController.isDarkMode
+                                        ? admWhiteColor
+                                        : admDarkPrimary),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Text(
+                                      menuTitle,
+                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: isLast
+                                            ? Colors.red
+                                            : (controller.themeController.isDarkMode
+                                            ? admWhiteColor
+                                            : admDarkPrimary),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 15,
-                                  color: isLast ? Colors.red :
-                                  (controller.themeController.isDarkMode
-                                      ? admWhiteColor
-                                      : admDarkPrimary),
-                                ),
-                              ],
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 15,
+                                    color: isLast
+                                        ? Colors.red
+                                        : (controller.themeController.isDarkMode
+                                        ? admWhiteColor
+                                        : admDarkPrimary),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                )
-              ],
-            ),
+                ],
+              );
+            }),
           ),
         ),
+
+
+
 
         body: GetBuilder<AdmHomeController>(
             init: homeController,
             tag: 'adm_home',
             // theme: theme,
             builder: (homeController) => SingleChildScrollView(
+                 controller : scrollController,
                   child: Column(
                     children: [
                       Padding(
@@ -572,7 +683,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                           empresaID = value;
                                           loadingContrller.GestionTickets1B();
                                           edificioDescripcion = empresasNombresSet[index];
+                                          empresaNombreID =empresasNombresSet[index];
                                           debugPrint(edificioID);
+                                          debugPrint(empresaNombreID);
                                           debugPrint(edificioDescripcion);
                                           _EdificioPropiedadSelecionada = value;
                                            reloadHomePage();
@@ -580,7 +693,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                         });
                                       },
                                     ),
-                                    Text( "Por favor, seleccione el edificio para obtener información detallada.",style: theme.textTheme.headlineSmall?.copyWith(
+                                    Text("Por favor, seleccione el edificio para obtener información detallada.",style: theme.textTheme.headlineSmall?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey,
                                         fontSize: MediaQuery.of(context).size.width*0.025,
@@ -595,10 +708,10 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 fontWeight: FontWeight.bold,
                                 color:Colors.black,
                           fontSize: MediaQuery.of(context).size.width*0.035,
-                        )),
+                        )) ,
 
                             17.height,
-                            FutureBuilder<List<DacumentosH5>>(
+                              FutureBuilder<List<DacumentosH5>>(
                               future:_futureDocumentos,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -1871,7 +1984,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             ),
 
                             17.height,
-                            Card(
+                              Card(
                               elevation: 3,
                               margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
                               color: Colors.green,
@@ -1905,15 +2018,15 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                   ],
                                 ),
                               ),
-                            ),
+                            ) ,
                             17.height,
-                            Text("Información Importante",style: theme.textTheme.headlineSmall?.copyWith(
+                             Text("Información Importante",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
                             17.height,
-                            FutureBuilder(future: _futureInfo,
+                              FutureBuilder(future: _futureInfo,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
@@ -2005,14 +2118,14 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               },
                             ),
                             17.height,
-                            Text("Noticias y Avisos",style: theme.textTheme.headlineSmall?.copyWith(
+                             Text("Noticias y Avisos",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
 
                             17.height,
-                            FutureBuilder(
+                              FutureBuilder(
                               future: _futureNoticias,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2022,7 +2135,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                     snapshot.data!.isEmpty) {
                                   return Center(
                                     child: Text(
-                                      "No hay noticias del día de hoy",
+                                      "No hay noticias del mes",
                                       style: theme.textTheme.bodyMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         fontSize: MediaQuery.of(context).size.width * 0.035,
@@ -2042,12 +2155,15 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
 
                                     return ListView.builder(
                                       padding: EdgeInsets.zero,
-                                      physics: const NeverScrollableScrollPhysics(), // so it expands naturally inside parent
-                                      shrinkWrap: true, // allows automatic height based on content
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
                                       itemCount: events.length,
                                       itemBuilder: (context, index) {
                                         final event = events[index];
                                         final fotos = event["pl_fotografias"] as List?;
+
+                                        // 🔹 Unique key for each carousel
+                                        final carouselKey = GlobalKey<CarouselSliderState>();
 
                                         return Card(
                                           elevation: 3,
@@ -2064,65 +2180,110 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                 if (fotos == null || fotos.isEmpty)
                                                   const Center(child: Text("Sin fotos"))
                                                 else
-                                                  CarouselSlider(
-                                                    options: CarouselOptions(
-                                                      aspectRatio: 16 / 9, // auto adjusts to screen size
-                                                      viewportFraction: 1.0,
-                                                      enableInfiniteScroll: false,
-                                                      enlargeCenterPage: true,
-                                                    ),
-                                                    items: fotos.map((foto) {
-                                                      final base64Img = foto["pv_fotografiab64"]?.toString();
-                                                      if (foto["pn_adjunto"] == 1) {
-                                                        return Column(
-                                                          children: [
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                            foto["pv_nombre"] == null ? Center(): Center(
-                                                              child: Text(foto["pv_nombre"],style: theme.textTheme.bodyMedium?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: MediaQuery.of(context).size.width * 0.035,
-                                                                color: Colors.black,
-                                                              ),),
-                                                            ),
-                                                            Center(
-                                                              child: SizedBox(
-                                                                width: MediaQuery.of(context).size.width * 0.60,
-                                                                child: ElevatedButton.icon(
-                                                                  icon: const Icon(Icons.download,color: Colors.white,),
-                                                                  label:  Text("Descargar",style: theme.textTheme.bodyMedium?.copyWith(
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: MediaQuery.of(context).size.width * 0.035,
-                                                                    color: Colors.white,
-                                                                  ),),
-                                                                  style: ElevatedButton.styleFrom(
-                                                                    backgroundColor: const Color.fromRGBO(6, 78, 116, 1),
-                                                                    foregroundColor: Colors.white,
-                                                                    padding: const EdgeInsets.symmetric(vertical: 20),
-                                                                    shape:  RoundedRectangleBorder(
-                                                                      borderRadius: BorderRadius.circular(20),
+                                                  Stack(
+                                                    alignment: Alignment.center,
+                                                    children: [
+                                                      CarouselSlider(
+                                                        key: carouselKey,
+                                                        options: CarouselOptions(
+                                                          aspectRatio: 16 / 9,
+                                                          viewportFraction: 1.0,
+                                                          enableInfiniteScroll: false,
+                                                          enlargeCenterPage: true,
+                                                        ),
+                                                        items: fotos.map((foto) {
+                                                          final base64Img = foto["pv_fotografiab64"]?.toString();
+                                                          if (foto["pn_adjunto"] == 1) {
+                                                            return Column(
+                                                              children: [
+                                                                const SizedBox(height: 10),
+                                                                if (foto["pv_nombre"] != null)
+                                                                  Center(
+                                                                    child: Text(
+                                                                      foto["pv_nombre"],
+                                                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                                                                        color: Colors.black,
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                  onPressed: () async{
-                                                                    await decodeBase64ToPdf(base64Img!, foto["pv_nombre"]);
-                                                                  },
+                                                                Center(
+                                                                  child: SizedBox(
+                                                                    width: MediaQuery.of(context).size.width * 0.60,
+                                                                    child: ElevatedButton.icon(
+                                                                      icon: const Icon(Icons.download, color: Colors.white),
+                                                                      label: Text(
+                                                                        "Descargar",
+                                                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                                                          fontWeight: FontWeight.bold,
+                                                                          fontSize: MediaQuery.of(context).size.width * 0.035,
+                                                                          color: Colors.white,
+                                                                        ),
+                                                                      ),
+                                                                      style: ElevatedButton.styleFrom(
+                                                                        backgroundColor: const Color.fromRGBO(6, 78, 116, 1),
+                                                                        padding: const EdgeInsets.symmetric(vertical: 20),
+                                                                        shape: RoundedRectangleBorder(
+                                                                          borderRadius: BorderRadius.circular(20),
+                                                                        ),
+                                                                      ),
+                                                                      onPressed: () async {
+                                                                        await decodeBase64ToPdf(base64Img!, foto["pv_nombre"]);
+                                                                      },
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                              ),
+                                                              ],
+                                                            );
+                                                          }
+
+                                                          final bytes = base64Decode(base64Img!);
+                                                          return ClipRRect(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            child: Image.memory(
+                                                              bytes,
+                                                              fit: BoxFit.cover,
+                                                              width: double.infinity,
                                                             ),
-                                                          ],
-                                                        );
-                                                      }
-                                                      final bytes = base64Decode(base64Img!);
-                                                      return ClipRRect(
-                                                        borderRadius: BorderRadius.circular(10),
-                                                        child: Image.memory(
-                                                          bytes,
-                                                          fit: BoxFit.cover,
-                                                          width: double.infinity,
+                                                          );
+                                                        }).toList(),
+                                                      ),
+
+                                                      // ⬅️ Left Arrow
+                                                      Positioned(
+                                                        left: 10,
+                                                        child: IconButton(
+                                                          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87, size: 30),
+                                                          onPressed: () {
+                                                            final controller = carouselKey.currentState?.pageController;
+                                                            if (controller != null && controller.hasClients) {
+                                                              controller.previousPage(
+                                                                duration: const Duration(milliseconds: 300),
+                                                                curve: Curves.easeInOut,
+                                                              );
+                                                            }
+                                                          },
                                                         ),
-                                                      );
-                                                    }).toList(),
+                                                      ),
+
+                                                      // ➡️ Right Arrow
+                                                      Positioned(
+                                                        right: 10,
+                                                        child: IconButton(
+                                                          icon: const Icon(Icons.arrow_forward_ios, color: Colors.black87, size: 30),
+                                                          onPressed: () {
+                                                            final controller = carouselKey.currentState?.pageController;
+                                                            if (controller != null && controller.hasClients) {
+                                                              controller.nextPage(
+                                                                duration: const Duration(milliseconds: 300),
+                                                                curve: Curves.easeInOut,
+                                                              );
+                                                            }
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
 
                                                 const SizedBox(height: 12),
@@ -2137,6 +2298,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                   ),
                                                 ),
                                                 const SizedBox(height: 8),
+
                                                 if (event["pl_comentarios"] != null &&
                                                     event["pl_comentarios"].isNotEmpty)
                                                   Text(
@@ -2158,15 +2320,15 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                   },
                                 );
                               },
-                            ),
+                            ) ,
                             17.height,
-                            Text("Objetos Perdidos",style: theme.textTheme.headlineSmall?.copyWith(
+                              Text("Objetos Perdidos",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
-                            )),
+                            )) ,
                             17.height,
-                            FutureBuilder(
+                              FutureBuilder(
                               future: _futurePerdidos,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2312,15 +2474,15 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                   },
                                 );
                               },
-                            ),
+                            ) ,
                           17.height,
-                            Text("Rentas y Ventas",style: theme.textTheme.headlineSmall?.copyWith(
+                             Text("Rentas y Ventas",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
                             17.height,
-                            FutureBuilder<List<RentaVentaD5>>(
+                             FutureBuilder<List<RentaVentaD5>>(
                               future:_futureRentas,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2625,13 +2787,13 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                   },
                                 );
                               },
-                            ),
+                            ) ,
                             17.height,
-                            Text("Amenidades Reservadas",style: theme.textTheme.headlineSmall?.copyWith(
+                             Text("Amenidades Reservadas",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
-                            )),
+                            )) ,
                             17.height,
                              Center(
                               child: Container(
@@ -2676,7 +2838,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                     )
                                 ),
                               ),
-                            ),
+                            ) ,
                             /*Card(
                               elevation: 3,
                               color:Color.fromRGBO(6,78,116,1),
@@ -2738,7 +2900,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               ),
                             ),*/
 
-                            FutureBuilder<List<ReservasF5>>(
+                             FutureBuilder<List<ReservasF5>>(
                               future: _futureReservas,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -3147,7 +3309,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                           if (fechaSelect != null) {
                                                                                             setState(() {
                                                                                               // Format as yyyy-MM-dd
-                                                                                              fechaPagoController.text =DateFormat('dd/MM/yyyy').format(fechaSelect!).toString();
+                                                                                              fechaPagoController.text = DateFormat('dd/MM/yyyy').format(fechaSelect!).toString();
                                                                                             });
                                                                                           }
                                                                                         },
@@ -3488,14 +3650,14 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                   }
                                 );
                               },
-                            ),
+                            ) ,
                             17.height,
                             //commonRowText("Comunicación con Administrador", viewAll, theme, () {}),
-                            Text("Comunicación con Administrador",style: theme.textTheme.headlineSmall?.copyWith(
+                             Text("Comunicación con Administrador",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
-                            )),
+                            )) ,
                             17.height,
                             tickets? Center(
                             child: Container(
@@ -3554,7 +3716,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             ),
                           ):Center(),
                             17.height,
-                          FutureBuilder<List<TickestG5>>(
+                             FutureBuilder<List<TickestG5>>(
                             future: _futureTickets,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -3881,13 +4043,15 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             ):Center(),
                             17.height,
                             //commonRowText("Paquetes", viewAll, theme, () {}),
-                            Text("Paquetes",style: theme.textTheme.headlineSmall?.copyWith(
+                            tickets == true? Center():Text("Paquetes",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
                             17.height,
-                            FutureBuilder(future: _futurePaquetes,
+                            tickets == true? Center(): FutureBuilder(
+                              future: _futurePaquetes,
+                              key: stopKey ,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
@@ -3918,86 +4082,90 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 //debugPrint(events.toString());
                                 return LayoutBuilder(
                                     builder: (context, constraints) {
-                                    return ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      physics: ClampingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: events.length,
-                                      itemBuilder: (context, index) {
-                                        final event = events[index];
-                                        return  Card(
-                                          margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: constraints.maxWidth*0.40,
-                                                      height: constraints.maxWidth*0.30,
-                                                      child:ClipRRect(
-                                                        borderRadius: BorderRadius.circular(20),
-                                                        child: Image.memory(base64Decode(event["pl_fotografias"][0]["pv_fotografiab64"].toString()),
-                                                          fit: BoxFit.contain,
-                                                          width: double.infinity,
+                                      return ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        physics: ClampingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: events.length,
+                                        itemBuilder: (context, index) {
+                                          final event = events[index];
+                                          return  Card(
+
+                                            margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: [
+                                                  Column(
+                                                    children: [
+                                                      event["pl_fotografias"] != null
+                                                          ?GestureDetector(
+                                                          onTap: () => showImageDialog5(context, event["pl_fotografias"][0]["pv_fotografiab64"].toString()),
+                                                          child: SizedBox(
+                                                            width: constraints.maxWidth*0.3,
+                                                            height: constraints.maxWidth*0.7,
+                                                            child: ClipRRect(
+                                                              borderRadius: BorderRadius.circular(20),
+                                                              child: Image.memory(base64Decode(event["pl_fotografias"][0]["pv_fotografiab64"].toString()),
+                                                                fit: BoxFit.contain,
+                                                                width: double.infinity,
+                                                              ),
+                                                            ),)
+                                                      ): const Center(child: Icon(Icons.image_not_supported, size: 60)),
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    children: [
+                                                      Container(
+                                                        width: constraints.maxWidth*0.45,
+                                                        //height: MediaQuery.of(context).size.height*0.30,
+                                                        child: ListTile(
+                                                          title: Text(event["pv_descripcion"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                            color:Color.fromRGBO(6,78,116,1),
+                                                            fontSize: constraints.maxWidth*0.04,), maxLines: 2,),
                                                         ),
                                                       ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    Container(
-                                                      width: constraints.maxWidth*0.45,
-                                                      //height: MediaQuery.of(context).size.height*0.30,
-                                                      child: ListTile(
-                                                        title: Text(event["pv_descripcion"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
-                                                        fontWeight: FontWeight.bold,
-                                                          color:Color.fromRGBO(6,78,116,1),
-                                                        fontSize: constraints.maxWidth*0.04,), maxLines: 2,),
+                                                      Container(
+                                                        width: constraints.maxWidth*0.45,
+                                                        child: ListTile(
+                                                          title: Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event["pf_fecha"].toString())),style: theme.textTheme.headlineSmall?.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                            color:Color.fromRGBO(167,167,132,1),
+                                                            fontSize: constraints.maxWidth*0.04,), maxLines: 2,),
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Container(
-                                                      width: constraints.maxWidth*0.45,
-                                                      child: ListTile(
-                                                        title: Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event["pf_fecha"].toString())),style: theme.textTheme.headlineSmall?.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color:Color.fromRGBO(167,167,132,1),
-                                                      fontSize: constraints.maxWidth*0.04,), maxLines: 2,),
+                                                      Container(
+                                                        width: constraints.maxWidth*0.45,
+                                                        child: ListTile(
+                                                          title: Text(event["pv_propiedad_nombre"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                            color:Color.fromRGBO(6,78,116,1),
+                                                            fontSize: constraints.maxWidth*0.04,), maxLines: 2,),
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Container(
-                                                      width: constraints.maxWidth*0.45,
-                                                      child: ListTile(
-                                                        title: Text(event["pv_propiedad_nombre"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
-                                                          fontWeight: FontWeight.bold,
-                                                          color:Color.fromRGBO(6,78,116,1),
-                                                          fontSize: constraints.maxWidth*0.04,), maxLines: 2,),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
 
-                                        );
-                                      },
-                                    );
-                                  }
+                                          );
+                                        },
+                                      );
+                                    }
                                 );
                               },
                             ),
                             17.height,
-                            Text("Visitas",style: theme.textTheme.headlineSmall?.copyWith(
+                            tickets == true? Center(): Text("Visitas",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
                             17.height,
-                            FutureBuilder(
+                            tickets == true? Center():  FutureBuilder(
                               future:_futureVisitas,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -4027,7 +4195,6 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 }
                                 final events = snapshot.data!;
                                 return LayoutBuilder(
-
                                     builder: (context, constraints) {
                                       return ListView.builder(
                                         padding: EdgeInsets.zero,
@@ -4069,6 +4236,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                           )),
                                                         )
                                                         : const Center(child: Text("No Image")),
+
                                                   ],
                                                 ),
                                                 Column(
@@ -4084,7 +4252,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               fontSize: constraints.maxWidth * 0.038
                                                           ),),
                                                         subtitle: Text(
-                                                          DateFormat('yyyyMMdd').format(DateTime.parse(event["pf_fecha"].toString()),) +" ${event["pf_hora_llegada"]}",
+                                                          DateFormat('dd/MM/yyyy').format(DateTime.parse(event["pf_fecha"].toString()),) +" ${event["pf_hora_llegada"]}",
                                                           style: theme.textTheme.headlineSmall?.copyWith(
                                                               fontWeight: FontWeight.bold,
                                                               color:Colors.grey[600],
@@ -4208,7 +4376,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               color:Color.fromRGBO(167,167,132,1),
                                                               fontSize: constraints.maxWidth * 0.038
                                                           ),),
-                                                        subtitle: Text(event["pv_visita_vehiculo_placa"].toString(),
+                                                        subtitle: Text(event["pv_visita_vehiculo_placa"]?.toString() ?? "",
                                                           style: theme.textTheme.headlineSmall?.copyWith(
                                                               fontWeight: FontWeight.bold,
                                                               color:Colors.grey[600],
@@ -4225,7 +4393,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               color:Color.fromRGBO(167,167,132,1),
                                                               fontSize: constraints.maxWidth * 0.038
                                                           ),),
-                                                        subtitle: Text(event["pv_observaciones"].toString(),
+                                                        subtitle: Text(event["pv_observaciones"]?.toString() ?? "",
                                                           style: theme.textTheme.headlineSmall?.copyWith(
                                                               fontWeight: FontWeight.bold,
                                                               color:Colors.grey[600],
@@ -4528,6 +4696,7 @@ void showImageDialog(BuildContext context, String iamgenSelectB) {
                   Uint8List bytes = base64Decode(iamgenSelectB);
 
                   final result = await ImageGallerySaverPlus.saveImage(bytes.buffer.asUint8List());
+                  //debugPrint("Desgargado en galeria");
                   msgxToast("Desgargado en galeria");
                   debugPrint(result.toString());
                 }
@@ -4592,11 +4761,22 @@ void showImageDialog4(BuildContext context, String imageUrl) {
     ),
   );
 }
+void showImageDialog5(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      content: Image.memory(base64Decode(imageUrl),
+
+      ),
+    ),
+  );
+}
+
 void msgxToast(String msxg){
 
   Fluttertoast.showToast(
     msg: msxg,
-    toastLength: Toast.LENGTH_LONG,
+    toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.CENTER,
     timeInSecForIosWeb: 1,
     backgroundColor: Colors.blue,
