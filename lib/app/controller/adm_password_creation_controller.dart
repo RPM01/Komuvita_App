@@ -10,6 +10,7 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../../constant/adm_strings.dart';
 import '../../route/my_route.dart';
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 import 'package:http/http.dart' as http;
 
@@ -77,7 +78,7 @@ class PasswordCreationController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/administracion/usuarios/cambiar_clave"
-          "http://api.komuvita.com/administracion/usuarios/cambiar_clave"
+          "$baseUrl/administracion/usuarios/cambiar_clave"
       );
       Map body = {
         "autenticacion":
@@ -99,6 +100,11 @@ class PasswordCreationController extends GetxController {
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if(json["resultado"]["pn_error"] == 0)
         {
           msgxToast("Contraseña creada con exito");
@@ -118,7 +124,7 @@ class PasswordCreationController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.dashboard,(route) => route.isFirst,);
       }
       showDialog(
           context: Get.context!,

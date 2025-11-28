@@ -22,6 +22,7 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 
 class AdmNoticiasController extends GetxController
@@ -63,7 +64,7 @@ class setNewsComentC7{
       };
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/noticias/comentario_noticia_creacion"
-          "http://api.komuvita.com/portal/noticias/comentario_noticia_creacion"
+          "$baseUrl/portal/noticias/comentario_noticia_creacion"
       );
       Map body = {
         "autenticacion":
@@ -86,7 +87,11 @@ class setNewsComentC7{
 
       if(response.statusCode == 200)
       {
-
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -99,6 +104,7 @@ class setNewsComentC7{
         //debugPrint(json["datos"][0]["pl_comentarios"][0]["pv_descripcion"].toString());
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+          
           debugPrint("Comentario ingresado!!");
           return List<Map<String, dynamic>>.from(json["datos"]);
         } else {
@@ -119,7 +125,7 @@ class setNewsComentC7{
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -166,7 +172,7 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
     };
     var url = Uri.parse(
        //"https://apidesa.komuvita.com/portal/noticias/noticias_listado"
-        "http://api.komuvita.com/portal/noticias/noticias_listado"
+        "$baseUrl/portal/noticias/noticias_listado"
     );
     Map body = {
       "autenticacion":
@@ -191,7 +197,11 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
 
     if(response.statusCode == 200)
     {
-
+      if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+      {
+        debugPrint("Si funciona verificar el mensaje");
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+      }
       if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
       // ✅ Check if datos exists and is not null
       if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -204,6 +214,7 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
       //debugPrint(json["datos"][0]["pl_comentarios"][0]["pv_descripcion"].toString());
 
       if (json["resultado"]["pn_tiene_datos"] == 1) {
+
         debugPrint("Noticias con datos");
         return List<Map<String, dynamic>>.from(json["datos"]);
       } else {
@@ -223,7 +234,7 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
       {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
     debugPrint(e.toString());
     showDialog(

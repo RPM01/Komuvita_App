@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -407,7 +408,7 @@ String terminosCondiciones = "";
                                   backgroundColor: admLightRed,
                                 ),
                               ),
-                            ],
+                            ]
                           )),
                     ),
                   )
@@ -792,27 +793,72 @@ String terminosCondiciones = "";
                                                 ),
                                               ),
                                               const SizedBox(height: 8),
-                                              SizedBox(
-                                                width: constraints.maxWidth * 0.8,
-                                                child: TextButton(onPressed: ()
-                                                {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (_) => AlertDialog(
-                                                      content: Text(documentos[setAmenidad].pvAmenidadReglamentoUso.toString(),maxLines: 3,style:  TextStyle(
-                                                        fontSize: constraints.maxWidth * 0.075,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Color.fromRGBO(6, 78, 116, 1),
-                                                      ),),
+                                            Center(  // ensures measurable tap area
+                                                child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                    // set the background color
+                                                  ),
+                                                  onPressed: () {
+                                                    // Safely obtain the text from documentos
+                                                    String texto = '';
+                                                    if (documentos.isNotEmpty && setAmenidad < documentos.length) {
+                                                      texto = documentos[setAmenidad].pvAmenidadReglamentoUso?.toString() ?? '';
+                                                    }
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (dialogContext) => AlertDialog(
+                                                        title: const Text(
+                                                          "Condiciones y Reglamento de Uso",
+                                                          textAlign: TextAlign.center,
+                                                        ),
+
+                                                        content: SingleChildScrollView(
+                                                          child: Column(
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              Text(
+                                                                texto,
+                                                                style: const TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: Color.fromRGBO(6, 78, 116, 1),
+                                                                ),
+                                                                maxLines: 20,
+                                                                overflow: TextOverflow.ellipsis,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () => Navigator.of(dialogContext).pop(),
+                                                            child: const Text("Cerrar"),
+                                                          ),
+                                                        ],
+
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(20),
+                                                        ),
                                                       ),
                                                     );
-                                                }, child: Text("Condiciones y Reglamento de Uso",style: theme.textTheme.headlineSmall?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  color:Color.fromRGBO(167,167,132,1))),
+                                                  },
+                                                  child: Center(
+                                                    child: Text(
+                                                      "Condiciones y Reglamento de Uso",
+                                                      textAlign: TextAlign.center,
+                                                      maxLines: 2,
+                                                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 20,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                              ),
-
-                                              Text("Cupo disponible ${documentos[setAmenidad].pnCupo}",style: theme.textTheme.headlineSmall?.copyWith(
+                                            Text("Cupo disponible ${documentos[setAmenidad].pnCupo}",style: theme.textTheme.headlineSmall?.copyWith(
                                                   fontWeight: FontWeight.bold,
                                                   color:Color.fromRGBO(167,167,132,1))),
 

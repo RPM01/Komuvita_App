@@ -6,12 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:nb_utils/nb_utils.dart';
-
 import '../../constant/adm_strings.dart';
-
 import 'package:http/http.dart' as http;
-
 import '../../route/my_route.dart';
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 
 
@@ -54,7 +52,7 @@ class ForgotPasswordController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/administracion/usuarios/restablecer_clave"
-          "http://api.komuvita.com/administracion/usuarios/restablecer_clave"
+          "$baseUrl/administracion/usuarios/restablecer_clave"
       );
       Map body = {
         "autenticacion":
@@ -69,6 +67,7 @@ class ForgotPasswordController extends GetxController {
 
       if(response.statusCode == 200)
       {
+
         if(json["resultado"]["pn_error"] == 0)
         {
           debugPrint(json["resultado"]["pn_tiene_datos"].toString());

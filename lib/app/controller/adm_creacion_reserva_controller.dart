@@ -25,6 +25,7 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 
 class AdmCrearReservaController extends GetxController {
@@ -52,7 +53,7 @@ class AdmCrearReservaController extends GetxController {
       final headers = {'Content-Type': 'application/json'};
       final url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/amenidades/amenidades_listado");
-        "http://api.komuvita.com/portal/amenidades/amenidades_listado");
+        "$baseUrl/portal/amenidades/amenidades_listado");
 
       final body = {
         "autenticacion": {"pv_token": token},
@@ -67,7 +68,11 @@ class AdmCrearReservaController extends GetxController {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> json = jsonDecode(response.body);
-
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         // Verificar si hubo error en la respuesta
         if (json["resultado"]["pn_error"] != 0) {
           throw Exception(json["resultado"]["pv_error_descripcion"]);
@@ -75,9 +80,8 @@ class AdmCrearReservaController extends GetxController {
         else if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
           {
             debugPrint("Si funciona verificar el mensaje");
-            Get.offAllNamed(MyRoute.loginScreen);
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
           }
-
         // Si no hay datos
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
           debugPrint("⚠️ 'datos' vacío en la respuesta");
@@ -102,7 +106,7 @@ class AdmCrearReservaController extends GetxController {
       {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
 
       debugPrint("❌ Exception: $e");
@@ -147,7 +151,7 @@ class reservaAmenidadCreacion
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_creacion");
-      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_creacion");
+      "$baseUrl/portal/amenidades/reserva_amenidad_creacion");
       Map body = {
         "autenticacion":
         {
@@ -180,6 +184,12 @@ class reservaAmenidadCreacion
 
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
+
         if (json["resultado"]["pn_error"] == 0)
         {  debugPrint(json["resultado"]["pv_error_descripcion"].toString());
 
@@ -189,6 +199,11 @@ class reservaAmenidadCreacion
           msgxToast(json["resultado"]["pv_error_descripcion"] );
           debugPrint("⚠️ 'datos' is null in response");
           return [];
+        }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
         }
 
         if (datos is List) {
@@ -208,7 +223,10 @@ class reservaAmenidadCreacion
         return [];
         }
         else
-        {msgxToast(json["resultado"]["pv_error_descripcion"]);
+        {
+          msgxToast(json["resultado"]["pv_error_descripcion"]);
+
+
 
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
         }
@@ -221,7 +239,7 @@ class reservaAmenidadCreacion
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       //Get.back();
       return [];

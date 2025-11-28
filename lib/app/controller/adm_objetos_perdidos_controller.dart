@@ -23,6 +23,8 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'Dio_Controller.dart';
+
 class AdmObjetosPerdidosController extends GetxController
 {
   final ThemeController themeController = Get.put(ThemeController());
@@ -60,7 +62,7 @@ Future<List<Map<String, dynamic>>>objetosPerdidos5()async
     };
     var url = Uri.parse(
       //"https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
-    "http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+    "$baseUrl/portal/cosasperdidas/cosas_perdidas_listado");
     Map body = {
       "autenticacion":
       {
@@ -93,6 +95,11 @@ Future<List<Map<String, dynamic>>>objetosPerdidos5()async
       }
       debugPrint("Regreso correcto");
       if (json["resultado"]["pn_tiene_datos"] == 1) {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         return List<Map<String, dynamic>>.from(json["datos"]);
       } else {
         debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -112,7 +119,7 @@ Future<List<Map<String, dynamic>>>objetosPerdidos5()async
       msgxToast(e.toString());
       debugPrint("Si funciona verificar el mensaje");
 
-      Get.offAllNamed(MyRoute.loginScreen);
+      Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
     }
     showDialog(
         context: Get.context!,
@@ -157,7 +164,7 @@ class objetosPerdidosSetReporteE6
       };
       var url = Uri.parse(
        //"https://apidesa.komuvita.com/portal/cosasperdidas/cosa_perdida_reclamar");
-      "http://api.komuvita.com/portal/cosasperdidas/cosa_perdida_reclamar");
+      "$baseUrl/portal/cosasperdidas/cosa_perdida_reclamar");
       Map body = {
         "autenticacion":
         {
@@ -190,6 +197,11 @@ class objetosPerdidosSetReporteE6
         }
         debugPrint("Regreso correcto");
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+          if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+          {
+            debugPrint("Si funciona verificar el mensaje");
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+          }
           return List<Map<String, dynamic>>.from(json["datos"]);
         } else {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -209,7 +221,7 @@ class objetosPerdidosSetReporteE6
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       showDialog(
           context: Get.context!,
