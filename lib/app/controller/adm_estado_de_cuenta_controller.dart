@@ -24,6 +24,7 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 
 class AdmEstadoCuentaController extends GetxController
@@ -68,7 +69,7 @@ class ServicioListadoCuenta{
 
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/cuentas/estado_cuenta");
-      "http://api.komuvita.com/portal/cuentas/estado_cuenta");
+      "$baseUrl/portal/cuentas/estado_cuenta");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -96,6 +97,11 @@ class ServicioListadoCuenta{
 
       if (response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0)
         {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -108,6 +114,7 @@ class ServicioListadoCuenta{
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+
           return (json["datos"] as List)
               .map((item) => CuentasH7.fromJson(item))
               .toList();
@@ -122,9 +129,10 @@ class ServicioListadoCuenta{
           msgxToast(json["resultado"]["pv_error_descripcion"]);
           debugPrint("Si funciona verificar el mensaje");
           if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
-            {
-              Get.offAllNamed(MyRoute.loginScreen);
-            }
+          {
+            debugPrint("Si funciona verificar el mensaje");
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+          }
         }
       }
 
@@ -135,7 +143,7 @@ class ServicioListadoCuenta{
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       showDialog(
         context: Get.context!,

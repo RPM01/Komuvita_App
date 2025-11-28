@@ -24,6 +24,8 @@ import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
 import 'adm_login_controller.dart';
+import 'package:administra/app/controller/Dio_Controller.dart';
+
 
 
 class AdmRentasVisitasController extends GetxController
@@ -68,7 +70,7 @@ class visitasLista
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/visitas/visita_listado");
-      "http://api.komuvita.com/portal/visitas/visita_listado");
+      "$baseUrl/portal/visitas/visita_listado");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -98,6 +100,11 @@ class visitasLista
 
       if (response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0)
         {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -125,7 +132,7 @@ class visitasLista
           debugPrint("Si funciona verificar el mensaje");
           if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
           {
-            Get.offAllNamed(MyRoute.loginScreen);
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
           }
         }
       }
@@ -137,7 +144,7 @@ class visitasLista
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       showDialog(
         context: Get.context!,
@@ -189,7 +196,7 @@ class VisitasRecibir
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/visitas/visita_recibir");
-      "http://api.komuvita.com/portal/portal/visitas/visita_recibir");
+      "${baseUrl}/portal/portal/visitas/visita_recibir");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -219,6 +226,11 @@ class VisitasRecibir
 
       if (response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -245,7 +257,7 @@ class VisitasRecibir
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -295,7 +307,7 @@ class visitasListaB
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/visitas/visita_pendiente_listado");
-      "http://api.komuvita.com/portal/visitas/visita_pendiente_listado");
+      "${baseUrl}/portal/visitas/visita_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -320,6 +332,11 @@ class visitasListaB
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -346,7 +363,7 @@ class visitasListaB
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       return [];
@@ -398,7 +415,7 @@ class crearVisitas
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/visitas/visita_creacion");
-      "http://api.komuvita.com/portal/visitas/visita_creacion");
+      "${baseUrl}/portal/visitas/visita_creacion");
       Map body = {
         "autenticacion":
         {
@@ -434,6 +451,11 @@ class crearVisitas
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -460,7 +482,7 @@ class crearVisitas
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       return [];
@@ -512,7 +534,9 @@ class EditarVisita
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/visitas/visita_edicion");
-      "http://api.komuvita.com/portal/visitas/visita_edicion");
+      "${baseUrl}/portal/visitas/visita_edicion");
+
+
       Map body = {
         "autenticacion":
         {
@@ -537,7 +561,9 @@ class EditarVisita
         }
       };
 
-      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      http.Response response = await http.post(
+          url,body: jsonEncode(body),headers:header);
+
       final json = jsonDecode(response.body);
       //debugPrint("Objetos Perdidos");
       debugPrint("Editada de nueva visita !!!");
@@ -548,6 +574,11 @@ class EditarVisita
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -574,7 +605,7 @@ class EditarVisita
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       return [];

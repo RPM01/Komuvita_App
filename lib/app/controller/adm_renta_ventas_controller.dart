@@ -22,6 +22,7 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 
 
@@ -67,7 +68,7 @@ class RentaVentasSetE5
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
-      "http://api.komuvita.com/portal/rentasventas/rentas_listado");
+      "$baseUrl/portal/rentasventas/rentas_listado");
       Map body = {
         "autenticacion":
         {
@@ -89,6 +90,11 @@ class RentaVentasSetE5
 
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -119,7 +125,7 @@ class RentaVentasSetE5
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -160,7 +166,7 @@ class listaDeMonedas
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/general/monedas_listado");
-      "http://api.komuvita.com/portal/general/monedas_listado");
+      "$baseUrl/portal/general/monedas_listado");
       Map  body = {
         "autenticacion":
         {
@@ -185,6 +191,11 @@ class listaDeMonedas
 
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -233,7 +244,7 @@ class listaDeMonedas
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -290,7 +301,7 @@ class RentaVentasSetE7
       };
       var url = Uri.parse(
       //"https://apidesa.komuvita.com/portal/rentasventas/rentas_creacion");
-      "http://api.komuvita.com/portal/rentasventas/rentas_creacion");
+      "$baseUrl/portal/rentasventas/rentas_creacion");
       Map<String,dynamic> body = {
         "autenticacion":
         {
@@ -312,7 +323,7 @@ class RentaVentasSetE7
       final json = jsonDecode(response.body);
       debugPrint("Rentas_Creadas");
       devLog.log(body.toString());
-      //debugPrint(body.toString());
+      debugPrint(body.toString());
       debugPrint(response.body.toString());
       devLog.log("Lista formada");
       devLog.log(body.toString());
@@ -321,6 +332,11 @@ class RentaVentasSetE7
 
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         msgxToast(json["resultado"]["pv_error_descripcion"].toString());
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
@@ -354,7 +370,7 @@ class RentaVentasSetE7
       {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(

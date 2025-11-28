@@ -24,6 +24,7 @@ import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import '../modal/adms_home_modal.dart';
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 import 'dart:developer'as devLog;
 
@@ -71,7 +72,7 @@ class ServiciosListadoDePaquetes
 
       var url = Uri.parse(
       //"https://apidesa.komuvita.com/portal/paqueteria/paquete_listado");
-      "http://api.komuvita.com/portal/portal/paqueteria/paquete_listado");
+      "$baseUrl/portal/portal/paqueteria/paquete_listado");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -100,6 +101,11 @@ class ServiciosListadoDePaquetes
 
       if (response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -112,12 +118,13 @@ class ServiciosListadoDePaquetes
           {
             msgxToast(json["resultado"]["pv_error_descripcion"]);
 
-            Get.offAllNamed(MyRoute.loginScreen);
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
           }
 
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+          
           return (json["datos"] as List)
               .map((item) => PaqueteG6.fromJson(item))
               .toList();
@@ -135,19 +142,10 @@ class ServiciosListadoDePaquetes
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
-      showDialog(
-        context: Get.context!,
-        builder: (context) {
-          return SimpleDialog(
-            title: const Text(errorMensaje),
-            contentPadding: const EdgeInsets.all(20),
-            children: [Text(e.toString())],
-          );
-        },
-      );
+      return[];
     }
     throw Exception("Error en conexión");
   }
@@ -200,7 +198,7 @@ class ServiciosListadoDePaquetesEdicion
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/paqueteria/paquete_edicion");
-      "http://api.komuvita.com/portal/portal/paqueteria/paquete_edicion");
+      "$baseUrl/portal/portal/paqueteria/paquete_edicion");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -234,6 +232,11 @@ class ServiciosListadoDePaquetesEdicion
 
       if (response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -244,6 +247,7 @@ class ServiciosListadoDePaquetesEdicion
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+          
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
         } else {
@@ -260,19 +264,10 @@ class ServiciosListadoDePaquetesEdicion
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
-      showDialog(
-        context: Get.context!,
-        builder: (context) {
-          return SimpleDialog(
-            title: const Text(errorMensaje),
-            contentPadding: const EdgeInsets.all(20),
-            children: [Text(e.toString())],
-          );
-        },
-      );
+      return[];
     }
     throw Exception("Error en conexión");
   }
@@ -323,7 +318,7 @@ class ServiciosListadoDePaquetesRecepcion
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/paqueteria/paquete_recepcion");
-      "http://api.komuvita.com/portal/portal/paqueteria/paquete_creacion");
+      "$baseUrl/portal/portal/paqueteria/paquete_creacion");
 
       devLog.log(imagenes.toString());
 
@@ -364,6 +359,11 @@ class ServiciosListadoDePaquetesRecepcion
 
       if (response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -374,6 +374,7 @@ class ServiciosListadoDePaquetesRecepcion
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+          
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
         } else {
@@ -390,19 +391,10 @@ class ServiciosListadoDePaquetesRecepcion
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
-      showDialog(
-        context: Get.context!,
-        builder: (context) {
-          return SimpleDialog(
-            title: const Text(errorMensaje),
-            contentPadding: const EdgeInsets.all(20),
-            children: [Text(e.toString())],
-          );
-        },
-      );
+      return[];
     }
     throw Exception("Error en conexión");
   }
@@ -440,7 +432,7 @@ class ServiciosListadoDePaquetesRecoletar
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/paqueteria/paquete_recolectar");
-      "http://api.komuvita.com/portal/portal/paqueteria/paquete_recolectar");
+      "$baseUrl/portal/portal/paqueteria/paquete_recolectar");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -468,6 +460,11 @@ class ServiciosListadoDePaquetesRecoletar
 
       if (response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -479,6 +476,7 @@ class ServiciosListadoDePaquetesRecoletar
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+          
           return List<Map<String, dynamic>>.from(json["datos"]);
 
         } else {
@@ -495,19 +493,10 @@ class ServiciosListadoDePaquetesRecoletar
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
-      showDialog(
-        context: Get.context!,
-        builder: (context) {
-          return SimpleDialog(
-            title: const Text(errorMensaje),
-            contentPadding: const EdgeInsets.all(20),
-            children: [Text(e.toString())],
-          );
-        },
-      );
+      return[];
     }
     throw Exception("Error en conexión");
   }

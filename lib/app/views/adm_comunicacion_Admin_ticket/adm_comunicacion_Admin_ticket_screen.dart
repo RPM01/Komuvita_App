@@ -97,6 +97,9 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
   final Map<int, CarouselSliderController> _controllers2 = {};
   final Map<int, int> _currentIndex2 = {};
 
+  String? getion;
+
+  String? gestionDescipcion;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -461,8 +464,8 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                   width: MediaQuery.of(context).size.width*0.45,
                                                   child: DropdownButtonFormField<String>(
                                                     isExpanded: true,
-                                                    value: periodeDeCuentaID[3].toString(),
-                                                    //hint: const Text("Seleccione una empresa"),
+                                                    value: periodoCuentaID,
+                                                    hint: const Text("Seleccione una empresa"),
                                                     decoration: InputDecoration(
                                                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                                       border: OutlineInputBorder(
@@ -520,7 +523,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                   width: MediaQuery.of(context).size.width*0.45,
                                                   child: DropdownButtonFormField<String>(
                                                     isExpanded: true,
-                                                    value: clientesIdsSet[0].toString(),
+                                                    value: propiedadCuentaID,
                                                     hint: const Text("Seleccione una empresa"),
                                                     decoration: InputDecoration(
                                                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -583,8 +586,8 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                   width: MediaQuery.of(context).size.width*0.45,
                                                   child: DropdownButtonFormField<String>(
                                                     isExpanded: true,
-                                                    value: gestionDescripcion[0].toString(),
-                                                    //hint: const Text("Seleccione una empresa"),
+                                                    value: gestionDescipcion,
+                                                    hint: const Text("Seleccione una empresa"),
                                                     decoration: InputDecoration(
                                                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                                       border: OutlineInputBorder(
@@ -802,8 +805,8 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                             return null; // Return null if the input is valid
                                                                           },
                                                                           isExpanded: true,
-                                                                          value: gestionIDsB[0].toString(),
-                                                                          hint: const Text("Seleccione una Tipo"),
+                                                                          value: getion,
+                                                                          hint: const Text("Tipo de gestion"),
                                                                           decoration: InputDecoration(
                                                                             contentPadding: const EdgeInsets.symmetric(
                                                                                 horizontal: 16, vertical: 12),

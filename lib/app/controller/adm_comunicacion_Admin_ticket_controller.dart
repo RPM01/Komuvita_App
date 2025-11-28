@@ -23,6 +23,7 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 
 
@@ -76,7 +77,7 @@ Future<List<TickestG5>> GestionTickets5B_2() async {
     };
     var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-        "http://api.komuvita.com/portal/tickets/gestiones_listado");
+        "$baseUrl/portal/tickets/gestiones_listado");
 
     Map body = {
       "autenticacion": {
@@ -100,6 +101,8 @@ Future<List<TickestG5>> GestionTickets5B_2() async {
     );
 
     final json = jsonDecode(response.body);
+    debugPrint(body.toString());
+    debugPrint(response.body.toString());
     debugPrint("Tickets69_G5");
 
     if (json["datos"] == null || json["datos"] is! List) {
@@ -121,7 +124,7 @@ Future<List<TickestG5>> GestionTickets5B_2() async {
      if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
     {
       debugPrint("Si funciona verificar el mensaje");
-      Get.offAllNamed(MyRoute.loginScreen);
+      Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
     }
 
       if (json["resultado"]["pn_error"] == 0) {
@@ -133,6 +136,7 @@ Future<List<TickestG5>> GestionTickets5B_2() async {
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+
           return datosList.map((item) => TickestG5.fromJson(item)).toList();
         } else {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -143,7 +147,7 @@ Future<List<TickestG5>> GestionTickets5B_2() async {
      if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
      {
        debugPrint("Si funciona verificar el mensaje");
-       Get.offAllNamed(MyRoute.loginScreen);
+       Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
      }
     }
   } catch (e) {
@@ -153,7 +157,7 @@ Future<List<TickestG5>> GestionTickets5B_2() async {
       msgxToast(e.toString());
       debugPrint("Si funciona verificar el mensaje");
 
-      Get.offAllNamed(MyRoute.loginScreen);
+      Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
     }
     debugPrint("❌ Exception: $e");
     return [];
@@ -199,7 +203,7 @@ class ServicioTickets
       };
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/tickets/gestion_creacion",
-        "http://api.komuvita.com/portal/tickets/gestion_creacion",
+        "$baseUrl/portal/tickets/gestion_creacion",
       );
       Map<String,dynamic> data =
       {
@@ -227,7 +231,13 @@ class ServicioTickets
 
       if(response.statusCode == 200)
       {
-        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
+        if (json["resultado"]["pn_error"] == 0) {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
           // Return an empty list instead of throwing
@@ -238,6 +248,7 @@ class ServicioTickets
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return [];
 
@@ -250,12 +261,12 @@ class ServicioTickets
         if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
         {
           debugPrint("Si funciona verificar el mensaje");
-          Get.offAllNamed(MyRoute.loginScreen);
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
         }
         if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
         {
           debugPrint("Si funciona verificar el mensaje");
-          Get.offAllNamed(MyRoute.loginScreen);
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
         }
       }
     }
@@ -267,7 +278,7 @@ class ServicioTickets
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
         msgxToast(e.toString());
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       return [];
@@ -312,7 +323,7 @@ class ServicioSeguimientoTickets
       };
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/tickets/seguimiento_gestion_creacion",
-        "http://api.komuvita.com/portal/tickets/seguimiento_gestion_creacion",
+        "$baseUrl/portal/tickets/seguimiento_gestion_creacion",
       );
       Map<String,dynamic> data =
       {
@@ -337,7 +348,8 @@ class ServicioSeguimientoTickets
 
       if(response.statusCode == 200)
       {
-        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
           // Return an empty list instead of throwing
@@ -346,8 +358,13 @@ class ServicioSeguimientoTickets
           return [];
         }
         debugPrint("Regreso correcto!!!!!");
-
+          if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+          {
+            debugPrint("Si funciona verificar el mensaje");
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+          }
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
 
@@ -360,7 +377,7 @@ class ServicioSeguimientoTickets
         if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
         {
           debugPrint("Si funciona verificar el mensaje");
-          Get.offAllNamed(MyRoute.loginScreen);
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
         }
       }
     }
@@ -372,7 +389,7 @@ class ServicioSeguimientoTickets
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
         msgxToast(e.toString());
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       //Get.back();
        debugPrint(e.toString());
@@ -402,7 +419,7 @@ Future<List<Map<String, dynamic>>>GestionTickets2()async
     };
     var url = Uri.parse(
     //"https://apidesa.komuvita.com/portal/tickets/gestion_tipo_listado");
-    "http://api.komuvita.com/portal/tickets/gestion_tipo_listado");
+    "$baseUrl/portal/tickets/gestion_tipo_listado");
     Map body = {
       "autenticacion":
       {
@@ -475,11 +492,20 @@ Future<List<Map<String, dynamic>>>GestionTickets2()async
     debugPrint("Tickest100");
     debugPrint(response.body.toString());
     if(response.statusCode == 200)
-
     {
+      if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+      {
+        debugPrint("Si funciona verificar el mensaje");
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+      }
       debugPrint("Regreso correcto");
       if(json["resultado"]["pn_tiene_datos"] == 1)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         //Get.offNamedUntil(MyRoute.home,(route) => route.isFirst,);
         return List<Map<String, dynamic>>.from(json["datos"]);
       }
@@ -488,11 +514,6 @@ Future<List<Map<String, dynamic>>>GestionTickets2()async
         debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
         //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
-      }
-      if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
-      {
-        debugPrint("Si funciona verificar el mensaje");
-        Get.offAllNamed(MyRoute.loginScreen);
       }
     }
   }
@@ -504,7 +525,7 @@ Future<List<Map<String, dynamic>>>GestionTickets2()async
       msgxToast(e.toString());
       debugPrint("Si funciona verificar el mensaje");
       msgxToast(e.toString());
-      Get.offAllNamed(MyRoute.loginScreen);
+      Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
     }
     //Get.back();
     debugPrint(e.toString());
@@ -543,7 +564,7 @@ class ServicioProcesoTickets
       };
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/tickets/gestion_en_proceso",
-        "http://api.komuvita.com/portal/tickets/gestion_en_proceso",
+        "$baseUrl/portal/tickets/gestion_en_proceso",
       );
       Map<String,dynamic> data =
       {
@@ -566,6 +587,11 @@ class ServicioProcesoTickets
 
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -577,6 +603,7 @@ class ServicioProcesoTickets
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
 
@@ -589,7 +616,7 @@ class ServicioProcesoTickets
         if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
         {
           debugPrint("Si funciona verificar el mensaje");
-          Get.offAllNamed(MyRoute.loginScreen);
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
         }
       }
     }
@@ -601,7 +628,7 @@ class ServicioProcesoTickets
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
         msgxToast(e.toString());
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       //Get.back();
       debugPrint(e.toString());
@@ -640,7 +667,7 @@ class ServicioFinalizarTickets
       };
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/tickets/gestion_finalizar",
-        "http://api.komuvita.com/portal/tickets/gestion_finalizar",
+        "$baseUrl/portal/tickets/gestion_finalizar",
       );
       Map<String,dynamic> data =
       {
@@ -663,6 +690,11 @@ class ServicioFinalizarTickets
 
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -674,6 +706,7 @@ class ServicioFinalizarTickets
         debugPrint("Regreso correcto!!!!!");
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
 
@@ -686,7 +719,7 @@ class ServicioFinalizarTickets
         if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
         {
           debugPrint("Si funciona verificar el mensaje");
-          Get.offAllNamed(MyRoute.loginScreen);
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
         }
       }
     }
@@ -698,7 +731,7 @@ class ServicioFinalizarTickets
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
         msgxToast(e.toString());
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       //Get.back();
       debugPrint(e.toString());
@@ -736,7 +769,7 @@ class ServicioCerrarTickets
       };
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/tickets/gestion_finalizar",
-        "http://api.komuvita.com/portal/tickets/gestion_finalizar",
+        "$baseUrl/portal/tickets/gestion_finalizar",
       );
       Map<String,dynamic> data =
       {
@@ -760,6 +793,7 @@ class ServicioCerrarTickets
 
       if(response.statusCode == 200)
       {
+
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -769,8 +803,14 @@ class ServicioCerrarTickets
           return [];
         }
         debugPrint("Regreso correcto!!!!!");
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
 
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
 
@@ -783,7 +823,7 @@ class ServicioCerrarTickets
         if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
         {
           debugPrint("Si funciona verificar el mensaje");
-          Get.offAllNamed(MyRoute.loginScreen);
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
         }
       }
     }
@@ -795,7 +835,7 @@ class ServicioCerrarTickets
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
         msgxToast(e.toString());
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       //Get.back();
       debugPrint(e.toString());

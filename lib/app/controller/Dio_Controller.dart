@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+String baseUrl = 'http://api.komuvita.com';
+//String baseUrl = 'https://apidesa.komuvita.com';
+
 class ApiClient {
 
   // The single shared Dio instance

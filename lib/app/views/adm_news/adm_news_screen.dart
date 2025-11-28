@@ -879,12 +879,15 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                   }
 
                                                                   final bytes = base64Decode(base64Img!);
-                                                                  return ClipRRect(
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                    child: Image.memory(
-                                                                      bytes,
-                                                                      fit: BoxFit.cover,
-                                                                      width: double.infinity,
+                                                                  return GestureDetector(
+                                                                    onTap: ()=>showImageDialog(context,base64Img!),
+                                                                    child: ClipRRect(
+                                                                      borderRadius: BorderRadius.circular(10),
+                                                                      child: Image.memory(
+                                                                        bytes,
+                                                                        fit: BoxFit.cover,
+                                                                        width: double.infinity,
+                                                                      ),
                                                                     ),
                                                                   );
                                                                 }).toList(),

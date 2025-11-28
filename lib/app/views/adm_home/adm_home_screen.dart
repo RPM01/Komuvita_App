@@ -2239,12 +2239,15 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                           }
 
                                                           final bytes = base64Decode(base64Img!);
-                                                          return ClipRRect(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                            child: Image.memory(
-                                                              bytes,
-                                                              fit: BoxFit.cover,
-                                                              width: double.infinity,
+                                                          return GestureDetector(
+                                                            onTap: ()=>showImageDialog4(context,base64Img!),
+                                                            child: ClipRRect(
+                                                              borderRadius: BorderRadius.circular(10),
+                                                              child: Image.memory(
+                                                                bytes,
+                                                                fit: BoxFit.cover,
+                                                                width: double.infinity,
+                                                              ),
                                                             ),
                                                           );
                                                         }).toList(),

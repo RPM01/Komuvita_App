@@ -12,6 +12,7 @@ import '../modal/adm_notification_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 
 
@@ -48,7 +49,7 @@ class AdmNotificationController extends GetxController{
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/notificaciones/notificaciones_listado"
-          "http://api.komuvita.com/portal/notificaciones/notificaciones_listado"
+          "$baseUrl/portal/notificaciones/notificaciones_listado"
       );
       Map body = {
         "autenticacion":
@@ -72,7 +73,14 @@ class AdmNotificationController extends GetxController{
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
       {
-        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
+
+        if (json["resultado"]["pn_error"] == 0) {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
           // Return an empty list instead of throwing

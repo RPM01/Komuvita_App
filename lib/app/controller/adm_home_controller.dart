@@ -22,6 +22,7 @@ import '../modal/adms_home_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer'as devLog;
 
+import 'Dio_Controller.dart';
 import 'adm_login_controller.dart';
 
 
@@ -77,7 +78,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/importantes/datos_importantes_listado"
-           "http://api.komuvita.com/portal/importantes/datos_importantes_listado"
+           "$baseUrl/portal/importantes/datos_importantes_listado"
       );
       Map body = {
             "autenticacion":
@@ -102,6 +103,11 @@ class AdmHomeController extends GetxController {
       debugPrint(json["datos"][0]["pv_detalle"].toString());
       if(response.statusCode == 200)
       {
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
           // ✅ Check if datos exists and is not null
           if (json["datos"] == null || (json["datos"] as List).isEmpty) {
@@ -127,7 +133,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       return [];
@@ -155,7 +161,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/noticias/noticias_listado"
-           "http://api.komuvita.com/portal/noticias/noticias_listado"
+           "$baseUrl/portal/noticias/noticias_listado"
         );
       Map body = {
         "autenticacion":
@@ -187,11 +193,17 @@ class AdmHomeController extends GetxController {
             debugPrint("⚠️ 'datos' is null or empty in response");
             return [];
           }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
 
           debugPrint("Noticias3");
           //debugPrint(json["datos"][0]["pl_comentarios"][0]["pv_descripcion"].toString());
 
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             debugPrint("Noticias con datos");
             debugPrint(body.toString());
             debugPrint(response.body.toString());
@@ -202,6 +214,7 @@ class AdmHomeController extends GetxController {
             debugPrint("Noticias Error");
             //debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             errorMensaje = json["resultado"]["pv_error_descripcion"].toString();
+            
             // //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
             // //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
           }
@@ -215,7 +228,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -251,7 +264,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado"
-           "http://api.komuvita.com/portal/rentasventas/rentas_listado"
+           "$baseUrl/portal/rentasventas/rentas_listado"
       );
       Map body = {
         "autenticacion":
@@ -281,9 +294,16 @@ class AdmHomeController extends GetxController {
             debugPrint("⚠️ 'datos' is null or empty in response");
             return [];
           }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return List<Map<String, dynamic>>.from(json["datos"]);
           } else {
+            
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
             throw Exception(
@@ -299,7 +319,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -335,7 +355,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/rentasventas/rentas_listado");
-           "http://api.komuvita.com/portal/rentasventas/rentas_listado");
+           "$baseUrl/portal/rentasventas/rentas_listado");
       Map body = {
         "autenticacion":
         {
@@ -364,13 +384,20 @@ class AdmHomeController extends GetxController {
             debugPrint("⚠️ 'datos' is null or empty in response");
             return [];
           }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           debugPrint("Regreso correcto!!!!!");
 
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return (json["datos"] as List)
                 .map((item) => RentaVentaD5.fromJson(item))
                 .toList();
           } else {
+
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
             throw Exception(
@@ -386,7 +413,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -423,7 +450,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
-           "http://api.komuvita.com/portal/cosasperdidas/cosas_perdidas_listado");
+           "$baseUrl/portal/cosasperdidas/cosas_perdidas_listado");
       Map body = {
         "autenticacion":
         {
@@ -452,8 +479,14 @@ class AdmHomeController extends GetxController {
             debugPrint("⚠️ 'datos' is null or empty in response");
             return [];
           }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           debugPrint("Regreso correcto");
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return List<Map<String, dynamic>>.from(json["datos"]);
           } else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -471,7 +504,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       return [];
@@ -497,7 +530,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
-           "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+           "$baseUrl/portal/amenidades/reservas_amenidades_listado");
       Map body = {
         "autenticacion":
         {
@@ -528,8 +561,14 @@ class AdmHomeController extends GetxController {
             debugPrint("⚠️ 'datos' is null or empty in response");
             return [];
           }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           debugPrint("Regreso correcto");
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return List<Map<String, dynamic>>.from(json["datos"]);
           } else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -547,7 +586,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -585,7 +624,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/amenidades/reservas_amenidades_listado");
-           "http://api.komuvita.com/portal/amenidades/reservas_amenidades_listado");
+           "$baseUrl/portal/amenidades/reservas_amenidades_listado");
       Map body = {
         "autenticacion":
         {
@@ -618,7 +657,13 @@ class AdmHomeController extends GetxController {
             debugPrint("⚠️ 'datos' is null or empty in response");
             return [];
           }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return (json["datos"] as List)
                 .map((item) => ReservasF5.fromJson(item))
                 .toList();
@@ -637,7 +682,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       debugPrint("Amenidades reservadas 2");
@@ -674,7 +719,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-           "http://api.komuvita.com/portal/tickets/gestiones_listado");
+           "$baseUrl/portal/tickets/gestiones_listado");
       Map body = {
         "autenticacion":
         {
@@ -710,7 +755,13 @@ class AdmHomeController extends GetxController {
             return [];
           }
           debugPrint("Regreso correcto");
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return List<Map<String, dynamic>>.from(json["datos"]);
           } else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -728,7 +779,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -766,7 +817,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
         //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-         "http://api.komuvita.com/portal/tickets/gestiones_listado");
+         "$baseUrl/portal/tickets/gestiones_listado");
 
 
       Map body = {
@@ -816,7 +867,13 @@ class AdmHomeController extends GetxController {
 
           debugPrint("Regreso correcto!!!!!");
 
+          if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+          {
+            debugPrint("Si funciona verificar el mensaje");
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+          }
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return datosList.map((item) => TickestG5.fromJson(item)).toList();
           } else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -831,7 +888,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint("❌ Exception: $e");
       showDialog(
@@ -868,7 +925,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
-           "http://api.komuvita.com/portal/tickets/gestiones_listado");
+           "$baseUrl/portal/tickets/gestiones_listado");
       Map body = {
         "autenticacion":
         {
@@ -909,7 +966,13 @@ class AdmHomeController extends GetxController {
             return [];
           }
           debugPrint("Regreso correcto!!!!!");
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return (json["datos"] as List)
                 .map((item) => TickestG5.fromJson(item))
                 .toList();
@@ -929,7 +992,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -969,7 +1032,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
-           "http://api.komuvita.com/portal/paqueteria/paquete_pendiente_listado");
+           "$baseUrl/portal/paqueteria/paquete_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -998,8 +1061,14 @@ class AdmHomeController extends GetxController {
             debugPrint("⚠️ 'datos' is null or empty in response");
             return [];
           }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           debugPrint("Regreso correcto");
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return List<Map<String, dynamic>>.from(json["datos"]);
           } else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -1017,7 +1086,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -1056,7 +1125,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/visitas/visita_pendiente_listado");
-           "http://api.komuvita.com/portal/visitas/visita_pendiente_listado");
+           "$baseUrl/portal/visitas/visita_pendiente_listado");
       Map body = {
         "autenticacion":
         {
@@ -1087,12 +1156,20 @@ class AdmHomeController extends GetxController {
             return [];
           }
           debugPrint("Regreso correcto!!!!!");
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return List<Map<String, dynamic>>.from(json["datos"]);
-          } else {
+          }
+          else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
             //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
             //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+            
           }
         }
       }
@@ -1104,7 +1181,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       return [];
@@ -1131,7 +1208,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/cuentas/forma_pago_listado");
-           "http://api.komuvita.com/portal/cuentas/forma_pago_listado");
+           "$baseUrl/portal/cuentas/forma_pago_listado");
       Map body = {
         "autenticacion":
         {
@@ -1162,7 +1239,14 @@ class AdmHomeController extends GetxController {
             return [];
           }
 
+          if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+          {
+            debugPrint("Si funciona verificar el mensaje");
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+          }
+
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             debugPrint(json["datos"].toString());
             List<Map<String, dynamic>> datos =
                 List<Map<String, dynamic>>.from(json["datos"]);
@@ -1201,7 +1285,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       return [];
@@ -1229,7 +1313,7 @@ class AdmHomeController extends GetxController {
       };
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
-           "http://api.komuvita.com/portal/cuentas/documentos_listado");
+           "$baseUrl/portal/cuentas/documentos_listado");
       Map body = {
         "autenticacion":
         {
@@ -1261,7 +1345,13 @@ class AdmHomeController extends GetxController {
             return [];
           }
           debugPrint("Regreso correcto!!!!!");
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return List<Map<String, dynamic>>.from(json["datos"]);
           } else {
             debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -1279,7 +1369,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -1338,7 +1428,7 @@ class AdmHomeController extends GetxController {
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/cuentas/documentos_listado");
-           "http://api.komuvita.com/portal/cuentas/documentos_listado");
+           "$baseUrl/portal/cuentas/documentos_listado");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -1375,8 +1465,13 @@ class AdmHomeController extends GetxController {
             return [];
           }
           debugPrint("Regreso correcto!!!!!");
-
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
           if (json["resultado"]["pn_tiene_datos"] == 1) {
+            
             return (json["datos"] as List)
                 .map((item) => DacumentosH5.fromJson(item))
                 .toList();
@@ -1394,7 +1489,7 @@ class AdmHomeController extends GetxController {
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       showDialog(
@@ -1496,7 +1591,7 @@ class ServicioListadoCargoClienteCargar{
         var dio = Dio();
       var response = await dio.request(
         //"https://apidesa.komuvita.com/portal/cuentas/documento_aplicar_pago",
-         "http://api.komuvita.com/portal/cuentas/documento_aplicar_pago",
+         "$baseUrl/portal/cuentas/documento_aplicar_pago",
 
           options: Options(
             method: 'POST',
@@ -1530,6 +1625,11 @@ class ServicioListadoCargoClienteCargar{
           debugPrint("Funciono!!!");
           msgxToast("Pago realizado correctamente no.${response.data["datos"]["pn_recibo"].toString()}");
 
+          if(response.data["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+          {
+            debugPrint("Si funciona verificar el mensaje");
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+          }
              debugPrint(status.toString());
         }
         else {
@@ -1577,7 +1677,7 @@ class AutorizarClass
       };
       var url = Uri.parse(
       //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_autoriza");
-      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_autoriza");
+      "$baseUrl/portal/amenidades/reserva_amenidad_autoriza");
       Map body = {
         "autenticacion":
         {
@@ -1609,7 +1709,17 @@ class AutorizarClass
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return [];
         }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+          if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+          {
+            debugPrint("Si funciona verificar el mensaje");
+            Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+          }
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
 
@@ -1628,7 +1738,7 @@ class AutorizarClass
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       msgxToast(e.toString());
@@ -1676,7 +1786,7 @@ class RechazarClass
       };
       var url = Uri.parse(
       //"https://apidesa.komuvita.com/portal/amenidades/reserva_amenidad_rechazar");
-      "http://api.komuvita.com/portal/amenidades/reserva_amenidad_rechazar");
+      "$baseUrl/portal/amenidades/reserva_amenidad_rechazar");
       Map<String,dynamic> body = {
         "autenticacion":
         {
@@ -1710,7 +1820,13 @@ class RechazarClass
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return [];
         }
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
         if (json["resultado"]["pn_tiene_datos"] == 1) {
+
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
 
@@ -1729,7 +1845,7 @@ class RechazarClass
         msgxToast(e.toString());
         debugPrint("Si funciona verificar el mensaje");
 
-        Get.offAllNamed(MyRoute.loginScreen);
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
       msgxToast(e.toString());
