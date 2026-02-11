@@ -340,7 +340,7 @@ class _AdmComunicacionJuntaDirectivaScreenState extends State<AdmComunicacionJun
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    //TODO: implement build
     return Scaffold(
         backgroundColor:admComunicacionJuntaDirectivaResultadoGestionController.themeController.isDarkMode?admDarkPrimary:admWhiteColor ,
         appBar: AppBar(
