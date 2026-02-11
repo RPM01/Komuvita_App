@@ -103,21 +103,27 @@ Future<List<TickestG5>> GestionTickets5B_2() async {
     final json = jsonDecode(response.body);
     debugPrint(body.toString());
     debugPrint(response.body.toString());
-    debugPrint("Tickets69_G5");
+
 
     if (json["datos"] == null || json["datos"] is! List) {
       debugPrint("⚠️ 'datos' is null or not a list");
       return [];
     }
     List datosList = json["datos"];
-    int totalWithGestion =
-        datosList.where((item) => item['pn_gestion'] != null).length;
+
+    int totalWithGestion = datosList.where((item) => item['pn_gestion'] != null).length;
+
+
+    debugPrint(url.toString());
     debugPrint(totalWithGestion.toString());
 
     debugPrint(body.toString());
     debugPrint(response.body.toString());
+    debugPrint(json["datos"][0]["pl_seguimiento"].toString());
+    //debugPrint(json["datos"][0]["pl_seguimiento"][0]["pl_fotografias"].toString());
+
     devLog.log("Tickets69_G5");
-    devLog.log(response.body.toString());
+
 
     if (response.statusCode == 200) {
 
@@ -300,7 +306,7 @@ class ServicioSeguimientoTickets
 
   Future<List<Map<String, dynamic>>>listadoSeguimientoTickets()async
   {
-    debugPrint("**********G6***********");
+    debugPrint("**********G7***********");
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
@@ -397,8 +403,9 @@ class ServicioSeguimientoTickets
     }
     return [];
   }
-
 }
+
+
 
 Future<List<Map<String, dynamic>>>GestionTickets2()async
 {

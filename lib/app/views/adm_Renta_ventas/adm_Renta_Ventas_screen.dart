@@ -23,6 +23,7 @@ import '../../../constant/adm_strings.dart';
 import '../../../adm_theme/adm_theme.dart';
 import '../../../widgets/home_widgets.dart';
 import '../../../widgets/adm_detail_view.dart';
+import '../../controller/adm_comunicacion_Admin_ticket_controller.dart';
 import '../../controller/adm_estado_de_cuenta_controller.dart';
 import '../../controller/adm_home_controller.dart';
 import '../../controller/adm_login_controller.dart';
@@ -67,6 +68,8 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
 
 
   TextEditingController descripcionController  = TextEditingController();
+  TextEditingController autorizacionObservacionController  = TextEditingController();
+
   TextEditingController precioController  = TextEditingController();
   TextEditingController infoContactoController  = TextEditingController();
 
@@ -89,11 +92,17 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
   List<String> monedaRoV_ID = ["1","2"];
   String ? monedaSelect;
   String monedaSet = "";
+  String admincheck = "";
+  String juntaDirect = "";
+  String inquilino = "";
 
+  List<TextEditingController>  observacionesSeguridadController =[];
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
+
     getUserInfo();
    // listaDeMonedas().listaMonedas();
     setState(() {
@@ -101,7 +110,6 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
           ? AdmTheme.admDarkTheme
           : AdmTheme.admLightTheme;
 
-      _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
 
     }
     );
@@ -113,6 +121,10 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userName = prefs.getString("NombreUser")!;
+      admincheck = prefs.getString("Admin")!;
+      juntaDirect = prefs.getString("JuntaDirectiva")!;
+      inquilino = prefs.getString("Inquilino") ?? "0";
+
       /*
       instrucionesPago = prefs.getString("intruciones de pago")!;
       debugPrint("Intruciones");
@@ -159,8 +171,9 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
     );
   }
 
-  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
-    if (isAdmin) {
+  IconData _getIconForIndex(int index, String isAdmin, String jundaDir,String inquilino)
+  {
+    if (jundaDir == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -169,18 +182,20 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return FontAwesomeIcons.gear;
+        case 8: return Icons.chat;
+        case 9: return Icons.person;
+        case 10: return FontAwesomeIcons.boxesPacking;
+        case 11: return Icons.lock_reset;
         default: return Icons.logout;
       }
-    } else if (jundaDir) {
+    } else if (jundaDir =="2") {
       switch (index) {
-        case 0: return FontAwesomeIcons.boxesPacking;
-        case 1: return FontAwesomeIcons.person;
+        case 0: return FontAwesomeIcons.person;
+        case 1:  return FontAwesomeIcons.boxesPacking;
         default: return Icons.logout;
       }
-    } else {
+    } else if (inquilino == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -189,10 +204,49 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
         default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
+      }
+    }
+    else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
+        default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
       }
     }
   }
@@ -316,7 +370,7 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                         itemBuilder: (context, index) {
                           final menuTitle = helpAndSupport[index];
                           final isLast = index == helpAndSupport.length - 1;
-                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+                          final iconData = _getIconForIndex(index, admincheck, juntaDirect,inquilino);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
@@ -329,11 +383,11 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                 }
 
                                 // 👇 Handle "Paquetes pendientes"
-                                if (menuTitle == "Paquetes pendientes") {
+                                /*if (menuTitle == "Paquetes pendientes") {
                                   Navigator.pop(context); // close drawer first
                                   Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
                                   return;
-                                }
+                                }*/
 
                                 // 👇 Normal navigation
                                 Navigator.pop(context);
@@ -831,9 +885,15 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                           debugPrint(infoContactoController.text);
                                                                           debugPrint(monedaSet);
                                                                           devLog.log(base64Images.toString());
-                                                                          await RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Images,monedaSet);
+
                                                                           RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Images,monedaSet).listadoCreacionRentas6B();
-                                                                          Future.delayed(const Duration(milliseconds: 400), () {
+                                                                          //RentaVentasSetE7(tipoSet,descripcionController.text,precioController.text,infoContactoController.text,base64Images,monedaSet).listadoCreacionRentas6B();
+                                                                        _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
+                                                                        _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
+
+                                                                        Future.delayed(const Duration(milliseconds: 450), () {
+                                                                          debugPrint("recargando");
+                                                                          msgxToast("recargando");
                                                                             _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
                                                                             Navigator.of(context).pop();
                                                                             imagenesSeleccionadas.clear();
@@ -841,7 +901,9 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                                             descripcionController.text ="";
                                                                             precioController.text = "";
                                                                             infoContactoController.text = "";
-                                                                          }
+                                                                          _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
+                                                                          _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
+                                                                        }
                                                                           );
 
 
@@ -941,6 +1003,10 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                             _controllers.putIfAbsent(index, () => CarouselSliderController());
                                             _currentIndex[index] = _currentIndex[index] ?? 0;
 
+                                            for (int i = 0; i < documentos.length; i++)
+                                            {
+                                              observacionesSeguridadController.add(TextEditingController(text:""));
+                                            }
                                             return Card(
                                               color: Colors.white,
                                               shape: RoundedRectangleBorder(
@@ -1182,6 +1248,87 @@ class _AdmRentasVentasScreenState extends State<AdmRentasVnetasScreen> {
                                                         ),
                                                       ),
                                                     ),
+                                                    20.height,
+                                                    event.pnPermiteAutorizarRechazar == 0 ? Center(): Column(
+                                                      children: <Widget>[
+                                                        Text("Observaciones",maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: theme.textTheme.headlineSmall?.copyWith(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Color.fromRGBO(6, 78, 116, 1),
+                                                              fontSize: MediaQuery.of(context).size.width*0.035,)
+                                                        ),
+                                                        10.height,
+
+                                                        TextFormField(
+                                                          controller: observacionesSeguridadController[index],
+                                                          validator: (String? value) {
+                                                            if (value == null || value.isEmpty) {
+                                                              return 'Información requerida'; // Error message if empty
+                                                            }
+                                                            return null; // Return null if the input is valid
+                                                          },
+                                                        ),
+                                                        10.height,
+                                                      ],
+                                                    ),
+                                                    event.pnPermiteAutorizarRechazar == 0 ? Center(): Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 35,
+                                                          child: ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor: Color.fromRGBO(146, 162, 87, 1),
+                                                              // set the background color
+                                                            ),
+                                                            onPressed: () async{
+                                                              ServicioAutorizacionTickets(event.pnRenta.toString(),"1",autorizacionObservacionController.text).SeguimientoAutorizacionTickets();
+                                                              Future.delayed(const Duration(milliseconds: 600), ()
+                                                              {
+                                                                setState(() {
+                                                                  _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
+                                                                });
+                                                              });
+                                                              },
+                                                            child: Text(
+                                                              "Autorizar",
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: MediaQuery.of(context).size.width*0.035,
+                                                              ),
+                                                            ),),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 35,
+                                                          child: ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor: Color.fromRGBO(248, 40, 90, 1),
+                                                              // set the background color
+                                                            ),
+                                                            onPressed: () async{
+                                                              ServicioAutorizacionTickets(event.pnRenta.toString(),"0",autorizacionObservacionController.text).SeguimientoAutorizacionTickets();
+                                                              Future.delayed(const Duration(milliseconds: 600), ()
+                                                              {
+                                                                setState(() {
+                                                                  _futureRentas = RentaVentasSetE5(tipoOpcion, criterionBusquedaController.text).listadoRentas5B();
+
+                                                                });
+                                                              });
+                                                            },
+                                                            child: Text(
+                                                              "Rechazar",
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                                fontSize: MediaQuery.of(context).size.width*0.035,
+                                                              ),
+                                                            ),),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    10.height
                                                   ],
                                                 ),
                                               ),

@@ -135,7 +135,14 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
   TextEditingController codigoController = TextEditingController();
   TextEditingController observacionesVisitasController = TextEditingController();
 
+  String NotadminCheck = "";
+  bool notCreateAdmin = false;
 
+
+  bool juntaDirects = false;
+  String admincheck = "";
+  String juntaDirect = "";
+  String inquilino = "";
 
   Future<void> scanBarcodeNormal() async {
     //debugPrint("Se preciono Boton");
@@ -167,17 +174,17 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
 
     setState(() {
       codigoController.text = barcodeScanRes;
-      if(codigoController.text == "")
+      /*if(codigoController.text == "")
       {
         _futureVisitaM6 = visitasLista("-1",propiedadCuentaID,periodoCuentaID,tipoOpcion,"-1").listadoVisitasM6();
       }
       else
       {
         _futureVisitaM6 = visitasLista(propiedadElegido,propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
-      }
+      }*/
       //debugPrint("Set producto${scannedValue}");
       msgxToast("Código escaneado");
-      codigoController.text = "";
+      //codigoController.text = "";
       }
     );
 
@@ -194,7 +201,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
           : AdmTheme.admLightTheme;
 
       propiedadCuentaID = propiedadesInternasIdsSet[0];
-      periodoCuentaID = periodeDeCuentaID[0].toString();
+      periodoCuentaID = periodeDeCuentaID[2].toString();
     }
     );
   }
@@ -208,6 +215,20 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
     setState(() {
 
       userName = prefs.getString("NombreUser")!;
+      NotadminCheck = prefs.getString("Admin") ?? "0";
+      NotadminCheck = prefs.getString("Admin") ?? "0";
+      admincheck = prefs.getString("Admin")!;
+      juntaDirect = prefs.getString("JuntaDirectiva")!;
+      inquilino = prefs.getString("Inquilino") ?? "0";
+
+      if(NotadminCheck == "0")
+      {
+        notCreateAdmin = true;
+      }
+      else
+      {
+        notCreateAdmin = false;
+      }
       if(codigoController.text == "")
       {
         _futureVisitaM6 = visitasLista("-1",propiedadCuentaID,periodoCuentaID,tipoOpcion,"-1").listadoVisitasM6();      }
@@ -323,8 +344,9 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
     );
   }
 
-  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
-    if (isAdmin) {
+  IconData _getIconForIndex(int index, String isAdmin, String jundaDir,String inquilino)
+  {
+    if (jundaDir == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -333,18 +355,20 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return FontAwesomeIcons.gear;
+        case 8: return Icons.chat;
+        case 9: return Icons.person;
+        case 10: return FontAwesomeIcons.boxesPacking;
+        case 11: return Icons.lock_reset;
         default: return Icons.logout;
       }
-    } else if (jundaDir) {
+    } else if (jundaDir =="2") {
       switch (index) {
-        case 0: return FontAwesomeIcons.boxesPacking;
-        case 1: return FontAwesomeIcons.person;
+        case 0: return FontAwesomeIcons.person;
+        case 1:  return FontAwesomeIcons.boxesPacking;
         default: return Icons.logout;
       }
-    } else {
+    } else if (inquilino == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -353,10 +377,49 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
         default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
+      }
+    }
+    else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
+        default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
       }
     }
   }
@@ -617,7 +680,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                         itemBuilder: (context, index) {
                           final menuTitle = helpAndSupport[index];
                           final isLast = index == helpAndSupport.length - 1;
-                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+                          final iconData = _getIconForIndex(index, admincheck, juntaDirect,inquilino);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
@@ -629,11 +692,11 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                                 }
 
                                 // 👇 Handle "Paquetes pendientes"
-                                if (menuTitle == "Paquetes pendientes") {
+                                /*if (menuTitle == "Paquetes pendientes") {
                                   Navigator.pop(context); // close drawer first
                                   Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
                                   return;
-                                }
+                                }*/
 
                                 // 👇 Normal navigation
                                 Navigator.pop(context);
@@ -726,7 +789,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                                                 width: MediaQuery.of(context).size.width*0.45,
                                                 child: DropdownButtonFormField<String>(
                                                   isExpanded: true,
-                                                  value: periodeDeCuentaID[3].toString(),
+                                                  value: periodeDeCuentaID[2].toString(),
                                                   //hint: const Text("Seleccione una empresa"),
                                                   decoration: InputDecoration(
                                                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -786,7 +849,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                                                 child: DropdownButtonFormField<String>(
                                                   isExpanded: true,
                                                   value: clientesIdsSet.isNotEmpty ? clientesIdsSet[0] : null,
-                                                  hint: const Text("Seleccione una empresa"),
+                                                  hint: const Text("Seleccione un periodo"),
                                                   decoration: InputDecoration(
                                                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                                     border: OutlineInputBorder(
@@ -808,7 +871,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                                                     return DropdownMenuItem<String>(
                                                       value: clientesIdsSet[index],
                                                       child: Text(
-                                                        "${propiedadesInternaNombresSet[index]} ${propiedadesDireccionNombresSet[index]}",
+                                                          "${propiedadesInternaNombresSet[index]} (${propiedadesDireccionNombresSet[index]})",
                                                         style: const TextStyle(fontSize: 20, color: Colors.black),
                                                       ),
                                                     );
@@ -824,8 +887,6 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                                                       debugPrint('Selected value: $value');
                                                       debugPrint('Selected name: ${propiedadesInternaNombresSet[selectedIndex]}');
 
-
-                                                      // Store selected info
                                                       propiedadElegido = value;
                                                       propiedadCuentaID = propiedadesInternasIdsSet[selectedIndex];
                                                       propiedadElegidoDescripcion = propiedadesInternaNombresSet[selectedIndex];
@@ -923,7 +984,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                                         ),
                                         ),
                                       ),
-                                      SizedBox(
+                                       SizedBox(
                                           width: MediaQuery.of(context).size.width*0.45,
                                           child: TextFormField(
                                               controller: codigoController,
@@ -985,411 +1046,411 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                                           ],
                                         ),
                                       ),
-                                      /*SizedBox(
-                                        height: 35,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color.fromRGBO(6, 78, 116, 1),
-                                            // set the background color
-                                          ),
-                                          onPressed: ()
-                                          {
-                                            showDialog<void>(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return StatefulBuilder(
-                                                  builder: (BuildContext context, StateSetter setStateDialog2) {
-                                                    return AlertDialog(
-                                                      title: const Text("Agregar un nuevo paquete"),
-                                                      content: Builder(
-                                                          builder: (context) {
-                                                            return SingleChildScrollView(
-                                                              scrollDirection: Axis.vertical,
-                                                              child: Form(
-                                                                key: _formKey,
-                                                                child: Column(
-                                                                  children: [
-                                                                    10.height,
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context).size.width * 0.45,
-                                                                      child: Text(
-                                                                        "Descripción clara del paquete:",
-                                                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                                                          fontWeight: FontWeight.bold,
-                                                                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                                                                          color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    10.height,
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context).size.width * 0.45,
+                                       admincheck == "1" ?SizedBox(
+                                         height: 35,
+                                         child: ElevatedButton(
+                                           style: ElevatedButton.styleFrom(
+                                             backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                             // set the background color
+                                           ),
+                                           onPressed: ()
+                                           {
+                                             showDialog<void>(
+                                               context: context,
+                                               builder: (BuildContext context) {
+                                                 return StatefulBuilder(
+                                                   builder: (BuildContext context, StateSetter setStateDialog2) {
+                                                     return AlertDialog(
+                                                       title: const Text("Agregar un nuevo paquete"),
+                                                       content: Builder(
+                                                           builder: (context) {
+                                                             return SingleChildScrollView(
+                                                               scrollDirection: Axis.vertical,
+                                                               child: Form(
+                                                                 key: _formKey,
+                                                                 child: Column(
+                                                                   children: [
+                                                                     10.height,
+                                                                     SizedBox(
+                                                                       width: MediaQuery.of(context).size.width * 0.45,
+                                                                       child: Text(
+                                                                         "Descripción clara del paquete:",
+                                                                         style: theme.textTheme.bodyMedium?.copyWith(
+                                                                           fontWeight: FontWeight.bold,
+                                                                           fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                           color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                     10.height,
+                                                                     SizedBox(
+                                                                       width: MediaQuery.of(context).size.width * 0.45,
 
-                                                                      child: TextFormField(
-                                                                        controller: descripcionController,
-                                                                        validator: (String? value) {
-                                                                          if (value == null || value.isEmpty) {
-                                                                            return 'Información requerida'; // Error message if empty
-                                                                          }
-                                                                          return null; // Return null if the input is valid
-                                                                        },
-                                                                        onChanged: (value) {
-                                                                          descripcionController.text = value;
-                                                                        },
-                                                                        onFieldSubmitted: (value) {
-                                                                          descripcionController.text = value;
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                    10.height,
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context).size.width * 0.45,
-                                                                      child: Text(
-                                                                        "Fecha de recepción",
-                                                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                                                          fontWeight: FontWeight.bold,
-                                                                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                                                                          color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    10.height,
-                                                                    TextFormField(
-                                                                      controller: controllerFecha,
-                                                                      readOnly: true,
-                                                                      decoration: InputDecoration(
-                                                                        hintText: "Fecha y hora",
-                                                                        border: const OutlineInputBorder(),
-                                                                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                                                      ),
-                                                                      onTap: () async {
-                                                                        // Step 1: Pick the date
-                                                                        DateTime? fechaSelect = await showDatePicker(
-                                                                          context: context,
-                                                                          initialDate: DateTime.now(),
-                                                                          firstDate: DateTime(2000),
-                                                                          lastDate: DateTime(3000),
-                                                                          builder: (BuildContext context, Widget? child) {
-                                                                            return Theme(
-                                                                              data: Theme.of(context).copyWith(
-                                                                                colorScheme: const ColorScheme.light(
-                                                                                  primary: Color.fromRGBO(6, 78, 116, 1),
-                                                                                ),
-                                                                              ),
-                                                                              child: child!,
-                                                                            );
-                                                                          },
-                                                                        );
+                                                                       child: TextFormField(
+                                                                         controller: descripcionController,
+                                                                         validator: (String? value) {
+                                                                           if (value == null || value.isEmpty) {
+                                                                             return 'Información requerida'; // Error message if empty
+                                                                           }
+                                                                           return null; // Return null if the input is valid
+                                                                         },
+                                                                         onChanged: (value) {
+                                                                           descripcionController.text = value;
+                                                                         },
+                                                                         onFieldSubmitted: (value) {
+                                                                           descripcionController.text = value;
+                                                                         },
+                                                                       ),
+                                                                     ),
+                                                                     10.height,
+                                                                     SizedBox(
+                                                                       width: MediaQuery.of(context).size.width * 0.45,
+                                                                       child: Text(
+                                                                         "Fecha de recepción",
+                                                                         style: theme.textTheme.bodyMedium?.copyWith(
+                                                                           fontWeight: FontWeight.bold,
+                                                                           fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                           color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                     10.height,
+                                                                     TextFormField(
+                                                                       controller: controllerFecha,
+                                                                       readOnly: true,
+                                                                       decoration: InputDecoration(
+                                                                         hintText: "Fecha y hora",
+                                                                         border: const OutlineInputBorder(),
+                                                                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                                                       ),
+                                                                       onTap: () async {
+                                                                         // Step 1: Pick the date
+                                                                         DateTime? fechaSelect = await showDatePicker(
+                                                                           context: context,
+                                                                           initialDate: DateTime.now(),
+                                                                           firstDate: DateTime(2000),
+                                                                           lastDate: DateTime(3000),
+                                                                           builder: (BuildContext context, Widget? child) {
+                                                                             return Theme(
+                                                                               data: Theme.of(context).copyWith(
+                                                                                 colorScheme: const ColorScheme.light(
+                                                                                   primary: Color.fromRGBO(6, 78, 116, 1),
+                                                                                 ),
+                                                                               ),
+                                                                               child: child!,
+                                                                             );
+                                                                           },
+                                                                         );
 
-                                                                        if (fechaSelect != null) {
-                                                                          // Step 2: Pick the time
-                                                                          TimeOfDay? horaSelect = await showTimePicker(
-                                                                            context: context,
-                                                                            initialTime: TimeOfDay.now(),
-                                                                            builder: (BuildContext context, Widget? child) {
-                                                                              return Theme(
-                                                                                data: Theme.of(context).copyWith(
-                                                                                  colorScheme: const ColorScheme.light(
-                                                                                    primary: Color.fromRGBO(6, 78, 116, 1),
-                                                                                  ),
-                                                                                ),
-                                                                                child: child!,
-                                                                              );
-                                                                            },
-                                                                          );
+                                                                         if (fechaSelect != null) {
+                                                                           // Step 2: Pick the time
+                                                                           TimeOfDay? horaSelect = await showTimePicker(
+                                                                             context: context,
+                                                                             initialTime: TimeOfDay.now(),
+                                                                             builder: (BuildContext context, Widget? child) {
+                                                                               return Theme(
+                                                                                 data: Theme.of(context).copyWith(
+                                                                                   colorScheme: const ColorScheme.light(
+                                                                                     primary: Color.fromRGBO(6, 78, 116, 1),
+                                                                                   ),
+                                                                                 ),
+                                                                                 child: child!,
+                                                                               );
+                                                                             },
+                                                                           );
 
-                                                                          if (horaSelect != null) {
-                                                                            // Combine date and time
-                                                                            fechaHora = DateTime(
-                                                                              fechaSelect.year,
-                                                                              fechaSelect.month,
-                                                                              fechaSelect.day,
-                                                                              horaSelect.hour,
-                                                                              horaSelect.minute,
-                                                                            );
+                                                                           if (horaSelect != null) {
+                                                                             // Combine date and time
+                                                                             fechaHora = DateTime(
+                                                                               fechaSelect.year,
+                                                                               fechaSelect.month,
+                                                                               fechaSelect.day,
+                                                                               horaSelect.hour,
+                                                                               horaSelect.minute,
+                                                                             );
 
-                                                                            setState(() {
-                                                                              debugPrint("Fecha");
-                                                                              debugPrint(controllerFecha.text);
-                                                                              controllerFecha.text = DateFormat('dd/MM/yyyy').format(fechaHora);
-                                                                              debugPrint(controllerFecha.text);
-                                                                            });
-                                                                          }
-                                                                        }
-                                                                      },
-                                                                      validator: (value) =>
-                                                                      (value == null || value.isEmpty) ? 'Información requerida' : null,
-                                                                    ),
-                                                                    10.height,
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context).size.width * 0.45,
-                                                                      child: Text(
-                                                                        "Propiedad",
-                                                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                                                          fontWeight: FontWeight.bold,
-                                                                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                                                                          color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    10.height,
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context).size.width * 0.45,
-                                                                      child: DropdownButtonFormField<String>(
-                                                                        validator: (String? value) {
-                                                                          if (value == null || value.isEmpty) {
-                                                                            return 'Información requerida'; // Mensaje si está vacío
-                                                                          }
-                                                                          return null; // Si es válido
-                                                                        },
-                                                                        isExpanded: true,
+                                                                             setState(() {
+                                                                               debugPrint("Fecha");
+                                                                               debugPrint(controllerFecha.text);
+                                                                               controllerFecha.text = DateFormat('dd/MM/yyyy').format(fechaHora);
+                                                                               debugPrint(controllerFecha.text);
+                                                                             });
+                                                                           }
+                                                                         }
+                                                                       },
+                                                                       validator: (value) =>
+                                                                       (value == null || value.isEmpty) ? 'Información requerida' : null,
+                                                                     ),
+                                                                     10.height,
+                                                                     SizedBox(
+                                                                       width: MediaQuery.of(context).size.width * 0.45,
+                                                                       child: Text(
+                                                                         "Propiedad",
+                                                                         style: theme.textTheme.bodyMedium?.copyWith(
+                                                                           fontWeight: FontWeight.bold,
+                                                                           fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                           color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                     10.height,
+                                                                     SizedBox(
+                                                                       width: MediaQuery.of(context).size.width * 0.45,
+                                                                       child: DropdownButtonFormField<String>(
+                                                                         validator: (String? value) {
+                                                                           if (value == null || value.isEmpty) {
+                                                                             return 'Información requerida'; // Mensaje si está vacío
+                                                                           }
+                                                                           return null; // Si es válido
+                                                                         },
+                                                                         isExpanded: true,
 
-                                                                        value: (clientesIdsSetB.isNotEmpty && clientesIdsSetB.first != -1)
-                                                                            ? clientesIdsSetB.first.toString()
-                                                                            : null,
-                                                                        hint: const Text("Seleccione una Propiedad"),
-                                                                        decoration: InputDecoration(
-                                                                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                                                          border: OutlineInputBorder(
-                                                                            borderRadius: BorderRadius.circular(12),
-                                                                            borderSide: const BorderSide(
-                                                                              color: Color.fromRGBO(6, 78, 116, 1),
-                                                                              width: 1,
-                                                                            ),
-                                                                          ),
-                                                                          focusedBorder: OutlineInputBorder(
-                                                                            borderRadius: BorderRadius.circular(12),
-                                                                            borderSide: const BorderSide(
-                                                                              color: Color.fromRGBO(6, 78, 116, 1),
-                                                                              width: 2,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        style: const TextStyle(
-                                                                          fontSize: 16,
-                                                                          fontWeight: FontWeight.w500,
-                                                                          color: Colors.black87,
-                                                                        ),
-                                                                        icon: const Icon(
-                                                                          Icons.arrow_drop_down,
-                                                                          color: Color.fromRGBO(6, 78, 116, 1),
-                                                                        ),
+                                                                         value: (clientesIdsSetB.isNotEmpty && clientesIdsSetB.first != -1)
+                                                                             ? clientesIdsSetB.first.toString()
+                                                                             : null,
+                                                                         hint: const Text("Seleccione una Propiedad"),
+                                                                         decoration: InputDecoration(
+                                                                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                                                           border: OutlineInputBorder(
+                                                                             borderRadius: BorderRadius.circular(12),
+                                                                             borderSide: const BorderSide(
+                                                                               color: Color.fromRGBO(6, 78, 116, 1),
+                                                                               width: 1,
+                                                                             ),
+                                                                           ),
+                                                                           focusedBorder: OutlineInputBorder(
+                                                                             borderRadius: BorderRadius.circular(12),
+                                                                             borderSide: const BorderSide(
+                                                                               color: Color.fromRGBO(6, 78, 116, 1),
+                                                                               width: 2,
+                                                                             ),
+                                                                           ),
+                                                                         ),
+                                                                         style: const TextStyle(
+                                                                           fontSize: 16,
+                                                                           fontWeight: FontWeight.w500,
+                                                                           color: Colors.black87,
+                                                                         ),
+                                                                         icon: const Icon(
+                                                                           Icons.arrow_drop_down,
+                                                                           color: Color.fromRGBO(6, 78, 116, 1),
+                                                                         ),
 
-                                                                        // --- Construcción segura de los ítems ---
-                                                                        items: List.generate(clientesIdsSetB.length, (index) {
-                                                                          // Evita errores si las listas no tienen la misma longitud
-                                                                          String nombre = (index < propiedadesInternaNombresSetB.length)
-                                                                              ? propiedadesInternaNombresSetB[index]
-                                                                              : "Desconocido";
+                                                                         // --- Construcción segura de los ítems ---
+                                                                         items: List.generate(clientesIdsSetB.length, (index) {
+                                                                           // Evita errores si las listas no tienen la misma longitud
+                                                                           String nombre = (index < propiedadesInternaNombresSetB.length)
+                                                                               ? propiedadesInternaNombresSetB[index]
+                                                                               : "Desconocido";
 
-                                                                          String direccion = (index < propiedadesDireccionNombresSetB.length)
-                                                                              ? propiedadesDireccionNombresSetB[index]
-                                                                              : "Sin dirección";
+                                                                           String direccion = (index < propiedadesDireccionNombresSetB.length)
+                                                                               ? propiedadesDireccionNombresSetB[index]
+                                                                               : "Sin dirección";
 
-                                                                          return DropdownMenuItem<String>(
-                                                                            value: clientesIdsSetB[index].toString(),
-                                                                            child: Text(
-                                                                              "$direccion",
-                                                                              style: const TextStyle(fontSize: 16, color: Colors.black),
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                          );
-                                                                        }),
+                                                                           return DropdownMenuItem<String>(
+                                                                             value: clientesIdsSetB[index].toString(),
+                                                                             child: Text(
+                                                                               "$direccion",
+                                                                               style: const TextStyle(fontSize: 16, color: Colors.black),
+                                                                               overflow: TextOverflow.ellipsis,
+                                                                             ),
+                                                                           );
+                                                                         }),
 
-                                                                        // --- Manejo seguro del cambio de valor ---
-                                                                        onChanged: (value) {
-                                                                          setState(() {
-                                                                            if (value == null) return;
+                                                                         // --- Manejo seguro del cambio de valor ---
+                                                                         onChanged: (value) {
+                                                                           setState(() {
+                                                                             if (value == null) return;
 
-                                                                            // Buscar el índice usando la lista correcta
-                                                                            int index = clientesIdsSetB.indexOf(value);
+                                                                             // Buscar el índice usando la lista correcta
+                                                                             int index = clientesIdsSetB.indexOf(value);
 
-                                                                            if (index != -1 && index < propiedadesDireccionNombresSetB.length) {
-                                                                              propiedadElegidoB = value;
-                                                                              propiedadElegidoID_B = propiedadesInternasIdsSetB[index].toString();
-                                                                              PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[index].toString();
+                                                                             if (index != -1 && index < propiedadesDireccionNombresSetB.length) {
+                                                                               propiedadElegidoB = value;
+                                                                               propiedadElegidoID_B = propiedadesInternasIdsSetB[index].toString();
+                                                                               PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[index].toString();
 
-                                                                              debugPrint("✅ Propiedad seleccionada: $propiedadElegidoB");
-                                                                              debugPrint("✅ Propiedad seleccionada ID: $propiedadElegidoID_B");
-                                                                              debugPrint("📍 Dirección: $PropiedadElegidaDEscripcion");
-                                                                            } else {
-                                                                              debugPrint("⚠️ Valor no encontrado o fuera de rango: $value");
-                                                                            }
-                                                                          });
-                                                                        },
-                                                                      ),
-                                                                    ),
+                                                                               debugPrint("✅ Propiedad seleccionada: $propiedadElegidoB");
+                                                                               debugPrint("✅ Propiedad seleccionada ID: $propiedadElegidoID_B");
+                                                                               debugPrint("📍 Dirección: $PropiedadElegidaDEscripcion");
+                                                                             } else {
+                                                                               debugPrint("⚠️ Valor no encontrado o fuera de rango: $value");
+                                                                             }
+                                                                           });
+                                                                         },
+                                                                       ),
+                                                                     ),
 
-                                                                    10.height,
+                                                                     10.height,
 
-                                                                    // ---------- BOTÓN SELECCIONAR IMÁGENES ----------
-                                                                    Container(
-                                                                      padding: const EdgeInsets.all(10),
-                                                                      child: ElevatedButton(
-                                                                        style: ElevatedButton.styleFrom(
-                                                                          backgroundColor: const Color.fromRGBO(6, 78, 116, 1),
-                                                                        ),
-                                                                        onPressed: () async {
+                                                                     // ---------- BOTÓN SELECCIONAR IMÁGENES ----------
+                                                                     Container(
+                                                                       padding: const EdgeInsets.all(10),
+                                                                       child: ElevatedButton(
+                                                                         style: ElevatedButton.styleFrom(
+                                                                           backgroundColor: const Color.fromRGBO(6, 78, 116, 1),
+                                                                         ),
+                                                                         onPressed: () async {
 
-                                                                          final regresarImagenesSelect =
-                                                                          await ImagePicker().pickMultiImage();
+                                                                           final regresarImagenesSelect =
+                                                                           await ImagePicker().pickMultiImage();
 
-                                                                          setStateDialog2(() {
-                                                                            if (regresarImagenesSelect.isEmpty) return;
-                                                                            imagenesSeleccionadas = regresarImagenesSelect
-                                                                                .map((x) => File(x.path))
-                                                                                .toList();
-                                                                            debugPrint("Imagenes recibidas");
-                                                                            debugPrint(regresarImagenesSelect.toString());
-                                                                            debugPrint("Imagenes enlistadas");
-                                                                            debugPrint(imagenesSeleccionadas.toString());
-                                                                            debugPrint("Listas creadas");
-                                                                          });
-                                                                          for (var img in imagenesSeleccionadas) {
-                                                                            List<int> imageBytes =
-                                                                            await img.readAsBytes();
-                                                                            base64Images.add(base64Encode(imageBytes));
-                                                                          }
-                                                                          debugPrint("Imagenes en String");
-                                                                          debugPrint(base64Images.toString());
-                                                                          msgxToast("Cargando imágenes...");
-                                                                        },
-                                                                        child: Text(
-                                                                          "Elegir Fotografías de Galería",
-                                                                          style: TextStyle(
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: Colors.white,
-                                                                            fontSize:
-                                                                            MediaQuery.of(context).size.width * 0.03,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    10.height,
-                                                                    // ---------- LISTADO DE IMÁGENES ----------
-                                                                    imagenesSeleccionadas.isNotEmpty
-                                                                        ? SizedBox(
-                                                                      height:  MediaQuery.of(context).size.width*0.4,
-                                                                      width:  MediaQuery.of(context).size.width*0.4,
-                                                                      child: CarouselSlider(
-                                                                        options: CarouselOptions(
-                                                                          height:  MediaQuery.of(context).size.width * 0.4,
-                                                                          enableInfiniteScroll: false,
-                                                                          enlargeCenterPage: true,
-                                                                          viewportFraction: 1.0,
-                                                                          autoPlay: true,
-                                                                        ),
-                                                                        items: imagenesSeleccionadas.map((imgFile) {
-                                                                          return Builder(
-                                                                            builder: (BuildContext context) {
-                                                                              return SizedBox(
-                                                                                width: MediaQuery.of(context).size.width* 0.4,
-                                                                                child: ClipRRect(
-                                                                                  borderRadius: BorderRadius.circular(12),
-                                                                                  child: Image.file(
-                                                                                    imgFile,
-                                                                                    fit: BoxFit.cover,
-                                                                                  ),
-                                                                                ),
-                                                                              );
-                                                                            },
-                                                                          );
-                                                                        }).toList(),
-                                                                      ),
-                                                                    ) : const Text("Selecione una imagen como minimo"),
-                                                                    10.height,
-                                                                    // ---------- CREAR TICKET ----------
-                                                                    Container(
-                                                                      padding: const EdgeInsets.all(10),
-                                                                      child: ElevatedButton(
-                                                                        style: ElevatedButton.styleFrom(
-                                                                          backgroundColor:
-                                                                          const Color.fromRGBO(6, 78, 116, 1),
-                                                                        ),
+                                                                           setStateDialog2(() {
+                                                                             if (regresarImagenesSelect.isEmpty) return;
+                                                                             imagenesSeleccionadas = regresarImagenesSelect
+                                                                                 .map((x) => File(x.path))
+                                                                                 .toList();
+                                                                             debugPrint("Imagenes recibidas");
+                                                                             debugPrint(regresarImagenesSelect.toString());
+                                                                             debugPrint("Imagenes enlistadas");
+                                                                             debugPrint(imagenesSeleccionadas.toString());
+                                                                             debugPrint("Listas creadas");
+                                                                           });
+                                                                           for (var img in imagenesSeleccionadas) {
+                                                                             List<int> imageBytes =
+                                                                             await img.readAsBytes();
+                                                                             base64Images.add(base64Encode(imageBytes));
+                                                                           }
+                                                                           debugPrint("Imagenes en String");
+                                                                           debugPrint(base64Images.toString());
+                                                                           msgxToast("Cargando imágenes...");
+                                                                         },
+                                                                         child: Text(
+                                                                           "Elegir Fotografías de Galería",
+                                                                           style: TextStyle(
+                                                                             fontWeight: FontWeight.bold,
+                                                                             color: Colors.white,
+                                                                             fontSize:
+                                                                             MediaQuery.of(context).size.width * 0.03,
+                                                                           ),
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                     10.height,
+                                                                     // ---------- LISTADO DE IMÁGENES ----------
+                                                                     imagenesSeleccionadas.isNotEmpty
+                                                                         ? SizedBox(
+                                                                       height:  MediaQuery.of(context).size.width*0.4,
+                                                                       width:  MediaQuery.of(context).size.width*0.4,
+                                                                       child: CarouselSlider(
+                                                                         options: CarouselOptions(
+                                                                           height:  MediaQuery.of(context).size.width * 0.4,
+                                                                           enableInfiniteScroll: false,
+                                                                           enlargeCenterPage: true,
+                                                                           viewportFraction: 1.0,
+                                                                           autoPlay: true,
+                                                                         ),
+                                                                         items: imagenesSeleccionadas.map((imgFile) {
+                                                                           return Builder(
+                                                                             builder: (BuildContext context) {
+                                                                               return SizedBox(
+                                                                                 width: MediaQuery.of(context).size.width* 0.4,
+                                                                                 child: ClipRRect(
+                                                                                   borderRadius: BorderRadius.circular(12),
+                                                                                   child: Image.file(
+                                                                                     imgFile,
+                                                                                     fit: BoxFit.cover,
+                                                                                   ),
+                                                                                 ),
+                                                                               );
+                                                                             },
+                                                                           );
+                                                                         }).toList(),
+                                                                       ),
+                                                                     ) : const Text("Selecione una imagen como minimo"),
+                                                                     10.height,
+                                                                     // ---------- CREAR TICKET ----------
+                                                                     Container(
+                                                                       padding: const EdgeInsets.all(10),
+                                                                       child: ElevatedButton(
+                                                                         style: ElevatedButton.styleFrom(
+                                                                           backgroundColor:
+                                                                           const Color.fromRGBO(6, 78, 116, 1),
+                                                                         ),
 
-                                                                        onPressed: () async {
-                                                                          debugPrint("boton presionado");
-                                                                          if (!_formKey.currentState!.validate()) {
-                                                                            msgxToast("1 Por favor complete todos los campos requeridos.");
-                                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                              const SnackBar(
-                                                                                content: Text("Por favor complete todos los campos requeridos."),
-                                                                              ),
-                                                                            );
-                                                                            return;
-                                                                          }
+                                                                         onPressed: () async {
+                                                                           debugPrint("boton presionado");
+                                                                           if (!_formKey.currentState!.validate()) {
+                                                                             msgxToast("1 Por favor complete todos los campos requeridos.");
+                                                                             ScaffoldMessenger.of(context).showSnackBar(
+                                                                               const SnackBar(
+                                                                                 content: Text("Por favor complete todos los campos requeridos."),
+                                                                               ),
+                                                                             );
+                                                                             return;
+                                                                           }
 
-                                                                          final prefs = await SharedPreferences.getInstance();
-                                                                          String? cliente = "";
-                                                                          cliente = prefs.getString("cliente");
-                                                                          debugPrint(base64Images.toString());
-                                                                          debugPrint("Seting Paquete");
-                                                                          debugPrint(propiedadElegidoB);
-                                                                          debugPrint(PropiedadElegidaDEscripcion);
-                                                                          debugPrint(propiedadElegidoID_B);
-                                                                          debugPrint(descripcionController.text);
-                                                                          controllerFecha.text = DateFormat('yyyyMMdd').format(fechaHora);
-                                                                          debugPrint(controllerFecha.text);
-                                                                          //debugPrint(prefs.getString("cliente"));
-                                                                          //debugPrint(base64Images.toString());
-                                                                          debugPrint(clienteIDset);
-                                                                          debugPrint("Total imágenes convertidas: ${base64Images.length}");
+                                                                           final prefs = await SharedPreferences.getInstance();
+                                                                           String? cliente = "";
+                                                                           cliente = prefs.getString("cliente");
+                                                                           debugPrint(base64Images.toString());
+                                                                           debugPrint("Seting Paquete");
+                                                                           debugPrint(propiedadElegidoB);
+                                                                           debugPrint(PropiedadElegidaDEscripcion);
+                                                                           debugPrint(propiedadElegidoID_B);
+                                                                           debugPrint(descripcionController.text);
+                                                                           controllerFecha.text = DateFormat('yyyyMMdd').format(fechaHora);
+                                                                           debugPrint(controllerFecha.text);
+                                                                           //debugPrint(prefs.getString("cliente"));
+                                                                           //debugPrint(base64Images.toString());
+                                                                           debugPrint(clienteIDset);
+                                                                           debugPrint("Total imágenes convertidas: ${base64Images.length}");
 
-                                                                          setState(() {
-                                                                            ServiciosListadoDePaquetesRecepcion(controllerFecha.text,
-                                                                                propiedadElegidoID_B,propiedadElegidoB,PropiedadElegidaDEscripcion,
-                                                                                descripcionController.text,base64Images).paquetesG7();
-                                                                            //_futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
-                                                                          });
-                                                                          Navigator.of(context).pop();
-                                                                          imagenesSeleccionadas.clear();
-                                                                          base64Images.clear();
-                                                                        },
-                                                                        child: Text(
-                                                                          "Nuevo paquete gestión",
-                                                                          style: TextStyle(
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: Colors.white,
-                                                                            fontSize:
-                                                                            MediaQuery.of(context).size.width * 0.03,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }
-                                                      ),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          style: TextButton.styleFrom(
-                                                            textStyle: Theme.of(context).textTheme.labelLarge,
-                                                          ),
-                                                          child: const Text('Cerrar'),
-                                                          onPressed: () {
-                                                            Navigator.of(context).pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            );
-                                            debugPrint("test Press");
-                                          },
-                                          child: Text(
-                                            "Crear nueva visita",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color:   Colors.white,
-                                              fontSize: MediaQuery.of(context).size.width* 0.05,
-                                            ),
-                                          ),
-                                        ),
-                                      ),*/
+                                                                           setState(() {
+                                                                             ServiciosListadoDePaquetesRecepcion(controllerFecha.text,
+                                                                                 propiedadElegidoID_B,propiedadElegidoB,PropiedadElegidaDEscripcion,
+                                                                                 descripcionController.text,base64Images).paquetesG7();
+                                                                             //_futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                                           });
+                                                                           Navigator.of(context).pop();
+                                                                           imagenesSeleccionadas.clear();
+                                                                           base64Images.clear();
+                                                                         },
+                                                                         child: Text(
+                                                                           "Nuevo paquete gestión",
+                                                                           style: TextStyle(
+                                                                             fontWeight: FontWeight.bold,
+                                                                             color: Colors.white,
+                                                                             fontSize:
+                                                                             MediaQuery.of(context).size.width * 0.03,
+                                                                           ),
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                   ],
+                                                                 ),
+                                                               ),
+                                                             );
+                                                           }
+                                                       ),
+                                                       actions: <Widget>[
+                                                         TextButton(
+                                                           style: TextButton.styleFrom(
+                                                             textStyle: Theme.of(context).textTheme.labelLarge,
+                                                           ),
+                                                           child: const Text('Cerrar'),
+                                                           onPressed: () {
+                                                             Navigator.of(context).pop();
+                                                           },
+                                                         ),
+                                                       ],
+                                                     );
+                                                   },
+                                                 );
+                                               },
+                                             );
+                                             debugPrint("test Press");
+                                           },
+                                           child: Text(
+                                             "Crear nueva visita",
+                                             style: TextStyle(
+                                               fontWeight: FontWeight.bold,
+                                               color:   Colors.white,
+                                               fontSize: MediaQuery.of(context).size.width* 0.05,
+                                             ),
+                                           ),
+                                         ),
+                                       ):Center(),
                                       17.height,
                                     ]
                                 ),
@@ -1491,7 +1552,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       _infoText("Fecha y hora:", "${ DateFormat('dd/MM/yyyy').format(DateTime.parse(event.pfFecha!)).toString()} ${event.pfHoraLlegada ?? ''}"),
-                                      _infoText("Propiedad:", event.pvPropiedad ?? ""),
+                                      _infoText("Propiedad:", event.pvPropiedadNombre ?? ""),
                                       _infoText("Motivo de Visita:", event.pvVisitaMotivo ?? ""),
                                       if (isReceived && event.pvObservaciones != null)
                                         _infoText("Obs:", event.pvObservaciones ?? ""),
@@ -1520,172 +1581,176 @@ class _AdmVisitasScreenState extends State<AdmVisitasAScreen> {
                             ),
 
                             const SizedBox(height: 10),
-
-                            // Observaciones + Button (only if not received)
                             if (!isReceived)
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
 
                                   const SizedBox(height: 8),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                        const Color.fromRGBO(6, 78, 116, 1),
-                                      ),
+                                  Row(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                            const Color.fromRGBO(6, 78, 116, 1),
+                                          ),
 
-                                      onPressed: () {
-                                        debugPrint("Recibir ${event.pvCodigo} con observación: ${obsController.text}");
-                                        observacionesVisitasController.text = "";
-                                        controllerFechaVisitaLLegada.text = "";
-                                        controllerHoraVisitaLLegada.text = "";
-                                        showDialog<void>(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return StatefulBuilder(
-                                                builder: (BuildContext context, StateSetter setStateDialog2) {
-                                                  final PageController pageController = PageController();
-                                                  int currentIndex = 0;
+                                          onPressed: () {
+                                            debugPrint("Recibir ${event.pvCodigo} con observación: ${obsController.text}");
+                                            observacionesVisitasController.text = "";
+                                            controllerFechaVisitaLLegada.text = "";
+                                            controllerHoraVisitaLLegada.text = "";
+                                            showDialog<void>(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return StatefulBuilder(
+                                                    builder: (BuildContext context, StateSetter setStateDialog2) {
+                                                      final PageController pageController = PageController();
+                                                      int currentIndex = 0;
 
-                                                  return AlertDialog(
-                                                      title: Text("Información para recibir la visita"),
-                                                      content: Builder(
-                                                          builder: (context) {
-                                                            return SingleChildScrollView(
-                                                                scrollDirection: Axis.vertical,
-                                                                child: Form(
-                                                                  key: _formKeyRecolecta,
-                                                                  child: Column(
-                                                                    children: [
-                                                                      Text("Observaciones",style: theme.textTheme.bodyMedium?.copyWith(
-                                                                          fontWeight: FontWeight.bold,
-                                                                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                                                                          color: const Color.fromRGBO(6, 78, 116, 1))),
-                                                                      10.height,
-                                                                      TextFormField(
-                                                                          controller: observacionesVisitasController,
-                                                                          decoration: InputDecoration(
-                                                                            hintText: "Observaciones de visita",
-                                                                            border: const OutlineInputBorder(),
-                                                                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                                      return AlertDialog(
+                                                          title: Text("Información para recibir la visita"),
+                                                          content: Builder(
+                                                              builder: (context) {
+                                                                return SingleChildScrollView(
+                                                                    scrollDirection: Axis.vertical,
+                                                                    child: Form(
+                                                                      key: _formKeyRecolecta,
+                                                                      child: Column(
+                                                                        children: [
+                                                                          Text("Observaciones",style: theme.textTheme.bodyMedium?.copyWith(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                              color: const Color.fromRGBO(6, 78, 116, 1))),
+                                                                          10.height,
+                                                                          TextFormField(
+                                                                              controller: observacionesVisitasController,
+                                                                              decoration: InputDecoration(
+                                                                                hintText: "Observaciones de visita",
+                                                                                border: const OutlineInputBorder(),
+                                                                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                                                              ),
+                                                                              minLines: 2,
+                                                                              maxLines: 3,
+                                                                              onChanged: (value)
+                                                                              {
+                                                                                setStateDialog2(() {
+                                                                                  controllerObsevacionesRecibir.text = value;
+                                                                                });
+                                                                              }
                                                                           ),
-                                                                          minLines: 2,
-                                                                          maxLines: 3,
-                                                                          onChanged: (value)
-                                                                          {
-                                                                            setStateDialog2(() {
-                                                                              controllerObsevacionesRecibir.text = value;
-                                                                            });
-                                                                          }
-                                                                      ),
-                                                                     Column(
-                                                                       children: [
-                                                                         Wrap(
-                                                                           spacing: 16,
-                                                                           runSpacing: 16,
-                                                                           alignment: WrapAlignment.spaceBetween,
+                                                                         Column(
                                                                            children: [
-                                                                             _buildDateField(
-                                                                               label: "Fecha de llegada",
-                                                                               controller: controllerFechaVisitaLLegada,
-                                                                               theme: theme,
-                                                                               context: context,
-                                                                               width: MediaQuery.of(context).size.width * 0.2,
-                                                                             ),
-                                                                             _buildTimeField(
-                                                                               label: "Hora de llegada",
-                                                                               controller: controllerHoraVisitaLLegada,
-                                                                               theme: theme,
-                                                                               context: context,
-                                                                               width: MediaQuery.of(context).size.width * 0.2,
+                                                                             Wrap(
+                                                                               spacing: 16,
+                                                                               runSpacing: 16,
+                                                                               alignment: WrapAlignment.spaceBetween,
+                                                                               children: [
+                                                                                 _buildDateField(
+                                                                                   label: "Fecha de llegada",
+                                                                                   controller: controllerFechaVisitaLLegada,
+                                                                                   theme: theme,
+                                                                                   context: context,
+                                                                                   width: MediaQuery.of(context).size.width * 0.2,
+                                                                                 ),
+                                                                                 _buildTimeField(
+                                                                                   label: "Hora de llegada",
+                                                                                   controller: controllerHoraVisitaLLegada,
+                                                                                   theme: theme,
+                                                                                   context: context,
+                                                                                   width: MediaQuery.of(context).size.width * 0.2,
+                                                                                 ),
+                                                                               ],
                                                                              ),
                                                                            ],
                                                                          ),
-                                                                       ],
-                                                                     ),
-                                                                      Row(
-                                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                                        children: [
-                                                                          ElevatedButton(onPressed: ()
-                                                                          {
-                                                                            Navigator
-                                                                                .of(
-                                                                                context)
-                                                                                .pop();
-                                                                          },child: Text("Cancelar",style: theme.textTheme.bodyMedium?.copyWith(
-                                                                            fontWeight: FontWeight.bold,
-                                                                            fontSize: MediaQuery.of(context).size.width * 0.045,
-                                                                            color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                          ),)),
-                                                                          ElevatedButton(
-                                                                              onPressed:()
-                                                                          {
-                                                                            if (!_formKeyRecolecta.currentState!.validate()) {
-                                                                              msgxToast("Complete todos los campos requeridos.");
-                                                                              return;
-                                                                            }
-                                                                            controllerFechaVisitaLLegada.text = DateFormat('yyyyMMdd').format(fechaHoraRecolecta);
-                                                                            debugPrint("Fecha");
-                                                                            debugPrint(event.pvCodigo);
-                                                                            debugPrint(controllerFechaVisitaLLegada.text);
-                                                                            debugPrint(observacionesVisitasController.text);
-                                                                            debugPrint(controllerHoraVisitaLLegada.text);
-
-                                                                            VisitasRecibir(event.pnVisita.toString(),controllerFechaVisitaLLegada.text,controllerHoraVisitaLLegada.text,observacionesVisitasController.text).VisitasM8();
-
-                                                                            Future.delayed(const Duration(milliseconds: 250), ()
-                                                                            {
-                                                                              setState(() {
-                                                                                if(codigoController.text == "")
-                                                                                {
-                                                                                  _futureVisitaM6 = visitasLista("-1",propiedadCuentaID,periodoCuentaID,tipoOpcion,"-1").listadoVisitasM6();
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                  _futureVisitaM6 = visitasLista(propiedadElegido,propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
-                                                                                }
-                                                                              });
-                                                                              reloadPage();
-                                                                              controllerFechaVisitaLLegada.text = "";
-                                                                              controllerObsevacionesRecibir.text = "";
-                                                                              Navigator
-                                                                                  .of(
-                                                                                  context)
-                                                                                  .pop();
-                                                                              msgxToast(
-                                                                                  "Visita marcada de recibida");
-                                                                            }
-                                                                            );
-                                                                          },
-                                                                              child: Text("Recibir Visita",style: theme.textTheme.bodyMedium?.copyWith(
+                                                                          Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                            children: [
+                                                                              ElevatedButton(onPressed: ()
+                                                                              {
+                                                                                Navigator
+                                                                                    .of(
+                                                                                    context)
+                                                                                    .pop();
+                                                                              },child: Text("Cancelar",style: theme.textTheme.bodyMedium?.copyWith(
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: MediaQuery.of(context).size.width * 0.045,
                                                                                 color: const Color.fromRGBO(6, 78, 116, 1),
                                                                               ),)),
+                                                                              ElevatedButton(
+                                                                                  onPressed:()
+                                                                              {
+                                                                                if (!_formKeyRecolecta.currentState!.validate()) {
+                                                                                  msgxToast("Complete todos los campos requeridos.");
+                                                                                  return;
+                                                                                }
+                                                                                controllerFechaVisitaLLegada.text = DateFormat('yyyyMMdd').format(fechaHoraRecolecta);
+                                                                                debugPrint("Fecha");
+                                                                                debugPrint(event.pvCodigo);
+                                                                                debugPrint(controllerFechaVisitaLLegada.text);
+                                                                                debugPrint(observacionesVisitasController.text);
+                                                                                debugPrint(controllerHoraVisitaLLegada.text);
+
+                                                                                VisitasRecibir(event.pnVisita.toString(),controllerFechaVisitaLLegada.text,controllerHoraVisitaLLegada.text,observacionesVisitasController.text).VisitasM8();
+
+                                                                                Future.delayed(const Duration(milliseconds: 250), ()
+                                                                                {
+                                                                                  setState(() {
+                                                                                    if(codigoController.text == "")
+                                                                                    {
+                                                                                      _futureVisitaM6 = visitasLista("-1",propiedadCuentaID,periodoCuentaID,tipoOpcion,"-1").listadoVisitasM6();
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                      _futureVisitaM6 = visitasLista(propiedadElegido,propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
+                                                                                    }
+                                                                                  });
+                                                                                  reloadPage();
+                                                                                  controllerFechaVisitaLLegada.text = "";
+                                                                                  controllerObsevacionesRecibir.text = "";
+                                                                                  Navigator
+                                                                                      .of(
+                                                                                      context)
+                                                                                      .pop();
+                                                                                  msgxToast(
+                                                                                      "Visita marcada de recibida");
+                                                                                }
+                                                                                );
+                                                                              },
+                                                                                  child: Text("Recibir Visita",style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                    fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                                    color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                  ),)),
+                                                                            ],
+                                                                          )
                                                                         ],
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )
-                                                            );
-                                                          })
+                                                                      ),
+                                                                    )
+                                                                );
+                                                              })
+                                                      );
+                                                    },
                                                   );
-                                                },
-                                              );
-                                            }
-                                           );
-                                      },
-                                      child:  Text("Recibir",style: theme.textTheme.bodyMedium?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context).size.width * 0.07,
-                                              color: Colors.white,
-                                              ),),
-                                    ),
+                                                }
+                                               );
+                                          },
+                                          child:  Text("Recibir",style: theme.textTheme.bodyMedium?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: MediaQuery.of(context).size.width * 0.07,
+                                                  color: Colors.white,
+                                                  ),),
+                                        ),
+                                      ),
+
+                                    ],
                                   ),
                                 ],
                               ),
+
                           ],
                         ),
                       ),

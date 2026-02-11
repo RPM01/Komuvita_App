@@ -100,6 +100,10 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
   String? getion;
 
   String? gestionDescipcion;
+  String admincheck = "";
+  String juntaDirect = "";
+  String inquilino = "";
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -124,6 +128,9 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
     setState(() {
 
       userName = prefs.getString("NombreUser")!;
+      admincheck = prefs.getString("Admin")!;
+      juntaDirect = prefs.getString("JuntaDirectiva")!;
+      inquilino = prefs.getString("Inquilino") ?? "0";
       /*
       instrucionesPago = prefs.getString("intruciones de pago")!;
       debugPrint("Intruciones");
@@ -164,8 +171,9 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
     );
   }
 
-  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
-    if (isAdmin) {
+  IconData _getIconForIndex(int index, String isAdmin, String jundaDir,String inquilino)
+  {
+    if (jundaDir == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -174,18 +182,20 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return FontAwesomeIcons.gear;
+        case 8: return Icons.chat;
+        case 9: return Icons.person;
+        case 10: return FontAwesomeIcons.boxesPacking;
+        case 11: return Icons.lock_reset;
         default: return Icons.logout;
       }
-    } else if (jundaDir) {
+    } else if (jundaDir =="2") {
       switch (index) {
-        case 0: return FontAwesomeIcons.boxesPacking;
-        case 1: return FontAwesomeIcons.person;
+        case 0: return FontAwesomeIcons.person;
+        case 1:  return FontAwesomeIcons.boxesPacking;
         default: return Icons.logout;
       }
-    } else {
+    } else if (inquilino == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -194,10 +204,49 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
         default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
+      }
+    }
+    else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
+        default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
       }
     }
   }
@@ -355,7 +404,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                         itemBuilder: (context, index) {
                           final menuTitle = helpAndSupport[index];
                           final isLast = index == helpAndSupport.length - 1;
-                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+                          final iconData = _getIconForIndex(index, admincheck, juntaDirect,inquilino);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
@@ -367,11 +416,11 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                 }
 
                                 // 👇 Handle "Paquetes pendientes"
-                                if (menuTitle == "Paquetes pendientes") {
+                                /*if (menuTitle == "Paquetes pendientes") {
                                   Navigator.pop(context); // close drawer first
                                   Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
                                   return;
-                                }
+                                }*/
 
                                 // 👇 Normal navigation
                                 Navigator.pop(context);
@@ -545,7 +594,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                     items: List.generate(clientesIdsSet.length, (index) {
                                                       return DropdownMenuItem<String>(
                                                         value: clientesIdsSet[index],
-                                                        child: Text("${propiedadesInternaNombresSet[index]} ${propiedadesDireccionNombresSet[index]}",
+                                                        child: Text("${propiedadesInternaNombresSet[index]} (${propiedadesDireccionNombresSet[index]})",
                                                           style: const TextStyle(
                                                             fontSize:  20,
                                                             color: Colors.black,
@@ -1136,7 +1185,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                 debugPrint("test Press");
                                               },
                                               child: Text(
-                                                "Crear ticket",
+                                                "Crear Gestión",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color:   Colors.white,
@@ -1388,7 +1437,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                 ],
                               ),
                              event.pnPermiteSeguimiento == 1 ? SizedBox(
-                                width: MediaQuery.of(context).size.width*0.35,
+                                width: MediaQuery.of(context).size.width*0.6,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Color.fromRGBO(6, 78, 116, 1),
@@ -1396,6 +1445,13 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                   ),
                                   onPressed: ()
                                   {
+                                    /*
+                                    debugPrint("Seguimiento Vacio");
+                                    debugPrint(event.plSeguimiento![index].isBlank.toString());
+                                    debugPrint("Seguimiento imagenes Vacio");
+                                    debugPrint(event.plSeguimiento![index].plFotografiasB.isBlank.toString());
+                                    debugPrint(event.plSeguimiento![index].plFotografiasB.toString());
+                                    *  */
                                     showDialog<void>(
                                       context: context,
                                       builder: (BuildContext context) {
@@ -1422,14 +1478,8 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                           return  Column(
                                                             crossAxisAlignment: CrossAxisAlignment.center,
                                                             children: [
-
                                                               const SizedBox(height: 10),
-                                                              Text(event.plSeguimiento![index].pvUsuario,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                fontSize: screenWidth * 0.045,
-                                                              ),),
-                                                              Row(
+                                                              /*Row(
                                                                 children: [
                                                                   Text(() {
                                                                     final raw = event.pvTiempoCreacion;
@@ -1447,7 +1497,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                     ),
                                                                   ),
                                                                 ],
-                                                              ),
+                                                              ),*/
                                                               const SizedBox(height: 10),
                                                               Text(
                                                                 DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event.plSeguimiento![index].pfFecha!)),
@@ -1460,30 +1510,37 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                 textAlign: TextAlign.center,
                                                               ),
                                                               const SizedBox(height: 10),
+                                                              SizedBox(
+                                                                width: screenWidth* 0.40,
+                                                                height:screenWidth * 0.30,
+                                                                child: /*event.plSeguimiento![index].plFotografiasB[0].pvFotografiaB642 == ""
+                                                                    ? ClipRRect(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                  child:Image.memory(
+                                                                    base64Decode(event.plSeguimiento![index].plFotografiasB[0].pvFotografiaB642.toString()),
+                                                                    fit: BoxFit.fill,
+                                                                    width: double.infinity,
+                                                                  ),
+                                                                )
+                                                                    :*/ Icon(Icons.image_not_supported,size: 80,),
+                                                              ),
+                                                              const SizedBox(height: 10),
+                                                              Text(event.plSeguimiento![index].pvUsuario,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                fontSize: screenWidth * 0.045,
+                                                              ),),
+
+                                                              const SizedBox(height: 10),
                                                               Text(
                                                                 event.plSeguimiento![index].pvComentario,
                                                                 style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
+                                                                  //fontWeight: FontWeight.bold,
                                                                   color: const Color.fromRGBO(6, 78, 116, 1),
                                                                   fontSize: screenWidth* 0.045,
                                                                 ),
                                                                 maxLines: 2,
                                                                 textAlign: TextAlign.center,
-                                                              ),
-                                                              const SizedBox(height: 10),
-                                                              SizedBox(
-                                                                width: screenWidth* 0.40,
-                                                                height:screenWidth * 0.30,
-                                                                child: event.plSeguimiento![index].plFotografias != null
-                                                                    ? ClipRRect(
-                                                                  borderRadius: BorderRadius.circular(10),
-                                                                  child: Image.memory(
-                                                                    base64Decode(event.plSeguimiento![index].plFotografias[0].pvFotografiaB64.toString()),
-                                                                    fit: BoxFit.fill,
-                                                                    width: double.infinity,
-                                                                  ),
-                                                                )
-                                                                    : Icon(Icons.image_not_supported,size: 80,),
                                                               ),
 
                                                               const SizedBox(height: 10),
@@ -1618,6 +1675,7 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                                   setState(() {
                                                                     _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
                                                                   });
+
                                                                 },
                                                                 child: Text(
                                                                   "Ingresar seguimiento",
@@ -1684,6 +1742,9 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                         _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
                                                       });
                                                       Navigator.of(context).pop();
+                                                      setState(() {
+                                                        _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                      });
                                                     },
                                                   ),
                                                 ],
@@ -1735,6 +1796,9 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                           _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
                                                         });
                                                         Navigator.of(context).pop();
+                                                        setState(() {
+                                                          _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                        });
                                                         },
                                                     ),
                                                   ],
@@ -1786,6 +1850,9 @@ class _AdmComunicacionAdminScreenState extends State<AdmComunicacionAdministrado
                                                           _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
                                                         });
                                                         Navigator.of(context).pop();
+                                                        setState(() {
+                                                          _futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
+                                                        });
                                                       },
                                                     ),
                                                   ],

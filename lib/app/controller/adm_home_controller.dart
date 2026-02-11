@@ -35,6 +35,14 @@ List<String> formaPago = [];
 List<String> formapagoDescirpcion = [];
 List<String> formapagoTarjeta = [];
 
+
+List<String> juntaDirectivaNombre = [];
+List<int> juntaDirectivaID = [];
+
+List<String> juntaDirectivaNombreResultadoGestion = [];
+List<int> juntaDirectivaID_ResultadoGestion = [];
+
+
 class AdmHomeController extends GetxController {
 
   RxList<AdmsCategory> listOCategoryAdms = <AdmsCategory>[].obs;
@@ -642,7 +650,7 @@ class AdmHomeController extends GetxController {
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
       //debugPrint("Objetos Perdidos");
-      debugPrint("Amenidades Reservadasdos");
+      debugPrint("Amenidades Reservadasdos Recarga");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
@@ -650,12 +658,19 @@ class AdmHomeController extends GetxController {
       {
         debugPrint("Regreso correcto!!!!!6");
 
-        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0)
+        {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
           // ✅ Check if datos exists and is not null
           if (json["datos"] == null || (json["datos"] as List).isEmpty) {
             // Return an empty list instead of throwing
             debugPrint("⚠️ 'datos' is null or empty in response");
             return [];
+          }
+        else if (json["resultado"]["pn_error"] == 1)
+          {
+            debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+            msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+
           }
         if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
         {
@@ -798,6 +813,96 @@ class AdmHomeController extends GetxController {
   }
 
 
+  Future<List<Map<String, dynamic>>>TipoComunicacionDirectiva1J()async
+  {
+    juntaDirectivaID.insert(0, -1);
+    juntaDirectivaNombre.insert(0, "Selecione");
+
+    debugPrint("**********J1***********");
+
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String empresa = empresaID;
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+        //"https://apidesa.komuvita.com/portal/tickets/propiedades_listado");
+          "$baseUrl/portal/juntadirectiva/comunicacion_tipo_listado");
+      Map body = {
+        "autenticacion":
+        {
+          "pv_token": token
+        },
+        "parametros":
+        {
+          "pn_empresa": empresaID,
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+
+      final empresasList = json["datos"] as List;
+      debugPrint("J1");
+      debugPrint(empresasList.toString());
+      debugPrint("J1");
+
+      final List<int> juntaDirectivaID_set = empresasList.map((e) => e["pn_gestion_tipo"] as int).toList();
+      final List<String> juntaDirectivaNombreSet = empresasList.map((e) => e["pv_descripcion"] as String).toList();
+
+
+      juntaDirectivaID = juntaDirectivaID_set;
+      juntaDirectivaNombre = juntaDirectivaNombreSet;
+
+
+
+      debugPrint("J1W");
+      debugPrint("Junta directiva List");
+      debugPrint(juntaDirectivaID.toString());
+      debugPrint(juntaDirectivaNombre.toString());
+      debugPrint("J1W");
+      if(response.statusCode == 200)
+
+      {
+        debugPrint("Regreso correcto");
+        if(json["resultado"]["pn_tiene_datos"] == 1)
+        {
+          debugPrint("Debo ir a paquetes!!!");
+
+          //Get.toNamed(MyRoute.paquetesListado);
+          return [];
+        }
+        else
+        {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(json["resultado"]["pv_error_descripcion"].toString());
+        }
+      }
+    }
+    catch(e)
+    {
+      //Get.back();
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offAllNamed(MyRoute.loginScreen);
+      }
+      debugPrint(e.toString());
+      return [];
+    }
+    throw Exception("Error en conexión");
+  }
 
   Future<List<TickestG5>> GestionTickets5B() async {
     debugPrint("**********G5***********");
@@ -1136,6 +1241,9 @@ class AdmHomeController extends GetxController {
           "pn_empresa": empresaID,
           "pv_cliente": cliente,
           "pv_propiedad": "-1",
+          "pn_periodo": "-1",
+          "pn_recibida": "-1",
+          "pv_codigo": "-1"
         }
       };
 
@@ -1143,9 +1251,10 @@ class AdmHomeController extends GetxController {
       final json = jsonDecode(response.body);
       //debugPrint("Objetos Perdidos");
       debugPrint("VisitasM5");
-      debugPrint(json["datos"][0]["pv_imagen_qrb64"].toString());
       debugPrint(body.toString());
       debugPrint(response.body.toString());
+      debugPrint(json["datos"][0]["pv_imagen_qrb64"].toString());
+      debugPrint("VisitasM5");
       if(response.statusCode == 200)
       {
         if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
@@ -1189,6 +1298,103 @@ class AdmHomeController extends GetxController {
     throw Exception("Error en conexión");
   }
 
+  Future<List<Map<String, dynamic>>>ColumicacionesListadosK1()async
+  {
+    debugPrint("**********K1***********");
+    juntaDirectivaID_ResultadoGestion.insert(0, -1);
+    juntaDirectivaNombreResultadoGestion.insert(0, "Selecione");
+    String errorMensaje = "Falla de conexión";
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("Token");
+    String? empresa = empresaID;
+    debugPrint(token);
+    debugPrint("Empresa");
+    debugPrint(empresa);
+    debugPrint("Tickets!!!");
+    try
+    {
+      var header = {
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+        //"https://apidesa.komuvita.com/portal/tickets/gestiones_listado");
+          "$baseUrl/portal/juntadirectiva/informacion_financiera_tipo_listado");
+      Map body = {
+        "autenticacion":
+        {
+          "pv_token": token
+        },
+        "parametros":
+        {
+          "pn_empresa": empresaID,
+        }
+      };
+
+      http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
+      final json = jsonDecode(response.body);
+
+      final empresasList = json["datos"] as List;
+      debugPrint("J1");
+      debugPrint(empresasList.toString());
+      debugPrint("J1");
+
+      final List<int> juntaDirectivaIDResultado_set  = empresasList.map((e) => e["pn_informacion_financiera_tipo"] as int).toList();
+      final List<String> juntaDirectivaNombreResultadoSet = empresasList.map((e) => e["pv_descripcion"] as String).toList();
+      debugPrint("K1");
+
+      juntaDirectivaID_ResultadoGestion = juntaDirectivaIDResultado_set;
+      juntaDirectivaNombreResultadoGestion = juntaDirectivaNombreResultadoSet;
+
+
+
+      debugPrint("K1W");
+
+      debugPrint("Junta directiva Gestion List");
+      debugPrint(juntaDirectivaID_ResultadoGestion.toString());
+      debugPrint(juntaDirectivaNombreResultadoGestion.toString());
+      debugPrint("K1W");
+      if(response.statusCode == 200)
+      {
+        //GestionTickets1();
+        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        // ✅ Check if datos exists and is not null
+        if (json["datos"] == null || (json["datos"] as List).isEmpty) {
+          // Return an empty list instead of throwing
+          debugPrint("⚠️ 'datos' is null or empty in response");
+          return [];
+        }
+        debugPrint("Regreso correcto");
+        if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
+        {
+          debugPrint("Si funciona verificar el mensaje");
+          Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+        }
+        if (json["resultado"]["pn_tiene_datos"] == 1) {
+
+          return List<Map<String, dynamic>>.from(json["datos"]);
+        } else {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          //msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+          throw Exception(
+              json["resultado"]["pv_error_descripcion"].toString());
+        }
+        }
+      }
+    }
+    catch(e)
+    {
+      if(e.toString() == "Exception: El token ha expirado")
+      {
+        msgxToast(e.toString());
+        debugPrint("Si funciona verificar el mensaje");
+
+        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
+      }
+      debugPrint(e.toString());
+      return[];
+    }
+    return[];
+  }
   Future<List<Map<String, dynamic>>>listaPagosH2()async
   {
     debugPrint("**********H2***********");
@@ -1669,7 +1875,6 @@ class AutorizarClass
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint(empresa);
-
     try
     {
       var header = {
@@ -1693,7 +1898,7 @@ class AutorizarClass
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
       //debugPrint("Objetos Perdidos");
-      debugPrint("Amenidades Reservadasdos");
+      debugPrint("Amenidades_ReservadasdosCreacion");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
@@ -1723,11 +1928,18 @@ class AutorizarClass
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
 
-        } else {
+        }
+
+        else {
           // debugPrint(json["resultado"]["pv_error_descripcion"].toString());
            msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           throw Exception(json["resultado"]["pv_error_descripcion"].toString());
         }
+        }
+        else if (json["resultado"]["pn_error"] == 1)
+        {
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
         }
       }
     }

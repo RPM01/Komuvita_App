@@ -56,7 +56,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
   String periodoCuentaID = "";
   String periodoCuentaDescripcion = "";
 
-  String propiedadCuentaID = "";
+  String propiedadCuentaID = "-1";
   String propiedadCuentaDescripcion = "";
 
   List<String> periodeDeCuenta = ["Todos","Del día","Semana En Curso","Mes En Curso","Año En Curso"];
@@ -77,6 +77,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
   TextEditingController motivoVisitaController = TextEditingController();
   TextEditingController nombreVisitaController = TextEditingController();
   TextEditingController _DPI_VisitasController = TextEditingController();
+  TextEditingController codigoVisitaController = TextEditingController();
   TextEditingController telefonoVisitasController = TextEditingController();
   TextEditingController placaVehiculoController = TextEditingController();
   TextEditingController observacionesVisitasCrearController = TextEditingController();
@@ -88,7 +89,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
   final _formKeyEdicion = GlobalKey<FormState>();
   final _formKeyRecolecta = GlobalKey<FormState>();
 
-  String periodoElegido = "3";
+  String periodoElegido = "2";
   String propiedadElegido = "-1";
   String propiedadElegidoDescripcion = " ";
   String TipoElegido = "-1";
@@ -147,6 +148,9 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
 
   DateTime? fechaSelect = DateTime.now();
 
+  String admincheck = "";
+  String juntaDirect = "";
+  String inquilino = "";
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -169,11 +173,16 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
     //_futureTickets = ListaFiltradaTickets(periodoElegido,propiedadElegido,TipoElegido,EstadoTicketElegido,busquedaController.text).GestionTickets5B_2();
 
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
-      _futureVisitasList = visitasListaB("-1","-1").visitas5();
+      _futureVisitasList = visitasListaB("-1","-1","2","-1",tipoOpcion).visitas5();
 
       //_futureVisitasList = visitasListaB("-1",).visitas5();
       userName = prefs.getString("NombreUser")!;
+      admincheck = prefs.getString("Admin")!;
+      juntaDirect = prefs.getString("JuntaDirectiva")!;
+      inquilino = prefs.getString("Inquilino") ?? "0";
+
       /*
       instrucionesPago = prefs.getString("intruciones de pago")!;
       debugPrint("Intruciones");
@@ -186,18 +195,35 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
   reloadPage()
   {
     setState(() {
+      if(periodoElegido == "-1")
+        {
+          setState(() {
+            periodoElegido == "";
+          });
+        }
       if(codigoController.text == "")
+        {
+          _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,"-1",tipoOpcion).visitas5();
+        }
+      else
       {
-        _futureVisitasList = visitasListaB("-1","-1").visitas5();
+        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
+      }
+
+
+
+      /*if(codigoController.text == "")
+      {
+        _futureVisitasList = visitasListaB("-1","-1","").visitas5();
         //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
       }
       else
       {
-        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido).visitas5();
+        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text).visitas5();
 
-        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido).visitas5();
+        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text).visitas5();
         //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
-      }
+      }*/
     });
   }
 
@@ -291,8 +317,9 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
     );
   }
 
-  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
-    if (isAdmin) {
+  IconData _getIconForIndex(int index, String isAdmin, String jundaDir,String inquilino)
+  {
+    if (jundaDir == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -301,18 +328,20 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return FontAwesomeIcons.gear;
+        case 8: return Icons.chat;
+        case 9: return Icons.person;
+        case 10: return FontAwesomeIcons.boxesPacking;
+        case 11: return Icons.lock_reset;
         default: return Icons.logout;
       }
-    } else if (jundaDir) {
+    } else if (jundaDir =="2") {
       switch (index) {
-        case 0: return FontAwesomeIcons.boxesPacking;
-        case 1: return FontAwesomeIcons.person;
+        case 0: return FontAwesomeIcons.person;
+        case 1:  return FontAwesomeIcons.boxesPacking;
         default: return Icons.logout;
       }
-    } else {
+    } else if (inquilino == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -321,10 +350,49 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
         default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
+      }
+    }
+    else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
+        default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
       }
     }
   }
@@ -565,7 +633,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                         itemBuilder: (context, index) {
                           final menuTitle = helpAndSupport[index];
                           final isLast = index == helpAndSupport.length - 1;
-                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+                          final iconData = _getIconForIndex(index, admincheck, juntaDirect,inquilino);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
@@ -577,11 +645,11 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                 }
 
                                 // 👇 Handle "Paquetes pendientes"
-                                if (menuTitle == "Paquetes pendientes") {
+                                /*if (menuTitle == "Paquetes pendientes") {
                                   Navigator.pop(context); // close drawer first
                                   Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
                                   return;
-                                }
+                                }*/
 
                                 // 👇 Normal navigation
                                 Navigator.pop(context);
@@ -650,7 +718,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Image.asset(doggy),
-                              17.height,
+                              //17.height,
                               Card(
                                 elevation: 3,
                                 color:Color.fromRGBO(146,162,87,1),
@@ -659,13 +727,13 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          /*Column(
+                                          Column(
                                             children: [
                                               SizedBox(
                                                 width: MediaQuery.of(context).size.width*0.45,
                                                 child: Text("Período",style: theme.textTheme.bodyMedium?.copyWith(
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: MediaQuery.of(context).size.width*0.035,
+                                                  fontSize: MediaQuery.of(context).size.width*0.050,
                                                   color: Color.fromRGBO(6,78,116,1),
                                                 ),
                                                 ),
@@ -674,7 +742,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                 width: MediaQuery.of(context).size.width*0.45,
                                                 child: DropdownButtonFormField<String>(
                                                   isExpanded: true,
-                                                  value: periodeDeCuentaID[3].toString(),
+                                                  value: periodeDeCuentaID[2].toString(),
                                                   //hint: const Text("Seleccione una empresa"),
                                                   decoration: InputDecoration(
                                                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -710,6 +778,12 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                       int index = periodeDeCuentaID.indexOf(int.parse(value!));
                                                       periodoCuentaID = value;
                                                       periodoElegido = value;
+                                                      if(periodoElegido == "-1")
+                                                        {
+                                                          setState(() {
+                                                            periodoElegido = "";
+                                                          });
+                                                        }
                                                       debugPrint(periodoElegido);
                                                       debugPrint(periodoCuentaID);
                                                     });
@@ -717,10 +791,9 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                 ),
                                               ),
                                             ],
-                                          ),*/
+                                          ),
                                           Column(
                                             children: [
-                                              10.height,
                                               SizedBox(
                                                 width: MediaQuery.of(context).size.width*0.45,
                                                 child: Text("Propiedades",style: theme.textTheme.bodyMedium?.copyWith(
@@ -757,7 +830,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                     return DropdownMenuItem<String>(
                                                       value: clientesIdsSet[index],
                                                       child: Text(
-                                                        "${propiedadesInternaNombresSet[index]} ${propiedadesDireccionNombresSet[index]}",
+                                                        propiedadesDireccionNombresSet[index],
                                                         style: const TextStyle(fontSize: 20, color: Colors.black),
                                                       ),
                                                     );
@@ -773,8 +846,6 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                       debugPrint('Selected value: $value');
                                                       debugPrint('Selected name: ${propiedadesInternaNombresSet[selectedIndex]}');
 
-
-                                                      // Store selected info
                                                       propiedadElegido = value;
                                                       propiedadCuentaID = propiedadesInternasIdsSet[selectedIndex];
                                                       propiedadElegidoDescripcion = propiedadesInternaNombresSet[selectedIndex];
@@ -782,40 +853,6 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                   },
                                                 ),
                                               ),
-                                              30.height,
-                                              SizedBox(
-                                                height: 35,
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: Color.fromRGBO(6, 78, 116, 1),
-                                                    // set the background color
-                                                  ),
-                                                  onPressed: () async{
-                                                    final prefs = await SharedPreferences.getInstance();
-                                                    setState(() {
-                                                      if(codigoController.text == "")
-                                                      {
-                                                        _futureVisitasList = visitasListaB("-1","-1").visitas5();
-                                                        //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
-                                                      }
-                                                      else
-                                                      {
-                                                        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido).visitas5();
-
-                                                        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido).visitas5();
-                                                        //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    "Filtrar",
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.white,
-                                                      fontSize: 25,
-                                                    ),
-                                                  ),),
-                                              )
                                             ],
                                           ),
                                         ],
@@ -830,7 +867,75 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                           color: Color.fromRGBO(6,78,116,1),
                                         ),),
                                       ),*/
+
                                       17.height,
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width*0.45,
+                                        child: Text("Código",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: MediaQuery.of(context).size.width*0.45,
+                                          child: TextFormField(
+                                              controller: codigoController,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  codigoController.text = value;
+                                                });
+                                              }
+                                          )
+                                      ),
+                                      17.height,
+                                      SizedBox(
+                                        height: 35,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                            // set the background color
+                                          ),
+                                          onPressed: () async{
+                                            final prefs = await SharedPreferences.getInstance();
+                                            setState(() {
+                                            debugPrint("filtrandoPropiedades");
+                                            _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
+
+                                               if(codigoController.text == "")
+                                              {
+                                                _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,"-1",tipoOpcion).visitas5();
+                                              }
+                                              else
+                                                {
+                                                  _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
+                                                }
+
+                                              /*if(propiedadElegido == "-1")
+                                              {
+                                                _futureVisitasList = visitasListaB("-1","-1","").visitas5();
+                                                //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
+                                              }
+                                              else
+                                              {
+                                                _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text).visitas5();
+
+                                                _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text).visitas5();
+                                                //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
+                                              }*/
+                                            });
+                                          },
+                                          child: Text(
+                                            "Filtrar",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 25,
+                                            ),
+                                          ),),
+                                      ),
+                                     17.height,
                                      /* Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
@@ -957,6 +1062,58 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                       ),*/
                                       17.height,
                                       SizedBox(
+                                        width: MediaQuery.of(context).size.width*0.45,
+                                        child: Column(
+                                          children: [
+                                            Text("Recibida",style: theme.textTheme.headlineSmall?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color:Color.fromRGBO(6,78,116,1),
+                                              fontSize: MediaQuery.of(context).size.width*0.050,
+                                            )),
+                                            ListTile(
+                                              title: Text("Sí"),
+                                              leading: Radio<String>(
+                                                value: radioTipo[0],
+                                                groupValue: tipoOpcion,
+                                                onChanged: (value){
+                                                  setState(() {
+                                                    tipoOpcion = value!;
+                                                    debugPrint(tipoOpcion.toString());
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            ListTile(
+                                              title: Text("No"),
+                                              leading: Radio<String>(
+                                                value: radioTipo[1],
+                                                groupValue: tipoOpcion,
+                                                onChanged: (value){
+                                                  setState(() {
+                                                    tipoOpcion = value!;
+                                                    debugPrint(tipoOpcion.toString());
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            ListTile(
+                                              title: Text("Todos"),
+                                              leading: Radio<String>(
+                                                value: radioTipo[2],
+                                                groupValue: tipoOpcion,
+                                                onChanged: (value){
+                                                  setState(() {
+                                                    tipoOpcion = value!;
+                                                    debugPrint(tipoOpcion.toString());
+                                                  });
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      17.height,
+                                      SizedBox(
                                         height: 35,
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -966,10 +1123,15 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                           onPressed: ()
                                           {
                                             setState(() {
+                                              debugPrint("Listas de Propiedad");
+                                              debugPrint(clientesIdsSetB.toString());
+                                              debugPrint(propiedadesDireccionNombresSetB.toString());
+                                              debugPrint(propiedadesInternasIdsSetB.toString());
 
                                               propiedadElegidoB =clientesIdsSetB.first.toString();
                                               PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[0];
                                               propiedadElegidoID_B = propiedadesInternasIdsSetB[0].toString();
+
                                               //PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[0];
                                               controllerFechaVisitaLLegada.text = "";
                                               controllerHoraVisitaLLegada.text = "";
@@ -1040,7 +1202,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                       width: MediaQuery.of(context).size.width * 0.45,
                                                                       child: DropdownButtonFormField<String>(
                                                                         validator: (String? value) {
-                                                                          if (value == null || value.isEmpty) {
+                                                                          if (value == null || value.isEmpty || value == "-1" || value == "Todos") {
                                                                             return 'Información requerida'; // Mensaje si está vacío
                                                                           }
                                                                           return null; // Si es válido
@@ -1108,6 +1270,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                             int index = clientesIdsSetB.indexOf(value);
 
                                                                             if (index != -1 && index < propiedadesDireccionNombresSetB.length) {
+
                                                                               propiedadElegidoB = value;
                                                                               propiedadElegidoID_B = propiedadesInternasIdsSetB[index].toString();
                                                                               PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[index].toString();
@@ -1394,6 +1557,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                           setStateDialog2(() {
                                                                             controllerFechaVisitaLLegada.text = DateFormat('yyyyMMdd').format(fechaSelect!);
                                                                           });
+
                                                                           debugPrint("Cliente ID");
                                                                           debugPrint(propiedadElegidoB);
                                                                           debugPrint("Cliente Nombre");
@@ -1428,17 +1592,18 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
 
                                                                           Future.delayed(const Duration(milliseconds: 250), ()
                                                                           {
+
                                                                             setState(() {
                                                                               if(codigoController.text == "")
                                                                               {
-                                                                                _futureVisitasList = visitasListaB("-1","-1").visitas5();
+                                                                                _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,"-1",tipoOpcion).visitas5();
                                                                                 //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
                                                                               }
                                                                               else
                                                                               {
-                                                                                _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido).visitas5();
+                                                                                _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
 
-                                                                                _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido).visitas5();
+                                                                                _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
                                                                                 //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
                                                                               }
                                                                             });
@@ -1557,21 +1722,20 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                             children: [
                                               event.isNotEmpty
                                                   ?GestureDetector(
-                                                onTap: () => showImageDialogB(context, event["pv_imagen_qrb64"].toString()),
-                                                child: SizedBox(
-                                                    width: constraints.maxWidth*0.3,
-                                                    height: constraints.maxWidth*0.7,
-                                                    child: ClipRRect(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      child: Image.memory(
-                                                        base64Decode(event["pv_imagen_qrb64"].toString()),
-                                                        fit: BoxFit.fill,
-                                                        width: double.infinity,
-                                                      ),
-                                                    )),
-                                              )
-                                                  : const Center(child: Text("No Image")),
-
+                                                    onTap: () => showImageDialogB(context, event["pv_imagen_qrb64"].toString()),
+                                                      child: SizedBox(
+                                                          width: constraints.maxWidth*0.3,
+                                                          height: constraints.maxWidth*0.7,
+                                                          child: ClipRRect(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            child: Image.memory(
+                                                              base64Decode(event["pv_imagen_qrb64"].toString()),
+                                                              fit: BoxFit.fill,
+                                                              width: double.infinity,
+                                                            ),
+                                                          )),
+                                                    )
+                                                        : const Center(child: Text("No Image")),
                                             ],
                                           ),
                                           Column(
@@ -1739,7 +1903,29 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                               ),
                                               Container(
                                                 width: constraints.maxWidth * 0.33,
-                                                child: ElevatedButton(
+                                                child: ListTile(
+                                                  title: Text("STATUS:",
+                                                    style: theme.textTheme.headlineSmall?.copyWith(
+                                                        fontWeight: FontWeight.bold,
+                                                        color:Color.fromRGBO(167,167,132,1),
+                                                        fontSize: constraints.maxWidth * 0.038
+                                                    ),),
+                                                  subtitle: event["pv_recibida"] == 0 ? Text("Pendiente",
+                                                    style: theme.textTheme.headlineSmall?.copyWith(
+                                                        fontWeight: FontWeight.bold,
+                                                        color:Colors.grey[600],
+                                                        fontSize: constraints.maxWidth * 0.035
+                                                    ),):Text("Recibida",
+                                                    style: theme.textTheme.headlineSmall?.copyWith(
+                                                        fontWeight: FontWeight.bold,
+                                                        color:Colors.grey[600],
+                                                        fontSize: constraints.maxWidth * 0.035
+                                                    ),),
+                                                ),
+                                              ),
+                                              Container(
+
+                                                child: event["pv_recibida"] == 0 ? ElevatedButton(
                                                     style: ElevatedButton.styleFrom(
                                                       backgroundColor:
                                                       const Color.fromRGBO(6, 78, 116, 1),
@@ -1747,10 +1933,14 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                     onPressed: ()
                                                   {
                                                     setState(() {
-
+                                                      debugPrint("ListadoPropiedades");
+                                                      debugPrint(clientesIdsSetB.toString());
+                                                      debugPrint(propiedadesDireccionNombresSetB.toString());
+                                                      debugPrint(propiedadesInternasIdsSetB.toString());
                                                       propiedadElegidoB =clientesIdsSetB.first.toString();
                                                       PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[0];
                                                       propiedadElegidoID_B = propiedadesInternasIdsSetB[0].toString();
+
                                                       //PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[0];
                                                       controllerFechaVisitaLLegada.text = event["pf_fecha"].toString();
                                                       controllerHoraVisitaLLegada.text = event["pf_hora_llegada"];
@@ -1761,14 +1951,30 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                       entradaID = event["pn_visita_entrada_tipo"].toString();
                                                       placaVehiculoController.text = event["pv_visita_vehiculo_placa"].toString();
                                                       observacionesVisitasCrearController.text = event["pv_observaciones"].toString();
-                                                    });
+                                                      codigoVisitaController.text =  event["pn_visita"].toString();
+
+                                                      if(observacionesVisitasCrearController.text == "null" || observacionesVisitasCrearController.text == "")
+                                                      {
+                                                        observacionesVisitasCrearController.text = "";
+                                                      }
+
+                                                      if(placaVehiculoController.text == "null"||placaVehiculoController.text == "")
+                                                      {
+                                                        placaVehiculoController.text = "";
+                                                      }
+                                                      //propiedadElegidoB = "";
+                                                      propiedadElegidoID_B = event["pv_propiedad"].toString();
+                                                      PropiedadElegidaDEscripcion = event["pv_propiedad_nombre"].toString();
+                                                      propiedadCuentaID = event["pv_propiedad"].toString();
+                                                    }
+                                                    );
                                                     showDialog<void>(
                                                       context: context,
                                                       builder: (BuildContext context) {
                                                         return StatefulBuilder(
                                                           builder: (BuildContext context, StateSetter setStateDialog2) {
                                                             return AlertDialog(
-                                                              title: const Text("Agregar un nuevo paquete"),
+                                                              title: const Text("Cambiar informacíon de visita"),
                                                               content: Builder(
                                                                   builder: (context) {
                                                                     return SingleChildScrollView(
@@ -1777,7 +1983,6 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                         key: _formKey,
                                                                         child: Column(
                                                                           children: [
-
                                                                             10.height,
                                                                             Column(
                                                                               children: [
@@ -1821,16 +2026,47 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                               width: MediaQuery.of(context).size.width * 0.45,
                                                                               child: DropdownButtonFormField<String>(
                                                                                 validator: (String? value) {
-                                                                                  if (value == null || value.isEmpty) {
+                                                                                  if (value == null || value.isEmpty || value == "-1" || value == "Todos") {
                                                                                     return 'Información requerida'; // Mensaje si está vacío
                                                                                   }
-                                                                                  return null; // Si es válido
+                                                                                  setState(() {
+                                                                                    if (value == null) return;
+
+                                                                                    // Buscar el índice usando la lista correcta
+                                                                                    int index = propiedadesDireccionNombresSet.indexOf(value);
+                                                                                    debugPrint("indice");
+                                                                                    debugPrint(index.toString());
+                                                                                    debugPrint(clientesIdsSetB[index].toString());
+                                                                                    debugPrint(propiedadesDireccionNombresSetB[index].toString());
+                                                                                    debugPrint(propiedadesInternasIdsSetB[index].toString());
+
+                                                                                    if (index != -1 && index < propiedadesInternasIdsSetB.length) {
+                                                                                      setStateDialog2(() {
+                                                                                        if(clientesIdsSetB[index].toString() == "-1")
+                                                                                        {
+                                                                                          PropiedadElegidaDEscripcion = "Todos";
+                                                                                          propiedadElegidoB = clientesIdsSetB[index].toString();
+                                                                                          propiedadElegidoID_B =  propiedadesInternasIdsSetB[index].toString();
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                          propiedadElegidoB = clientesIdsSetB[index].toString();
+                                                                                          propiedadElegidoID_B =  propiedadesInternasIdsSetB[index].toString();
+                                                                                          PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[index].toString();
+                                                                                        }
+                                                                                      });
+                                                                                      debugPrint("✅ Propiedad seleccionada: $propiedadElegidoB");
+                                                                                      debugPrint("✅ Propiedad seleccionada ID: $propiedadElegidoID_B");
+                                                                                      debugPrint("📍 Dirección: $PropiedadElegidaDEscripcion");
+                                                                                    } else {
+                                                                                      debugPrint("⚠️ Valor no encontrado o fuera de rango: $value");
+                                                                                    }
+                                                                                  });
+                                                                                  return null;
                                                                                 },
                                                                                 isExpanded: true,
 
-                                                                                value: (clientesIdsSetB.isNotEmpty && clientesIdsSetB.first != -1)
-                                                                                    ? clientesIdsSetB.first.toString()
-                                                                                    : null,
+                                                                                initialValue:  PropiedadElegidaDEscripcion,
                                                                                 hint: const Text("Seleccione una Propiedad"),
                                                                                 decoration: InputDecoration(
                                                                                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1859,8 +2095,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                                   color: Color.fromRGBO(6, 78, 116, 1),
                                                                                 ),
 
-                                                                                // --- Construcción segura de los ítems ---
-                                                                                items: List.generate(clientesIdsSetB.length, (index) {
+                                                                                items: List.generate(propiedadesDireccionNombresSet.length, (index) {
                                                                                   // Evita errores si las listas no tienen la misma longitud
                                                                                   String nombre = (index < propiedadesInternaNombresSetB.length)
                                                                                       ? propiedadesInternaNombresSetB[index]
@@ -1871,9 +2106,9 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                                       : "Sin dirección";
 
                                                                                   return DropdownMenuItem<String>(
-                                                                                    value: clientesIdsSetB[index].toString(),
+                                                                                    value: propiedadesDireccionNombresSet[index].toString(),
                                                                                     child: Text(
-                                                                                      "$direccion",
+                                                                                      "$direccion ",
                                                                                       style: const TextStyle(fontSize: 16, color: Colors.black),
                                                                                       overflow: TextOverflow.ellipsis,
                                                                                     ),
@@ -1886,13 +2121,30 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                                     if (value == null) return;
 
                                                                                     // Buscar el índice usando la lista correcta
-                                                                                    int index = clientesIdsSetB.indexOf(value);
+                                                                                    int index = propiedadesDireccionNombresSet.indexOf(value);
+                                                                                    debugPrint("indice");
+                                                                                    debugPrint("SetInfo");
+                                                                                    debugPrint(value);
+                                                                                    debugPrint(index.toString());
+                                                                                    debugPrint(clientesIdsSetB[index].toString());
+                                                                                    debugPrint(propiedadesDireccionNombresSetB[index].toString());
+                                                                                    debugPrint(propiedadesInternasIdsSetB[index].toString());
 
-                                                                                    if (index != -1 && index < propiedadesDireccionNombresSetB.length) {
-                                                                                      propiedadElegidoB = value;
-                                                                                      propiedadElegidoID_B = propiedadesInternasIdsSetB[index].toString();
-                                                                                      PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[index].toString();
-
+                                                                                    if (index != -1 && index < propiedadesInternasIdsSetB.length) {
+                                                                                      setStateDialog2(() {
+                                                                                        if(clientesIdsSetB[index].toString() == "-1")
+                                                                                          {
+                                                                                            PropiedadElegidaDEscripcion = "Todos";
+                                                                                            propiedadElegidoB = clientesIdsSetB[index].toString();
+                                                                                            propiedadElegidoID_B =  propiedadesInternasIdsSetB[index].toString();
+                                                                                          }
+                                                                                        else
+                                                                                          {
+                                                                                            propiedadElegidoB = clientesIdsSetB[index].toString();
+                                                                                            propiedadElegidoID_B =  propiedadesInternasIdsSetB[index].toString();
+                                                                                            PropiedadElegidaDEscripcion = propiedadesDireccionNombresSetB[index].toString();
+                                                                                          }
+                                                                                      });
                                                                                       debugPrint("✅ Propiedad seleccionada: $propiedadElegidoB");
                                                                                       debugPrint("✅ Propiedad seleccionada ID: $propiedadElegidoID_B");
                                                                                       debugPrint("📍 Dirección: $PropiedadElegidaDEscripcion");
@@ -2106,7 +2358,7 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                               width: MediaQuery.of(context).size.width * 0.45,
                                                                               child: TextFormField(
                                                                                 validator: (String? value) {
-                                                                                  if (value == null || value.isEmpty && entradaID != "1") {
+                                                                                  if (value == null || value.isEmpty && entradaID != "1"|| value == "" && entradaID != "1") {
                                                                                     return 'Información requerida'; // Error message if empty
                                                                                   }
                                                                                   return null; // Return null if the input is valid
@@ -2171,7 +2423,9 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                                   final prefs = await SharedPreferences.getInstance();
                                                                                   String? cliente = "";
                                                                                   cliente = prefs.getString("cliente");
-                                                                                  controllerFechaVisitaLLegada.text = DateFormat('yyyyMMdd').format(fechaHora);
+                                                                                  controllerFechaVisitaLLegada.text = DateFormat('yyyyMMdd').format(fechaSelect!);
+                                                                                  debugPrint("Codigo de visita");
+                                                                                  debugPrint(codigoVisitaController.text);
                                                                                   debugPrint("Cliente ID");
                                                                                   debugPrint(propiedadElegidoB);
                                                                                   debugPrint("Cliente Nombre");
@@ -2203,21 +2457,21 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                                                       propiedadElegidoB,PropiedadElegidaDEscripcion,controllerFechaVisitaLLegada.text,
                                                                                       controllerHoraVisitaLLegada.text,motivoVisitaController.text,nombreVisitaController.text,
                                                                                       _DPI_VisitasController.text,telefonoVisitasController.text,entradaID!,
-                                                                                      placaVehiculoController.text,observacionesVisitasCrearController.text).visitas9();
+                                                                                      placaVehiculoController.text,observacionesVisitasCrearController.text,codigoVisitaController.text).visitas9();
 
-                                                                                  Future.delayed(const Duration(milliseconds: 250), ()
+                                                                                  Future.delayed(const Duration(milliseconds: 400), ()
                                                                                   {
                                                                                     setState(() {
                                                                                       if(codigoController.text == "")
                                                                                       {
-                                                                                        _futureVisitasList = visitasListaB("-1","-1").visitas5();
+                                                                                        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,"-1",tipoOpcion).visitas5();
                                                                                         //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
                                                                                       }
                                                                                       else
                                                                                       {
-                                                                                        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido).visitas5();
+                                                                                        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
 
-                                                                                        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido).visitas5();
+                                                                                        _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
                                                                                         //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
                                                                                       }
                                                                                     });
@@ -2264,8 +2518,180 @@ class _AdmVisitasScreenState extends State<AdmVisitasBScreen> {
                                                      fontWeight: FontWeight.bold,
                                                      fontSize: MediaQuery.of(context).size.width*0.05,
                                                      color: Colors.white,
-                                                   ),))
+                                                   ),)):Center()
                                               ),
+                                              //if (!isReceived)
+                                              event["pv_recibida"] == 0 ? Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SizedBox(height: 8),
+                                                    admincheck == "1" ?  Row(
+                                                      children: [
+                                                        Align(
+                                                          alignment: Alignment.centerLeft,
+                                                          child: ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor:
+                                                              const Color.fromRGBO(6, 78, 116, 1),
+                                                            ),
+
+                                                            onPressed: () {
+                                                              debugPrint("Recibir ${event["pv_codigo"]} con observación: ${event["pv_recibida_observaciones"]}");
+                                                              observacionesVisitasController.text = "";
+                                                              controllerFechaVisitaLLegada.text = "";
+                                                              controllerHoraVisitaLLegada.text = "";
+                                                              showDialog<void>(
+                                                                  context: context,
+                                                                  builder: (BuildContext context) {
+                                                                    return StatefulBuilder(
+                                                                      builder: (BuildContext context, StateSetter setStateDialog2) {
+                                                                        final PageController pageController = PageController();
+                                                                        int currentIndex = 0;
+
+                                                                        return AlertDialog(
+                                                                            title: Text("Información para recibir la visita"),
+                                                                            content: Builder(
+                                                                                builder: (context) {
+                                                                                  return SingleChildScrollView(
+                                                                                      scrollDirection: Axis.vertical,
+                                                                                      child: Form(
+                                                                                        key: _formKeyRecolecta,
+                                                                                        child: Column(
+                                                                                          children: [
+                                                                                            Text("Observaciones",style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                                fontWeight: FontWeight.bold,
+                                                                                                fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                                                color: const Color.fromRGBO(6, 78, 116, 1))),
+                                                                                            10.height,
+                                                                                            TextFormField(
+                                                                                                controller: observacionesVisitasController,
+                                                                                                decoration: InputDecoration(
+                                                                                                  hintText: "Observaciones de visita",
+                                                                                                  border: const OutlineInputBorder(),
+                                                                                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                                                                                ),
+                                                                                                minLines: 2,
+                                                                                                maxLines: 3,
+                                                                                                onChanged: (value)
+                                                                                                {
+                                                                                                  setStateDialog2(() {
+                                                                                                    controllerObsevacionesRecibir.text = value;
+                                                                                                  });
+                                                                                                }
+                                                                                            ),
+                                                                                            Column(
+                                                                                              children: [
+                                                                                                Wrap(
+                                                                                                  spacing: 16,
+                                                                                                  runSpacing: 16,
+                                                                                                  alignment: WrapAlignment.spaceBetween,
+                                                                                                  children: [
+                                                                                                    _buildDateField(
+                                                                                                      label: "Fecha de llegada",
+                                                                                                      controller: controllerFechaVisitaLLegada,
+                                                                                                      theme: theme,
+                                                                                                      context: context,
+                                                                                                      width: MediaQuery.of(context).size.width * 0.2,
+                                                                                                    ),
+                                                                                                    _buildTimeField(
+                                                                                                      label: "Hora de llegada",
+                                                                                                      controller: controllerHoraVisitaLLegada,
+                                                                                                      theme: theme,
+                                                                                                      context: context,
+                                                                                                      width: MediaQuery.of(context).size.width * 0.2,
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                            Row(
+                                                                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                                              children: [
+                                                                                                ElevatedButton(onPressed: ()
+                                                                                                {
+                                                                                                  Navigator
+                                                                                                      .of(
+                                                                                                      context)
+                                                                                                      .pop();
+                                                                                                },child: Text("Cancelar",style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                                  fontWeight: FontWeight.bold,
+                                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                                                  color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                                ),)),
+                                                                                                ElevatedButton(
+                                                                                                    onPressed:()
+                                                                                                    {
+                                                                                                      if (!_formKeyRecolecta.currentState!.validate()) {
+                                                                                                        msgxToast("Complete todos los campos requeridos.");
+                                                                                                        return;
+                                                                                                      }
+                                                                                                      controllerFechaVisitaLLegada.text = DateFormat('yyyyMMdd').format(fechaHoraRecolecta);
+                                                                                                      debugPrint("Fecha");
+                                                                                                      debugPrint(event["pv_codigo"].toString());
+                                                                                                      debugPrint(controllerFechaVisitaLLegada.text);
+                                                                                                      debugPrint(observacionesVisitasController.text);
+                                                                                                      debugPrint(controllerHoraVisitaLLegada.text);
+
+                                                                                                      VisitasRecibir(event["pn_visita"].toString(),controllerFechaVisitaLLegada.text,controllerHoraVisitaLLegada.text,observacionesVisitasController.text).VisitasM8();
+
+                                                                                                      Future.delayed(const Duration(milliseconds: 250), ()
+                                                                                                      {
+                                                                                                        setState(() {
+                                                                                                          if(codigoController.text == "")
+                                                                                                          {
+                                                                                                            _futureVisitasList = visitasListaB("-1","-1",periodoElegido,"-1",tipoOpcion).visitas5();
+                                                                                                            //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
+                                                                                                          }
+                                                                                                          else
+                                                                                                          {
+                                                                                                            _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
+
+                                                                                                            _futureVisitasList = visitasListaB(propiedadCuentaID,propiedadElegido,periodoElegido,codigoController.text,tipoOpcion).visitas5();
+                                                                                                            //_futureVisitaM6 = visitasLista(propiedadCuentaID,periodoCuentaID,tipoOpcion,codigoController.text).listadoVisitasM6();
+                                                                                                          }
+                                                                                                        });
+                                                                                                        reloadPage();
+                                                                                                        controllerFechaVisitaLLegada.text = "";
+                                                                                                        controllerObsevacionesRecibir.text = "";
+                                                                                                        Navigator
+                                                                                                            .of(
+                                                                                                            context)
+                                                                                                            .pop();
+                                                                                                        msgxToast(
+                                                                                                            "Visita marcada de recibida");
+                                                                                                      }
+                                                                                                      );
+                                                                                                    },
+                                                                                                    child: Text("Recibir Visita",style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                                      fontWeight: FontWeight.bold,
+                                                                                                      fontSize: MediaQuery.of(context).size.width * 0.045,
+                                                                                                      color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                                    ),)),
+                                                                                              ],
+                                                                                            )
+                                                                                          ],
+                                                                                        ),
+                                                                                      )
+                                                                                  );
+                                                                                })
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  }
+                                                              );
+                                                            },
+                                                            child:  Text("Recibir",style: theme.textTheme.bodyMedium?.copyWith(
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: MediaQuery.of(context).size.width*0.05,
+                                                              color: Colors.white,
+                                                            ),),
+                                                          ),
+                                                        ),
+
+                                                      ],
+                                                    ):Center(),
+                                                  ],
+                                                ):Center(),
                                             ],
                                           ),
                                         ],

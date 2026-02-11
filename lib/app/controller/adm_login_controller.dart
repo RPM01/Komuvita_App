@@ -32,10 +32,17 @@ List<String> propiedadesInternasIdsSet = [];
 List<String> propiedadesInternaNombresSet = [];
 List<String> propiedadesDireccionNombresSet = [];
 
+List<String> clientesIdsSet1 = [];
+List<String> propiedadesInternasIdsSet1 = [];
+List<String> propiedadesInternaNombresSet1 = [];
+List<String> propiedadesDireccionNombresSet1 = [];
+
 List<String> clientesIdsSetB = [];
 List<String> propiedadesInternasIdsSetB = [];
 List<String> propiedadesInternaNombresSetB = [];
 List<String> propiedadesDireccionNombresSetB = [];
+
+
 String clienteIDset = "";
 String empresaID = "";
 String empresaNombreID = "";
@@ -124,8 +131,11 @@ class LoginController extends GetxController {
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
       debugPrint("Info Login");
+      debugPrint(url.toString());
       debugPrint(body.toString());
       debugPrint(response.body.toString());
+      devLog.log("Info Login");
+      devLog.log(response.body.toString());
 
 
       if(response.statusCode == 200)
@@ -137,8 +147,12 @@ class LoginController extends GetxController {
 
             prefs.setString("Token", json["datos"]["pv_token"].toString());
             prefs.setString("Admin", json["datos"]["pn_administrador"].toString());
+
+
             prefs.setString("JuntaDirectiva", json["datos"]["pn_junta_directiva"].toString());
+            prefs.setString("Inquilino", json["datos"]["pn_inquilino"].toString());
             debugPrint(prefs.getString("JuntaDirectiva"));
+
             prefs.setString("Empresa", json["datos"]["pl_empresas"][0][0]["pn_empresa"].toString());
             prefs.setString("correo",emailControllerText);
             prefs.setString("intruciones de pago",json["datos"]["pl_empresas"][0][0]["pv_instrucciones_pago"].toString());
@@ -158,8 +172,6 @@ class LoginController extends GetxController {
             final List<String> empresasNombres = flatList.map((e) => e["pv_empresa_nombre"] as String).toList();
             final List<String> empresasPropiedad = flatList.map((e) => e["pv_propiedad_tipo"] as String).toList();
 
-
-
             empresasIdsSet = empresasIds;
             empresasNombresSet = empresasNombres;
             empresasPropiedadSet = empresasPropiedad;
@@ -170,27 +182,31 @@ class LoginController extends GetxController {
             debugPrint(empresasPropiedad.toString());
 
 
-
-            if(json["datos"]["pn_junta_directiva"] == 2)
-            {
-              debugPrint("Es Un Agente");
-              GestionTickets1C();
-            }
-            else
-            {
-              GestionTickets1();
-            }
-
             if(json["datos"]["pn_clave_vencida"] == 1)
             {
               msgxToast("Su contraseña se encuentra vencida");
-
               Get.toNamed(MyRoute.forgotPasswordScreen);
-
             }
             else
             {
-              GestionTickets1();
+              if(json["datos"]["pn_junta_directiva"] == 2)
+              {
+                debugPrint("Es Un Agente");
+                debugPrint(json["datos"]["pn_junta_directiva"].toString());
+
+                GestionTickets1C();
+              }
+              else if(json["resultado"]["pn_error"] == 1)
+                {
+                  msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+                }
+              else
+              {
+                debugPrint("No es Un Agente");
+                debugPrint(json["datos"]["pn_junta_directiva"].toString());
+                GestionTickets1();
+              }
+
             }
           }
         else{
@@ -252,6 +268,7 @@ class LoginController extends GetxController {
       final json = jsonDecode(response.body);
       debugPrint("Lista Clientes");
        debugPrint( body.toString());
+       debugPrint(response.body.toString());
       debugPrint("clientes");
 
       debugPrint(json["datos"][0]["pv_cliente"].toString());
@@ -278,6 +295,11 @@ class LoginController extends GetxController {
       final List<String> propiedadIds = empresasList.map((e) => e["pn_propiedad"] as String).toList();
       final List<String> propiedadDescripcion = empresasList.map((e) => e["pv_descripcion"] as String).toList();
       final List<String> direccionDescripcion = empresasList.map((e) => e["pv_direccion"] as String).toList();
+
+      final List<String> clientesIds1 = empresasList.map((e) => e["pv_cliente"] as String).toList();
+      final List<String> propiedadIds1 = empresasList.map((e) => e["pn_propiedad"] as String).toList();
+      final List<String> propiedadDescripcion1 = empresasList.map((e) => e["pv_descripcion"] as String).toList();
+      final List<String> direccionDescripcion1 = empresasList.map((e) => e["pv_direccion"] as String).toList();
 
       final List<String> clientesIdsB = empresasList.map((e) => e["pv_cliente"] as String).toList();
       final List<String> propiedadIdsB = empresasList.map((e) => e["pn_propiedad"] as String).toList();
@@ -306,13 +328,21 @@ class LoginController extends GetxController {
 
       clientesIds.insert(0, "-1");
       propiedadIds.insert(0, "-1");
-      propiedadDescripcion.insert(0, "Todos");
-      direccionDescripcion.insert(0, "");
+      clientesIdsSetB.insert(0, "-1");
+      propiedadesInternasIdsSetB.insert(0, "-1");
+      propiedadesDireccionNombresSetB.insert(0, "Todos");
+      propiedadDescripcion.insert(0, "");
+      direccionDescripcion.insert(0, "Todos");
 
       clientesIdsSet = clientesIds;
       propiedadesInternasIdsSet = propiedadIds;
       propiedadesInternaNombresSet = propiedadDescripcion;
       propiedadesDireccionNombresSet = direccionDescripcion;
+
+      clientesIdsSet1 = clientesIds1;
+      propiedadesInternasIdsSet1 = propiedadIds1;
+      propiedadesInternaNombresSet1 = propiedadDescripcion1;
+      propiedadesDireccionNombresSet1 = direccionDescripcion1;
 
 
 
@@ -357,7 +387,7 @@ class LoginController extends GetxController {
           Get.offNamedUntil(MyRoute.home,(route) => route.isFirst,);
           return List<Map<String, dynamic>>.from(json["datos"]);
         }
-        else
+        else if (json["resultado"]["pn_error"] == 1)
         {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
@@ -472,8 +502,9 @@ class LoginController extends GetxController {
 
       clientesIds.insert(0, "-1");
       propiedadIds.insert(0, "-1");
+      clientesIdsSetB.insert(0, "-1");
       propiedadDescripcion.insert(0, "Todos");
-      direccionDescripcion.insert(0, "");
+      direccionDescripcion.insert(0, "Todos");
 
       clientesIdsSet = clientesIds;
       propiedadesInternasIdsSet = propiedadIds;
@@ -636,7 +667,7 @@ class LoginController extends GetxController {
       clientesIds.insert(0, "-1");
       propiedadIds.insert(0, "-1");
       propiedadDescripcion.insert(0, "Todos");
-      direccionDescripcion.insert(0, "");
+      direccionDescripcion.insert(0, "Todos");
 
       clientesIdsSet = clientesIds;
       propiedadesInternasIdsSet = propiedadIds;
@@ -657,7 +688,7 @@ class LoginController extends GetxController {
       debugPrint(propiedadesDireccionNombresSet.toString());
       debugPrint(propiedadesDireccionNombresSet.length.toString());
 
-      debugPrint("clientes IDB");
+      debugPrint("clientes_IDB");
       debugPrint(clientesIdsSetB.toString());
       debugPrint(clientesIdsSetB.length.toString());
       debugPrint("propiedadesInternasIdsSetB");
@@ -709,6 +740,8 @@ class LoginController extends GetxController {
     }
     throw Exception("Error en conexión");
   }
+
+
 
 
   void togglePasswordVisibility() {

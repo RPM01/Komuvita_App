@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-String baseUrl = 'http://api.komuvita.com';
-//String baseUrl = 'https://apidesa.komuvita.com';
+//String baseUrl = 'http://api.komuvita.com';
+String baseUrl = 'https://apidesa.komuvita.com';
 
 class ApiClient {
 
   // The single shared Dio instance
   static final Dio dio = Dio(
     BaseOptions(
-      //baseUrl: 'https://apidesa.komuvita.com',
-      baseUrl: 'http://api.komuvita.com/porta',
+      baseUrl: 'https://apidesa.komuvita.com/',
+      //baseUrl: 'http://api.komuvita.com/',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
       sendTimeout: const Duration(seconds: 10),

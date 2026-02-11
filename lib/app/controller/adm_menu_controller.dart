@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:administra/app/views/adm_Comunicacion_Junta_Directiva/adm_Comunicacion_Junta_Directiva_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -18,6 +19,7 @@ import 'package:administra/app/views/adm_paquetes/adm_paquetes_screen.dart';
 import 'package:administra/adm_theme/theme_controller.dart';
 
 // Import your Home controller
+import '../views/adm_ComunicacionJuntadirectiva_ResultadoGestion/adm_ComunicacionJuntadirectiva_ResultadoGestion_screen.dart';
 import '../views/adm_Visitas/adm_visitasA_screen.dart';
 import '../views/adm_Visitas/adm_visitasB_screen.dart';
 import 'adm_home_controller.dart';
@@ -34,6 +36,10 @@ class AdmMenuController extends GetxController {
   var screens = <Widget>[].obs;
   var isMenuReady = false.obs;
 
+  String adminCheck = "";
+  String juntaDirec = "";
+  String inquilino = "";
+
   @override
   void onInit() {
     super.onInit();
@@ -45,8 +51,13 @@ class AdmMenuController extends GetxController {
       final prefs = await SharedPreferences.getInstance();
 
       // Example flags for testing — set these in real usage
-      String? adminCheck = prefs.getString("Admin") ?? "0";
-      String? juntaDirec = prefs.getString("JuntaDirectiva") ?? "0";
+       adminCheck = prefs.getString("Admin") ?? "0";
+       juntaDirec = prefs.getString("JuntaDirectiva") ?? "0";
+       inquilino = prefs.getString("Inquilino") ?? "0";
+      debugPrint("Info_Usuario");
+      debugPrint(adminCheck.toString());
+      debugPrint(juntaDirec.toString());
+      debugPrint(inquilino.toString());
 
       isAdmin.value = adminCheck == "1";
       jundaDir.value = juntaDirec == "2";
@@ -61,7 +72,8 @@ class AdmMenuController extends GetxController {
 
   /// Updates menu and screens according to user type
   void _setMenuForUser() {
-    if (isAdmin.value) {
+
+    if (juntaDirec == "1") {
       // 👑 Admin menu
       helpAndSupport.assignAll([
         'Inicio',
@@ -70,9 +82,11 @@ class AdmMenuController extends GetxController {
         'Rentas y Ventas',
         'Objetos Perdidos',
         'Reservar Amenidad',
-        'Tickets de comunicación',
-        'Paquetes',
+        'Comunicación con Administrador',
+        'Comunicación Junta',
+        'Resultados Gestion',
         'Visitas',
+        'Paquetes',
         //'Cambio de contraseña',
         'Cerrar Sesión',
       ]);
@@ -85,27 +99,124 @@ class AdmMenuController extends GetxController {
         AdmObjetosPerdidsoScreen(),
         AdmCreacionReservaScreen(),
         AdmComunicacionAdministradorScreen(),
+        AdmComunicacionJuntaDirectivaScreen(),
+        AdmComunicacionJuntaDirectivaResultadoGestionScreen(),
+        AdmVisitasBScreen(),
         AdmPaquetesListadosScreen(),
-        AdmVisitasAScreen(),
+
         //AdmPasswordCreationScreen(),
       ]);
-    } else if (jundaDir.value) {
+    }
+    else if (adminCheck == "1") {
+      // 👑 Admin menu
+      helpAndSupport.assignAll([
+        'Inicio',
+        'Estado de cuenta',
+        'Noticias y Avisos',
+        'Rentas y Ventas',
+        'Objetos Perdidos',
+        'Reservar Amenidad',
+        'Comunicación con Administrador',
+        'Comunicación Junta',
+        'Resultados Gestion',
+        'Visitas',
+        'Paquetes',
+        //'Cambio de contraseña',
+        'Cerrar Sesión',
+      ]);
+
+      screens.assignAll([
+        AdmHomeScreen(),
+        AdmEstadoDeCuentaScreen(),
+        AdmNoticiasScreen(),
+        AdmRentasVnetasScreen(),
+        AdmObjetosPerdidsoScreen(),
+        AdmCreacionReservaScreen(),
+        AdmComunicacionAdministradorScreen(),
+        AdmComunicacionJuntaDirectivaScreen(),
+        AdmComunicacionJuntaDirectivaResultadoGestionScreen(),
+        AdmVisitasAScreen(),
+        AdmPaquetesListadosScreen(),
+
+        //AdmPasswordCreationScreen(),
+      ]);
+    }
+    else if (juntaDirec == "2") {
       // 👥 Junta Directiva
       helpAndSupport.assignAll([
         //'Inicio',
-        'Listado de Paquetes',
         'Visitas',
+        'Listado de Paquetes',
         //'Cambio de contraseña',
         'Cerrar Sesión',
       ]);
 
       screens.assignAll([
         //AdmHomeScreen(),
-        AdmPaquetesListadosScreen(),
         AdmVisitasAScreen(),
+        AdmPaquetesListadosScreen(),
+
         //AdmPasswordCreationScreen(),
       ]);
-    } else {
+    }else if (inquilino == "1") {
+      // 👑 Admin menu
+      helpAndSupport.assignAll([
+        'Inicio',
+        //'Estado de cuenta',
+        'Noticias y Avisos',
+        'Rentas y Ventas',
+        'Objetos Perdidos',
+        'Reservar Amenidad',
+        'Comunicación con Administrador',
+        'Visitas',
+        'Paquetes',
+        //'Cambio de contraseña',
+        'Cerrar Sesión',
+      ]);
+
+      screens.assignAll([
+        AdmHomeScreen(),
+        //AdmEstadoDeCuentaScreen(),
+        AdmNoticiasScreen(),
+        AdmRentasVnetasScreen(),
+        AdmObjetosPerdidsoScreen(),
+        AdmCreacionReservaScreen(),
+        AdmComunicacionAdministradorScreen(),
+        AdmVisitasBScreen(),
+        AdmPaquetesListadosScreen(),
+
+        //AdmPasswordCreationScreen(),
+      ]);} else if (juntaDirec == "0") {
+      // 👑 Admin menu
+      helpAndSupport.assignAll([
+        'Inicio',
+        'Estado de cuenta',
+        'Noticias y Avisos',
+        'Rentas y Ventas',
+        'Objetos Perdidos',
+        'Reservar Amenidad',
+        'Comunicación con Administrador',
+        'Visitas',
+        'Paquetes',
+        //'Cambio de contraseña',
+        'Cerrar Sesión',
+      ]);
+
+      screens.assignAll([
+        AdmHomeScreen(),
+        AdmEstadoDeCuentaScreen(),
+        AdmNoticiasScreen(),
+        AdmRentasVnetasScreen(),
+        AdmObjetosPerdidsoScreen(),
+        AdmCreacionReservaScreen(),
+        AdmComunicacionAdministradorScreen(),
+        AdmVisitasBScreen(),
+        AdmPaquetesListadosScreen(),
+
+        //AdmPasswordCreationScreen(),
+      ]);
+
+      /*
       // 🧍 Regular user
       helpAndSupport.assignAll([
         'Inicio',
@@ -115,8 +226,8 @@ class AdmMenuController extends GetxController {
         'Objetos Perdidos',
         'Reservar Amenidad',
         'Comunicación con Administrador',
-        'Paquetes pendientes',
         'Visitas',
+        'Paquetes pendientes',
         'Cambio de contraseña',
         'Cerrar Sesión',
       ]);
@@ -129,11 +240,11 @@ class AdmMenuController extends GetxController {
         AdmObjetosPerdidsoScreen(),
         AdmCreacionReservaScreen(),
         AdmComunicacionAdministradorScreen(),
-        AdmPaquetesListadosScreen(),
         AdmVisitasBScreen(),
+        AdmPaquetesListadosScreen(),
         AdmPasswordCreationScreen(),
       ]);
-    }
+    */}
   }
 
 

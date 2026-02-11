@@ -65,6 +65,7 @@ class _AdmCreacionResrvaScreenState extends State<AdmCreacionReservaScreen> {
   DateTime? _selectedDay;
   String userNombre = "";
   String admincheck = "";
+  String juntaDirect = "";
   bool tickets = true;
   Key _pageKey = UniqueKey();
   bool  isChecked = false;
@@ -72,6 +73,7 @@ String terminosCondiciones = "";
 
   String propiedadNombre = "";
   String propiedadDireccion = "";
+  String inquilino = "";
 
   @override
   void initState() {
@@ -104,6 +106,9 @@ String terminosCondiciones = "";
       debugPrint(prefs.getString("cliente"));
        userName = prefs.getString("NombreUser")!;
       admincheck = prefs.getString("Admin")!;
+      juntaDirect = prefs.getString("JuntaDirectiva")!;
+      inquilino = prefs.getString("Inquilino") ?? "0";
+
       if(admincheck == "1")
       {
         tickets = true;
@@ -279,8 +284,9 @@ String terminosCondiciones = "";
     );
   }
 
-  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
-    if (isAdmin) {
+  IconData _getIconForIndex(int index, String isAdmin, String jundaDir,String inquilino)
+  {
+    if (jundaDir == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -289,18 +295,20 @@ String terminosCondiciones = "";
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return FontAwesomeIcons.gear;
+        case 8: return Icons.chat;
+        case 9: return Icons.person;
+        case 10: return FontAwesomeIcons.boxesPacking;
+        case 11: return Icons.lock_reset;
         default: return Icons.logout;
       }
-    } else if (jundaDir) {
+    } else if (jundaDir =="2") {
       switch (index) {
-        case 0: return FontAwesomeIcons.boxesPacking;
-        case 1: return FontAwesomeIcons.person;
+        case 0: return FontAwesomeIcons.person;
+        case 1:  return FontAwesomeIcons.boxesPacking;
         default: return Icons.logout;
       }
-    } else {
+    } else if (inquilino == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -309,10 +317,49 @@ String terminosCondiciones = "";
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
         default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
+      }
+    }
+    else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
+        default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
       }
     }
   }
@@ -443,7 +490,7 @@ String terminosCondiciones = "";
                         itemBuilder: (context, index) {
                           final menuTitle = helpAndSupport[index];
                           final isLast = index == helpAndSupport.length - 1;
-                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+                          final iconData = _getIconForIndex(index, admincheck, juntaDirect, inquilino);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
@@ -456,11 +503,11 @@ String terminosCondiciones = "";
                                 }
 
                                 // 👇 Handle "Paquetes pendientes"
-                                if (menuTitle == "Paquetes pendientes") {
+                                /*if (menuTitle == "Paquetes pendientes") {
                                   Navigator.pop(context); // close drawer first
                                   Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
                                   return;
-                                }
+                                }*/
 
                                 // 👇 Normal navigation
                                 Navigator.pop(context);
@@ -880,10 +927,10 @@ String terminosCondiciones = "";
 
 
                                                     setState(() {
-                                                      propiedadAcobrar = propiedadesInternasIdsSetB[0].toString();
+                                                      propiedadAcobrar = propiedadesInternasIdsSet1[0].toString();
                                                       observacionesController.text = " ";
-                                                      propiedadNombre =  propiedadesInternaNombresSetB[0].toString();
-                                                      propiedadDireccion = propiedadesDireccionNombresSetB[0].toString();
+                                                      propiedadNombre =  propiedadesInternaNombresSet1[0].toString();
+                                                      propiedadDireccion = propiedadesDireccionNombresSet1[0].toString();
                                                       debugPrint(propiedadAcobrar);
                                                       debugPrint(propiedadNombre);
                                                       debugPrint(propiedadDireccion);
@@ -952,7 +999,7 @@ String terminosCondiciones = "";
                                                                               return null; // Return null if the input is valid
                                                                             },
                                                                             isExpanded: true,
-                                                                            value: clientesIdsSetB[0].toString(),
+                                                                            value: clientesIdsSet1[0].toString(),
                                                                             hint: const Text("Seleccione una empresa"),
                                                                             decoration: InputDecoration(
                                                                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -971,10 +1018,10 @@ String terminosCondiciones = "";
                                                                               color: Colors.black87,
                                                                             ),
                                                                             icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                                                            items: List.generate(clientesIdsSetB.length, (index) {
+                                                                            items: List.generate(clientesIdsSet1.length, (index) {
                                                                               return DropdownMenuItem<String>(
-                                                                                value: clientesIdsSetB[index],
-                                                                                child: Text("${propiedadesInternaNombresSetB[index]} ${propiedadesDireccionNombresSetB[index]}",
+                                                                                value: clientesIdsSet1[index],
+                                                                                child: Text("${propiedadesInternaNombresSet1[index]} ${propiedadesDireccionNombresSet1[index]}",
                                                                                   style: const TextStyle(
                                                                                     fontSize:  20,
                                                                                     color: Colors.black,
@@ -984,12 +1031,12 @@ String terminosCondiciones = "";
                                                                             }),
                                                                             onChanged: (value) {
                                                                               setState(() {
-                                                                                int index = clientesIdsSetB.indexOf(value!);
+                                                                                int index = clientesIdsSet1.indexOf(value!);
                                                                                 //propiedadAcobrar = value;
                                                                                 debugPrint(index.toString());
-                                                                                propiedadAcobrar = propiedadesInternasIdsSetB[index].toString();
-                                                                                propiedadNombre =  propiedadesInternaNombresSetB[index].toString();
-                                                                                propiedadDireccion = propiedadesDireccionNombresSetB[index].toString();
+                                                                                propiedadAcobrar = propiedadesInternasIdsSet1[index].toString();
+                                                                                propiedadNombre =  propiedadesInternaNombresSet1[index].toString();
+                                                                                propiedadDireccion = propiedadesDireccionNombresSet1[index].toString();
                                                                                 clienteIDset = value;
                                                                                 debugPrint(propiedadAcobrar);
                                                                                 debugPrint(propiedadNombre);

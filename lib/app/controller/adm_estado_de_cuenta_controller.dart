@@ -58,6 +58,8 @@ class ServicioListadoCuenta{
 
     debugPrint(token);
     debugPrint("Empresa");
+    debugPrint("VerificacionCliente");
+    debugPrint(cliente);
     debugPrint(empresa);
 
     //GestionTickets1();
@@ -77,7 +79,7 @@ class ServicioListadoCuenta{
         },
         "parametros": {
           "pn_empresa": empresaID,
-          "pv_cliente": clienteIDset,
+          "pv_cliente": cliente,
           "pv_propiedad":propiedad,
           "pn_periodo": periodo
         }

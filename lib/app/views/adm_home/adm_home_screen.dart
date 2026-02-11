@@ -184,6 +184,11 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
     _futurePaquetes = homeController.paqueteria5();
     _futureVisitas = homeController.visitas5();
     homeController.listaPagosH2();
+    homeController.ColumicacionesListadosK1().then((_) {
+      debugPrint("COMUNICACIÓN DIRECTIVA LISTA2");
+    });homeController.TipoComunicacionDirectiva1J().then((_) {
+      debugPrint("COMUNICACIÓN DIRECTIVA LISTA1");
+    });
 
     theme = homeController.themeController.isDarkMode
         ? AdmTheme.admDarkTheme
@@ -223,16 +228,30 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
   _futurePaquetes = homeController.paqueteria5();
   _futureVisitas = homeController.visitas5();
   homeController.listaPagosH2();
-
   GestionTickets2();
+  homeController.ColumicacionesListadosK1();
+
+  homeController.TipoComunicacionDirectiva1J().then((_) {
+    debugPrint("COMUNICACIÓN DIRECTIVA LISTA");
+  });
 }
   void reloadreserva()
   {
-    _futureReservas = homeController.amenidadesReservadas5B();
+    Future.delayed(const Duration(milliseconds: 600), ()
+    {
+      setState(() {
+        _futureReservas = homeController.amenidadesReservadas5B();
+      });
+    });
+
+
   }
   int currentIndex = 0;
   String admincheck = "";
+  String juntaDirect = "";
+  String inquilino = "";
   bool tickets = true;
+
 
   getUserInfo() async
   {
@@ -245,6 +264,8 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
       userName = prefs.getString("NombreUser")!;
       instrucionesPago = prefs.getString("intruciones de pago")!;
       admincheck = prefs.getString("Admin")!;
+       juntaDirect = prefs.getString("JuntaDirectiva")!;
+       inquilino = prefs.getString("Inquilino") ?? "0";
 
       if(admincheck == "1")
         {
@@ -369,8 +390,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
     );
   }
 
-  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
-    if (isAdmin) {
+  IconData _getIconForIndex(int index, String isAdmin, String jundaDir,String inquilino)
+  {
+    if (jundaDir == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -379,18 +401,20 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return FontAwesomeIcons.gear;
+        case 8: return Icons.chat;
+        case 9: return Icons.person;
+        case 10: return FontAwesomeIcons.boxesPacking;
+        case 11: return Icons.lock_reset;
         default: return Icons.logout;
       }
-    } else if (jundaDir) {
+    } else if (jundaDir =="2") {
       switch (index) {
-        case 0: return FontAwesomeIcons.boxesPacking;
-        case 1: return FontAwesomeIcons.person;
+        case 0: return FontAwesomeIcons.person;
+        case 1:  return FontAwesomeIcons.boxesPacking;
         default: return Icons.logout;
       }
-    } else {
+    } else if (inquilino == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -399,10 +423,49 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
         default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
+      }
+    }
+    else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        //case 8: return Icons.lock_reset;
+        default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
       }
     }
   }
@@ -410,9 +473,27 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
   final CarouselController _controller = CarouselController();
   final GlobalKey<CarouselSliderState> _carouselKey = GlobalKey<CarouselSliderState>();
   @override
+  bool _canPop = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:homeController.themeController.isDarkMode?admDarkPrimary:admWhiteColor ,
+    return PopScope(
+        // Set canPop dynamically based on the variable.
+        canPop: _canPop,
+        onPopInvoked: (bool didPop) {
+      if (didPop) {
+        return; // The navigation happened, so nothing else to do.
+      }
+
+      // Custom logic here if needed when pop is blocked (e.g., show a dialog).
+      if (!_canPop) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Por favor cierre sesión apropiadamente')),
+        );
+      }
+    },
+    child:  Scaffold(
+    backgroundColor:homeController.themeController.isDarkMode?admDarkPrimary:admWhiteColor ,
         appBar: AppBar(
           backgroundColor: homeController.themeController.isDarkMode
               ? admDarkPrimary
@@ -469,7 +550,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                       height: 50,
                       width: 75,
                       decoration: BoxDecoration(
-                          //color: Colors.yellow,
+                        //color: Colors.yellow,
                           border: Border.all(
                               color: homeController.themeController.isDarkMode
                                   ? darkGreyColor
@@ -478,26 +559,26 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                           borderRadius: BorderRadius.circular(50)),
                       child: Center(
                           child: Stack(
-                        children: [
-                          SvgPicture.asset(
-                            notification,
-                            height: 24,
-                            width: 24,
-                            colorFilter: ColorFilter.mode(
-                                homeController.themeController.isDarkMode
-                                    ? admWhiteColor
-                                    : admTextColor,
-                                BlendMode.srcIn),
-                          ),
-                          const Positioned(
-                            right: 0,
-                            child: CircleAvatar(
-                              radius: 5,
-                              backgroundColor: admLightRed,
-                            ),
-                          ),
-                        ],
-                      )),
+                            children: [
+                              SvgPicture.asset(
+                                notification,
+                                height: 24,
+                                width: 24,
+                                colorFilter: ColorFilter.mode(
+                                    homeController.themeController.isDarkMode
+                                        ? admWhiteColor
+                                        : admTextColor,
+                                    BlendMode.srcIn),
+                              ),
+                              const Positioned(
+                                right: 0,
+                                child: CircleAvatar(
+                                  radius: 5,
+                                  backgroundColor: admLightRed,
+                                ),
+                              ),
+                            ],
+                          )),
                     ),
                   )
                 ],
@@ -532,7 +613,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                         itemBuilder: (context, index) {
                           final menuTitle = helpAndSupport[index];
                           final isLast = index == helpAndSupport.length - 1;
-                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+                          final iconData = _getIconForIndex(index, admincheck, juntaDirect,inquilino);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
@@ -546,14 +627,13 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                   return;
                                 }
 
-                                if (tickets == false && menuTitle == "Paquetes pendientes") {
+                                /*if (tickets == false && menuTitle == "Paquetes pendientes") {
                                   irPorPAquetes();
                                   debugPrint("Valor del menu");
                                   debugPrint(menuTitle.toString());
-
                                   //controller.onScrollButtonPressed();
                                   return;
-                                }
+                                }*/
 
                                 await Future.delayed(const Duration(milliseconds: 200));
                                 Get.to(controller.screens[index]);},
@@ -613,8 +693,8 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
             tag: 'adm_home',
             // theme: theme,
             builder: (homeController) => SingleChildScrollView(
-                 controller : scrollController,
-                  child: Column(
+                controller : scrollController,
+                child: Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(15.0),
@@ -622,110 +702,110 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                           // Image.asset(doggy),
+                            // Image.asset(doggy),
                             17.height,
                             Center(
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width*0.95,
                                 //height: MediaQuery.of(context).size.height*0.20,
                                 child: Card(
-                                  elevation: 3,
+                                    elevation: 3,
                                     color: Colors.grey[200],
-                                  child: Column(
-                                    children: [
-                                      Text("Seleccionar Edificio",style: theme.textTheme.headlineSmall?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color:Color.fromRGBO(6,78,116,1),
-                                        fontSize: MediaQuery.of(context).size.width*0.035,
-                                      )),
-                                    DropdownButtonFormField<String>(
-                                      isExpanded: true,
-                                      value: edificioID,
-                                      hint: const Text("Seleccione un Edificio"),
-                                      decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                          borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                          borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
-                                        ),
-                                      ),
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black87,
-                                      ),
-                                      icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                      items: List.generate(empresasIdsSet.length, (index) {
-                                        return DropdownMenuItem<String>(
-                                          value: empresasIdsSet[index].toString(),
-                                          child: Text(
-                                            " ${empresasNombresSet[index]} ",
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.black,
+                                    child: Column(
+                                      children: [
+                                        Text("Seleccionar Edificio",style: theme.textTheme.headlineSmall?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color:Color.fromRGBO(6,78,116,1),
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                        )),
+                                        DropdownButtonFormField<String>(
+                                          isExpanded: true,
+                                          value: edificioID,
+                                          hint: const Text("Seleccione un Edificio"),
+                                          decoration: InputDecoration(
+                                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                              borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                              borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
                                             ),
                                           ),
-                                        );
-                                      }),
-                                      onChanged: (value) async{
-                                        final prefs = await SharedPreferences.getInstance();
-                                        setState(() {
-                                          debugPrint(empresasNombresSet.toString());
-                                          debugPrint(empresasIdsSet.toString());
-                                          int index = empresasIdsSet.indexOf(int.parse(value!));
-                                          debugPrint("Aqui esta el index");
-                                          debugPrint(index.toString());
-                                          edificioID = value;
-                                          empresaID = value;
-                                          loadingContrller.GestionTickets1B();
-                                          edificioDescripcion = empresasNombresSet[index];
-                                          empresaNombreID =empresasNombresSet[index];
-                                          debugPrint(edificioID);
-                                          debugPrint(empresaNombreID);
-                                          debugPrint(edificioDescripcion);
-                                          _EdificioPropiedadSelecionada = value;
-                                           reloadHomePage();
-                                          //debugPrint(edificioID);
-                                        });
-                                      },
-                                    ),
-                                    Text("Por favor, seleccione el edificio para obtener información detallada.",style: theme.textTheme.headlineSmall?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey,
-                                        fontSize: MediaQuery.of(context).size.width*0.025,
-                                      )),
-                                    ],
-                                  )
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black87,
+                                          ),
+                                          icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
+                                          items: List.generate(empresasIdsSet.length, (index) {
+                                            return DropdownMenuItem<String>(
+                                              value: empresasIdsSet[index].toString(),
+                                              child: Text(
+                                                " ${empresasNombresSet[index]} ",
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                          onChanged: (value) async{
+                                            final prefs = await SharedPreferences.getInstance();
+                                            setState(() {
+                                              debugPrint(empresasNombresSet.toString());
+                                              debugPrint(empresasIdsSet.toString());
+                                              int index = empresasIdsSet.indexOf(int.parse(value!));
+                                              debugPrint("Aqui esta el index");
+                                              debugPrint(index.toString());
+                                              edificioID = value;
+                                              empresaID = value;
+                                              loadingContrller.GestionTickets1B();
+                                              edificioDescripcion = empresasNombresSet[index];
+                                              empresaNombreID =empresasNombresSet[index];
+                                              debugPrint(edificioID);
+                                              debugPrint(empresaNombreID);
+                                              debugPrint(edificioDescripcion);
+                                              _EdificioPropiedadSelecionada = value;
+                                              reloadHomePage();
+                                              //debugPrint(edificioID);
+                                            });
+                                          },
+                                        ),
+                                        Text("Por favor, seleccione el edificio para obtener información detallada.",style: theme.textTheme.headlineSmall?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey,
+                                          fontSize: MediaQuery.of(context).size.width*0.025,
+                                        )),
+                                      ],
+                                    )
                                 ),
                               ),
                             ),
                             17.height,
-                            Text("Documentos Pendientes",style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color:Colors.black,
-                          fontSize: MediaQuery.of(context).size.width*0.035,
-                        )) ,
+                            inquilino == "1" ? Center(): Text("Documentos Pendientes",style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color:Colors.black,
+                              fontSize: MediaQuery.of(context).size.width*0.035,
+                            )) ,
 
                             17.height,
-                              FutureBuilder<List<DacumentosH5>>(
+                            inquilino == "1" ? Center(): FutureBuilder<List<DacumentosH5>>(
                               future:_futureDocumentos,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (snapshot.hasError) {
                                   return  Center(
-                                   child: Title(color: Color.fromRGBO(6,78,116,1),
-                                    child: Text("No hay documentos Pendientes",style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context).size.width*0.035,
-                                      color: Color.fromRGBO(6,78,116,1),
-                                      ),
-                                    ),
-                                    )
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay documentos Pendientes",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
                                   );
                                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                                   return  Center(
@@ -765,7 +845,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                               padding: const EdgeInsets.all(8.0),
                                               child: Column(
                                                 children: [
-                                                   Row(
+                                                  Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                       Expanded(
@@ -844,13 +924,13 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children:  [
                                                               Text("TIPO",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Color.fromRGBO(167,167,132,1),
                                                                   fontSize: titleFontSize
                                                               )),
                                                               Text("SERIE",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color:Color.fromRGBO(167,167,132,1),
                                                                   fontSize: titleFontSize
                                                               )),
                                                               Text(
@@ -873,14 +953,14 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               crossAxisAlignment: CrossAxisAlignment.end,
                                                               children: [
                                                                 Text(
-                                                                  event.pvDocumentoTipoDescripcion ?? "",
-                                                                  maxLines: 1,
-                                                                  overflow: TextOverflow.ellipsis,
-                                                                style: theme.textTheme.headlineSmall?.copyWith(
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: Colors.grey[500],
-                                                                    fontSize: titleFontSize
-                                                                )
+                                                                    event.pvDocumentoTipoDescripcion ?? "",
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                    style: theme.textTheme.headlineSmall?.copyWith(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: Colors.grey[500],
+                                                                        fontSize: titleFontSize
+                                                                    )
                                                                 ),
                                                                 Text(
                                                                   event.pvSerie ?? "",
@@ -919,7 +999,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                   Card(
                                                       color: Colors.white,
                                                       child: Padding(
-                                                        padding: const EdgeInsets.all(12),
+                                                          padding: const EdgeInsets.all(12),
                                                           child: Row(
                                                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                             children: [
@@ -928,21 +1008,21 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                                   children: [
                                                                     Text(
-                                                                      "NOMBRE",
-                                                                      maxLines: 1,
-                                                                      overflow: TextOverflow.ellipsis,
+                                                                        "NOMBRE",
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
                                                                         style: theme.textTheme.headlineSmall?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
+                                                                            fontWeight: FontWeight.bold,
                                                                             color:Color.fromRGBO(167,167,132,1),
-                                                                        fontSize: titleFontSize)),
+                                                                            fontSize: titleFontSize)),
                                                                     Text(
-                                                                      event.pvNombre ?? "",
+                                                                        event.pvNombre ?? "",
                                                                         softWrap: true,
                                                                         overflow: TextOverflow.visible,
                                                                         style: theme.textTheme.headlineSmall?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color: Colors.grey[500],
-                                                                        fontSize: titleFontSize)),
+                                                                            fontWeight: FontWeight.bold,
+                                                                            color: Colors.grey[500],
+                                                                            fontSize: titleFontSize)),
                                                                   ],
                                                                 ),
                                                               ),
@@ -951,31 +1031,31 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                                   children: [
                                                                     Text(
-                                                                      "NIT",
-                                                                      maxLines: 1,
-                                                                      overflow: TextOverflow.ellipsis,
-                                                                          style: theme.textTheme.headlineSmall?.copyWith(
-                                                                          fontWeight: FontWeight.bold,
-                                                                              color:Color.fromRGBO(167,167,132,1),
-                                                                          fontSize: titleFontSize)
-                                                                          ),
+                                                                        "NIT",
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: theme.textTheme.headlineSmall?.copyWith(
+                                                                            fontWeight: FontWeight.bold,
+                                                                            color:Color.fromRGBO(167,167,132,1),
+                                                                            fontSize: titleFontSize)
+                                                                    ),
                                                                     Text(
-                                                                      event.pvNit ?? "",
-                                                                      maxLines: 1,
-                                                                      overflow: TextOverflow.ellipsis,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color: Colors.grey[500],
-                                                                      fontSize: titleFontSize)
-                                                                      ),
+                                                                        event.pvNit ?? "",
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: Colors.grey[500],
+                                                                        fontSize: titleFontSize)
+                                                                    ),
                                                                   ],
                                                                 ),
                                                               ),
                                                             ],
-                                                        )
+                                                          )
                                                       )
-                                                    ),
+                                                  ),
                                                   const SizedBox(height: 8),
-                                                   Row(
+                                                  Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                     children: [
                                                       Column(
@@ -1096,7 +1176,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                             SizedBox(
                                                                               width: constraints.maxWidth*0.35,
                                                                               child: Text(
-                                                                                   event.pvNombre!,
+                                                                                  event.pvNombre!,
                                                                                   maxLines: 3,
                                                                                   overflow: TextOverflow.ellipsis,
                                                                                   style: theme.textTheme.headlineSmall?.copyWith(
@@ -1114,34 +1194,34 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                                 color:Color.fromRGBO(167,167,132,1),
                                                                                 fontSize: titleFontSize)),
                                                                         Card(
-                                                                          elevation: 3,
-                                                                          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+                                                                            elevation: 3,
+                                                                            margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
                                                                             color:Color.fromRGBO(167,167,132,1),
-                                                                          child: Padding(
-                                                                          padding: const EdgeInsets.all(8),
-                                                                          child: Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Center(
-                                                                                child: Text("Descripción",maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                    style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        color:Colors.white,
-                                                                                        fontSize: titleFontSize)),
-                                                                              ),
-                                                                              Center(
-                                                                                child: Text("Cantidad",maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                    style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        color:Colors.white,
-                                                                                        fontSize: titleFontSize)),
-                                                                              ),
-                                                                              Center(),
-                                                                            ],
+                                                                            child: Padding(
+                                                                                padding: const EdgeInsets.all(8),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: [
+                                                                                    Center(
+                                                                                      child: Text("Descripción",maxLines: 1,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                              fontWeight: FontWeight.bold,
+                                                                                              color:Colors.white,
+                                                                                              fontSize: titleFontSize)),
+                                                                                    ),
+                                                                                    Center(
+                                                                                      child: Text("Cantidad",maxLines: 1,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                              fontWeight: FontWeight.bold,
+                                                                                              color:Colors.white,
+                                                                                              fontSize: titleFontSize)),
+                                                                                    ),
+                                                                                    Center(),
+                                                                                  ],
+                                                                                )
                                                                             )
-                                                                          )
                                                                         ),
                                                                         Column(
                                                                           children: event.plDetalle.map((detalle) {
@@ -1252,7 +1332,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                     TextButton(
                                                                       style: TextButton.styleFrom(
                                                                         textStyle: Theme.of(context).textTheme.labelLarge,
-                                                                       ),
+                                                                      ),
                                                                       child:  Text('Cerrar'),
                                                                       onPressed: () {
                                                                         Navigator.of(context).pop();
@@ -1278,18 +1358,18 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                             debugPrint("Boton2");
                                                             debugPrint(event.pvVerCobro.toString());
                                                             if(event.pnPermiteVerCobro == 1)
-                                                              {
-                                                                final rawUrl =  event.pvVerCobro!;
-                                                                final uri = Uri.tryParse(rawUrl);
-                                                                final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
-                                                                if (await canLaunchUrl(safeUri)) {
-                                                                  await launchUrl(safeUri, mode: LaunchMode.externalApplication);
-                                                                }
-                                                                else
-                                                                {
-                                                                  debugPrint("Could not launch $safeUri");
-                                                                }
+                                                            {
+                                                              final rawUrl =  event.pvVerCobro!;
+                                                              final uri = Uri.tryParse(rawUrl);
+                                                              final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
+                                                              if (await canLaunchUrl(safeUri)) {
+                                                                await launchUrl(safeUri, mode: LaunchMode.externalApplication);
                                                               }
+                                                              else
+                                                              {
+                                                                debugPrint("Could not launch $safeUri");
+                                                              }
+                                                            }
                                                             else
                                                             {
                                                               msgxToast("No se puede ver cobro");
@@ -1490,7 +1570,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                 );
                                                               },
                                                             );
-                                                            }, icon: Icon(Icons.money_sharp,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.05),),
+                                                          }, icon: Icon(Icons.money_sharp,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.05),),
                                                           Text("Pagos",
                                                               style: TextStyle(
                                                                 fontWeight: FontWeight.bold,
@@ -1501,7 +1581,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                       ),
                                                       Column(
                                                         children: [
-                                                       event.pnPermiteAplicaPago == 1 ? IconButton(onPressed: (){
+                                                          event.pnPermiteAplicaPago == 1 ? IconButton(onPressed: (){
                                                             debugPrint("Boton4");
 
                                                             setState(() {
@@ -1514,446 +1594,446 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               builder: (BuildContext context) {
                                                                 return StatefulBuilder(
                                                                     builder: (BuildContext context, StateSetter setStateDialog) {
-                                                                    return AlertDialog(
-                                                                      title: const Text('Aplicar Pago'),
-                                                                      content: SingleChildScrollView(
-                                                                        scrollDirection: Axis .vertical,
-                                                                        child: Form(
-                                                                          key: _formKey1,
-                                                                          child: Column(
-                                                                            children: [
-                                                                              Title(color: Colors.black, child: Text(
-                                                                                'Detalle de pago Doc ${event.pnDocumento}',
-                                                                              ),),
-                                                                              Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                children: [
-                                                                                  Text(
-                                                                                      "Tipo",
-                                                                                      maxLines: 1,
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                          fontWeight: FontWeight.bold,
-                                                                                          color:Color.fromRGBO(167,167,132,1),
-                                                                                          fontSize: titleFontSize)),
-                                                                                  Text(
-                                                                                      event.pvDocumentoTipoDescripcion!,
-                                                                                      maxLines: 1,
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                          fontWeight: FontWeight.bold,
-                                                                                          color:Color.fromRGBO(167,167,132,1),
-                                                                                          fontSize: titleFontSize)
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                              Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                children: [
-                                                                                  Text(
-                                                                                      "Propiedad",
-                                                                                      maxLines: 1,
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                          fontWeight: FontWeight.bold,
-                                                                                          color:Color.fromRGBO(167,167,132,1),
-                                                                                          fontSize: titleFontSize)),
-
-                                                                                  Text(
-                                                                                      event.pvPropiedadDescripcion!,
-                                                                                      maxLines: 1,
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                          fontWeight: FontWeight.bold,
-                                                                                          color:Color.fromRGBO(167,167,132,1),
-                                                                                          fontSize: titleFontSize)),
-                                                                                  Text(
-                                                                                      event.pnDocumento.toString()!,
-                                                                                      maxLines: 1,
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                          fontWeight: FontWeight.bold,
-                                                                                          color:Color.fromRGBO(167,167,132,1),
-                                                                                          fontSize: titleFontSize)),
-                                                                                ],
-                                                                              ),
-                                                                              Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                children: [
-                                                                                  Text(
-                                                                                      "Dirección",
-                                                                                      maxLines: 1,
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                          fontWeight: FontWeight.bold,
-                                                                                          color:Color.fromRGBO(167,167,132,1),
-                                                                                          fontSize: titleFontSize)),
-                                                                                  SizedBox(
-                                                                                    width: constraints.maxWidth*0.35,
-                                                                                    child: Text(
-                                                                                        event.pvPropiedadDireccion!,
-                                                                                        maxLines: 4,
+                                                                      return AlertDialog(
+                                                                        title: const Text('Aplicar Pago'),
+                                                                        content: SingleChildScrollView(
+                                                                          scrollDirection: Axis .vertical,
+                                                                          child: Form(
+                                                                            key: _formKey1,
+                                                                            child: Column(
+                                                                              children: [
+                                                                                Title(color: Colors.black, child: Text(
+                                                                                  'Detalle de pago Doc ${event.pnDocumento}',
+                                                                                ),),
+                                                                                Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                        "Tipo",
+                                                                                        maxLines: 1,
                                                                                         overflow: TextOverflow.ellipsis,
                                                                                         style: theme.textTheme.headlineSmall?.copyWith(
                                                                                             fontWeight: FontWeight.bold,
                                                                                             color:Color.fromRGBO(167,167,132,1),
                                                                                             fontSize: titleFontSize)),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-
-                                                                              Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                children: [
-                                                                                  Text(
-                                                                                      "Nombre",
-                                                                                      maxLines: 1,
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                          fontWeight: FontWeight.bold,
-                                                                                          color:Color.fromRGBO(167,167,132,1),
-                                                                                          fontSize: titleFontSize)),
-                                                                                  SizedBox(
-                                                                                    width: constraints.maxWidth*0.35,
-                                                                                    child: Text(
-                                                                                        event.pvNombre!,
-                                                                                        maxLines: 3,
+                                                                                    Text(
+                                                                                        event.pvDocumentoTipoDescripcion!,
+                                                                                        maxLines: 1,
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                        style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color:Color.fromRGBO(167,167,132,1),
+                                                                                            fontSize: titleFontSize)
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                        "Propiedad",
+                                                                                        maxLines: 1,
                                                                                         overflow: TextOverflow.ellipsis,
                                                                                         style: theme.textTheme.headlineSmall?.copyWith(
                                                                                             fontWeight: FontWeight.bold,
                                                                                             color:Color.fromRGBO(167,167,132,1),
                                                                                             fontSize: titleFontSize)),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                              Text("Detalle",
-                                                                                  maxLines: 1,
-                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:Color.fromRGBO(167,167,132,1),
-                                                                                      fontSize: titleFontSize)),
-                                                                              Row(
-                                                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    "Total ${event.pvMonedaSimbolo}${formatMoneyWithoutSymbol(event.pmValor!)}",
-                                                                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      fontSize: subtitleFontSize,
-                                                                                      color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                    ),
-                                                                                  ),
-                                                                                  Text(
-                                                                                    "Pendiente ${event.pvMonedaSimbolo}${formatMoneyWithoutSymbol(event.pmValorPendiente!)}",
-                                                                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      fontSize: subtitleFontSize,
-                                                                                      color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                              Card(
-                                                                                  elevation: 3,
-                                                                                  margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-                                                                                  color:Colors.white,
-                                                                                  child: Padding(
-                                                                                      padding: const EdgeInsets.all(8),
-                                                                                      child: Column(
-                                                                                        children: [
-                                                                                          Text("Monto a pagar (Q)",
-                                                                                              maxLines: 1,
-                                                                                              overflow: TextOverflow.ellipsis,
-                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  fontSize: titleFontSize)),
-                                                                                          10.height,
-                                                                                          TextFormField(
-                                                                                            validator: (String? value) {
-                                                                                              if (value == null || value.isEmpty) {
-                                                                                                return 'Información requerida'; // Error message if empty
-                                                                                              }
-                                                                                              return null; // Return null if the input is valid
-                                                                                            },
-                                                                                            keyboardType: TextInputType.number,
-                                                                                            textInputAction: TextInputAction.next,
-                                                                                            controller: montoPagarController,
-                                                                                            showCursor: false,
-                                                                                            decoration: const InputDecoration(
-                                                                                              border: OutlineInputBorder(),
-                                                                                            ),
-                                                                                            onChanged: (value)
-                                                                                            {
-                                                                                              setStateDialog(() {
-                                                                                                montoPagarController.text = value;
-                                                                                              });
-                                                                                            },
-                                                                                          ),
-                                                                                          10.height,
-                                                                                          Text("Forma de pago ",
-                                                                                              maxLines: 1,
-                                                                                              overflow: TextOverflow.ellipsis,
-                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  fontSize: titleFontSize)),
-                                                                                          10.height,
-                                                                                          DropdownButtonFormField<String>(
-                                                                                            validator: (String? value) {
-                                                                                              if (value == null || value.isEmpty) {
-                                                                                                return 'Información requerida'; // Error message if empty
-                                                                                              }
-                                                                                              return null; // Return null if the input is valid
-                                                                                            },
-                                                                                            isExpanded: true,
-                                                                                            value: formaPago[0].toString(),
-                                                                                            hint: const Text("Seleccione una empresa"),
-                                                                                            decoration: InputDecoration(
-                                                                                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                                                                              border: OutlineInputBorder(
-                                                                                                borderRadius: BorderRadius.circular(12),
-                                                                                                borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
-                                                                                              ),
-                                                                                              focusedBorder: OutlineInputBorder(
-                                                                                                borderRadius: BorderRadius.circular(12),
-                                                                                                borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
-                                                                                              ),
-                                                                                            ),
-                                                                                            style: const TextStyle(
-                                                                                              fontSize: 16,
-                                                                                              fontWeight: FontWeight.w500,
-                                                                                              color: Colors.black87,
-                                                                                            ),
-                                                                                            icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                                                                            items: List.generate(formaPago.length, (index) {
-                                                                                              return DropdownMenuItem<String>(
-                                                                                                value: formaPago[index].toString(),
-                                                                                                child: Text(
-                                                                                                  "${formapagoDescirpcion[index]}",
-                                                                                                  style: const TextStyle(
 
-                                                                                                    color: Colors.black,
-                                                                                                  ),
+                                                                                    Text(
+                                                                                        event.pvPropiedadDescripcion!,
+                                                                                        maxLines: 1,
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                        style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color:Color.fromRGBO(167,167,132,1),
+                                                                                            fontSize: titleFontSize)),
+                                                                                    Text(
+                                                                                        event.pnDocumento.toString()!,
+                                                                                        maxLines: 1,
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                        style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color:Color.fromRGBO(167,167,132,1),
+                                                                                            fontSize: titleFontSize)),
+                                                                                  ],
+                                                                                ),
+                                                                                Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                        "Dirección",
+                                                                                        maxLines: 1,
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                        style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color:Color.fromRGBO(167,167,132,1),
+                                                                                            fontSize: titleFontSize)),
+                                                                                    SizedBox(
+                                                                                      width: constraints.maxWidth*0.35,
+                                                                                      child: Text(
+                                                                                          event.pvPropiedadDireccion!,
+                                                                                          maxLines: 4,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                              fontWeight: FontWeight.bold,
+                                                                                              color:Color.fromRGBO(167,167,132,1),
+                                                                                              fontSize: titleFontSize)),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+
+                                                                                Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                        "Nombre",
+                                                                                        maxLines: 1,
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                        style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color:Color.fromRGBO(167,167,132,1),
+                                                                                            fontSize: titleFontSize)),
+                                                                                    SizedBox(
+                                                                                      width: constraints.maxWidth*0.35,
+                                                                                      child: Text(
+                                                                                          event.pvNombre!,
+                                                                                          maxLines: 3,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                              fontWeight: FontWeight.bold,
+                                                                                              color:Color.fromRGBO(167,167,132,1),
+                                                                                              fontSize: titleFontSize)),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                Text("Detalle",
+                                                                                    maxLines: 1,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                    style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color:Color.fromRGBO(167,167,132,1),
+                                                                                        fontSize: titleFontSize)),
+                                                                                Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      "Total ${event.pvMonedaSimbolo}${formatMoneyWithoutSymbol(event.pmValor!)}",
+                                                                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        fontSize: subtitleFontSize,
+                                                                                        color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                      ),
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "Pendiente ${event.pvMonedaSimbolo}${formatMoneyWithoutSymbol(event.pmValorPendiente!)}",
+                                                                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        fontSize: subtitleFontSize,
+                                                                                        color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                Card(
+                                                                                    elevation: 3,
+                                                                                    margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+                                                                                    color:Colors.white,
+                                                                                    child: Padding(
+                                                                                        padding: const EdgeInsets.all(8),
+                                                                                        child: Column(
+                                                                                          children: [
+                                                                                            Text("Monto a pagar (Q)",
+                                                                                                maxLines: 1,
+                                                                                                overflow: TextOverflow.ellipsis,
+                                                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                    fontWeight: FontWeight.bold,
+                                                                                                    color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                    fontSize: titleFontSize)),
+                                                                                            10.height,
+                                                                                            TextFormField(
+                                                                                              validator: (String? value) {
+                                                                                                if (value == null || value.isEmpty) {
+                                                                                                  return 'Información requerida'; // Error message if empty
+                                                                                                }
+                                                                                                return null; // Return null if the input is valid
+                                                                                              },
+                                                                                              keyboardType: TextInputType.number,
+                                                                                              textInputAction: TextInputAction.next,
+                                                                                              controller: montoPagarController,
+                                                                                              showCursor: false,
+                                                                                              decoration: const InputDecoration(
+                                                                                                border: OutlineInputBorder(),
+                                                                                              ),
+                                                                                              onChanged: (value)
+                                                                                              {
+                                                                                                setStateDialog(() {
+                                                                                                  montoPagarController.text = value;
+                                                                                                });
+                                                                                              },
+                                                                                            ),
+                                                                                            10.height,
+                                                                                            Text("Forma de pago ",
+                                                                                                maxLines: 1,
+                                                                                                overflow: TextOverflow.ellipsis,
+                                                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                    fontWeight: FontWeight.bold,
+                                                                                                    color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                    fontSize: titleFontSize)),
+                                                                                            10.height,
+                                                                                            DropdownButtonFormField<String>(
+                                                                                              validator: (String? value) {
+                                                                                                if (value == null || value.isEmpty) {
+                                                                                                  return 'Información requerida'; // Error message if empty
+                                                                                                }
+                                                                                                return null; // Return null if the input is valid
+                                                                                              },
+                                                                                              isExpanded: true,
+                                                                                              value: formaPago[0].toString(),
+                                                                                              hint: const Text("Seleccione una empresa"),
+                                                                                              decoration: InputDecoration(
+                                                                                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                                                                                border: OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(12),
+                                                                                                  borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
                                                                                                 ),
-                                                                                              );
-                                                                                            }),
-                                                                                            onChanged: (value) {
-                                                                                              setState(() {
-                                                                                                int indexB = formaPago.indexOf(value!);
-                                                                                                debugPrint(indexB.toString());
-                                                                                                debugPrint(formaPago[indexB].toString());
-                                                                                                formaPagoController.text =formaPago[indexB].toString();
-                                                                                                //formaPagoController.text = formapagoDescirpcion[index];
-                                                                                              });
-                                                                                            },
-                                                                                          ),
-                                                                                          10.height,
-                                                                                          Text("Fecha de pago ",
-                                                                                              maxLines: 1,
-                                                                                              overflow: TextOverflow.ellipsis,
-                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  fontSize: titleFontSize)),
-                                                                                          10.height,
-                                                                                          TextFormField(
-                                                                                            validator: (String? value) {
-                                                                                              if (value == null || value.isEmpty) {
-                                                                                                return 'Información requerida'; // Error message if empty
-                                                                                              }
-                                                                                              return null; // Return null if the input is valid
-                                                                                            },
-                                                                                            textInputAction: TextInputAction.next,
-                                                                                            controller: fechaPagoController,
-                                                                                            readOnly: true,
-                                                                                            onTap: () async {
+                                                                                                focusedBorder: OutlineInputBorder(
+                                                                                                  borderRadius: BorderRadius.circular(12),
+                                                                                                  borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
+                                                                                                ),
+                                                                                              ),
+                                                                                              style: const TextStyle(
+                                                                                                fontSize: 16,
+                                                                                                fontWeight: FontWeight.w500,
+                                                                                                color: Colors.black87,
+                                                                                              ),
+                                                                                              icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
+                                                                                              items: List.generate(formaPago.length, (index) {
+                                                                                                return DropdownMenuItem<String>(
+                                                                                                  value: formaPago[index].toString(),
+                                                                                                  child: Text(
+                                                                                                    "${formapagoDescirpcion[index]}",
+                                                                                                    style: const TextStyle(
+
+                                                                                                      color: Colors.black,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                );
+                                                                                              }),
+                                                                                              onChanged: (value) {
+                                                                                                setState(() {
+                                                                                                  int indexB = formaPago.indexOf(value!);
+                                                                                                  debugPrint(indexB.toString());
+                                                                                                  debugPrint(formaPago[indexB].toString());
+                                                                                                  formaPagoController.text =formaPago[indexB].toString();
+                                                                                                  //formaPagoController.text = formapagoDescirpcion[index];
+                                                                                                });
+                                                                                              },
+                                                                                            ),
+                                                                                            10.height,
+                                                                                            Text("Fecha de pago ",
+                                                                                                maxLines: 1,
+                                                                                                overflow: TextOverflow.ellipsis,
+                                                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                    fontWeight: FontWeight.bold,
+                                                                                                    color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                    fontSize: titleFontSize)),
+                                                                                            10.height,
+                                                                                            TextFormField(
+                                                                                              validator: (String? value) {
+                                                                                                if (value == null || value.isEmpty) {
+                                                                                                  return 'Información requerida'; // Error message if empty
+                                                                                                }
+                                                                                                return null; // Return null if the input is valid
+                                                                                              },
+                                                                                              textInputAction: TextInputAction.next,
+                                                                                              controller: fechaPagoController,
+                                                                                              readOnly: true,
+                                                                                              onTap: () async {
                                                                                                 fechaSelect = await showDatePicker(
-                                                                                                context: context,
-                                                                                                initialDate: DateTime.now(),
-                                                                                                firstDate: DateTime(2000),
-                                                                                                lastDate: DateTime(3000),
-                                                                                                builder: (BuildContext context, Widget? child) {
-                                                                                                  return Theme(
-                                                                                                    data: Theme.of(context).copyWith(
-                                                                                                      colorScheme: ColorScheme.light(
-                                                                                                        primary: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                      ),
-                                                                                                      textButtonTheme: TextButtonThemeData(
-                                                                                                        style: TextButton.styleFrom(
-                                                                                                          textStyle:theme.textTheme.bodyMedium?.copyWith(
-                                                                                                            fontWeight: FontWeight.bold,
-                                                                                                            fontSize: MediaQuery.of(context).size.width*0.035,
-                                                                                                            color: Color.fromRGBO(6,78,116,1),
+                                                                                                  context: context,
+                                                                                                  initialDate: DateTime.now(),
+                                                                                                  firstDate: DateTime(2000),
+                                                                                                  lastDate: DateTime(3000),
+                                                                                                  builder: (BuildContext context, Widget? child) {
+                                                                                                    return Theme(
+                                                                                                      data: Theme.of(context).copyWith(
+                                                                                                        colorScheme: ColorScheme.light(
+                                                                                                          primary: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                                        ),
+                                                                                                        textButtonTheme: TextButtonThemeData(
+                                                                                                          style: TextButton.styleFrom(
+                                                                                                            textStyle:theme.textTheme.bodyMedium?.copyWith(
+                                                                                                              fontWeight: FontWeight.bold,
+                                                                                                              fontSize: MediaQuery.of(context).size.width*0.035,
+                                                                                                              color: Color.fromRGBO(6,78,116,1),
+                                                                                                            ),
+                                                                                                            minimumSize: Size(1.5 ,1.5),
+                                                                                                            foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
                                                                                                           ),
-                                                                                                          minimumSize: Size(1.5 ,1.5),
-                                                                                                          foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
                                                                                                         ),
                                                                                                       ),
-                                                                                                    ),
-                                                                                                    child: child!,
-                                                                                                  );
-                                                                                                },
-                                                                                              );
+                                                                                                      child: child!,
+                                                                                                    );
+                                                                                                  },
+                                                                                                );
 
-                                                                                              if (fechaSelect != null) {
-                                                                                                setState(() {
-                                                                                                  // Format as yyyy-MM-dd
-                                                                                                  fechaPagoController.text =DateFormat('dd/MM/yyyy').format(fechaSelect!).toString();
-                                                                                                });
-                                                                                              }
-                                                                                            },
-                                                                                            decoration: InputDecoration(
-                                                                                              labelText: 'Fecha de pago',
-                                                                                              border: OutlineInputBorder(),
-                                                                                            ),
-                                                                                          ),
-                                                                                          10.height,
-                                                                                          Text("No. de Autorización",
-                                                                                              maxLines: 1,
-                                                                                              overflow: TextOverflow.ellipsis,
-                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  fontSize: titleFontSize)),
-                                                                                          10.height,
-                                                                                          TextFormField(
-                                                                                            validator: (String? value) {
-                                                                                              if (value == null || value.isEmpty) {
-                                                                                                return 'Información requerida'; // Error message if empty
-                                                                                              }
-                                                                                              return null; // Return null if the input is valid
-                                                                                            },
-                                                                                            keyboardType: TextInputType.number,
-                                                                                            textInputAction: TextInputAction.next,
-                                                                                            controller: numeroAutorizacionController,
-                                                                                            showCursor: false,
-                                                                                            decoration: const InputDecoration(
-                                                                                              border: OutlineInputBorder(),
-
-                                                                                            ),
-                                                                                            onChanged: (value)
-                                                                                            {
-                                                                                              setStateDialog(() {
-                                                                                                numeroAutorizacionController.text = value;
-                                                                                              });
-                                                                                            },
-                                                                                          ),
-                                                                                          10.height,
-                                                                                          Text("Fotografia de Pago",
-                                                                                              maxLines: 1,
-                                                                                              overflow: TextOverflow.ellipsis,
-                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  fontSize: titleFontSize)),
-                                                                                          10.height,
-                                                                                          Container(
-                                                                                            padding: const EdgeInsets.all(10),
-                                                                                            child: ElevatedButton(
-                                                                                              style: ElevatedButton.styleFrom(
-                                                                                                backgroundColor: Color.fromRGBO(6, 78, 116, 1),
-                                                                                                      // set the background color
-                                                                                              ),
-                                                                                              onPressed: () async{
-                                                                                                msgxToast("Cargando imagen...");
-                                                                                                final regresarIamgenSelect = await ImagePicker().pickImage(
-                                                                                                    source: ImageSource.gallery);
-                                                                                                setStateDialog(() {
-                                                                                                  if (regresarIamgenSelect == null) return;
-                                                                                                  iamgenSelect = File(regresarIamgenSelect.path);
-                                                                                                });
-                                                                                                //_PickGalery();
-                                                                                                //Navigator.of(context).pop();
-                                                                                              },
-                                                                                              child: Text(
-                                                                                                "Elegir Fotografía de Galería",
-                                                                                                style: TextStyle(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color: Colors.white,
-                                                                                                  fontSize: constraints.maxWidth * 0.03,
-                                                                                                ),
-                                                                                              ),),
-                                                                                          ),
-
-                                                                                          iamgenSelect != null ? SizedBox(
-                                                                                            height: constraints.maxWidth*0.4,
-                                                                                            width: constraints.maxWidth*0.4,
-                                                                                            child: Image.file(iamgenSelect!),
-                                                                                          ) : const Text("Puede seleccionar una opcion"),
-                                                                                          10.height,
-                                                                                          Container(
-                                                                                            padding: const EdgeInsets.all(10),
-                                                                                            child: ElevatedButton(
-
-                                                                                              style: ElevatedButton.styleFrom(
-                                                                                                backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
-                                                                                              ),
-                                                                                              onPressed: () async{
-
-                                                                                                if (!_formKey1.currentState!.validate()) {
-                                                                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                                                                    const SnackBar(
-                                                                                                      content: Text("Por favor complete todos los campos requeridos."),
-                                                                                                    ),
-                                                                                                  );
-                                                                                                  return;
+                                                                                                if (fechaSelect != null) {
+                                                                                                  setState(() {
+                                                                                                    // Format as yyyy-MM-dd
+                                                                                                    fechaPagoController.text =DateFormat('dd/MM/yyyy').format(fechaSelect!).toString();
+                                                                                                  });
                                                                                                 }
-                                                                                                if(iamgenSelect != null)
-                                                                                             {
-                                                                                              File imageFile = File(iamgenSelect!.path);
-                                                                                              List<int> imageBytes = await imageFile.readAsBytes();
-                                                                                              setStateDialog(() {
-                                                                                                base64Image = base64Encode(imageBytes);
-                                                                                              });
-                                                                                            }
-
-                                                                                            //msgxToast("Cargando imagen...");
-                                                                                                debugPrint("Cargando imagen...");
-                                                                                                debugPrint(montoPagarController.text);
-                                                                                                DateTime fecha = DateFormat('dd/MM/yyyy').parse(fechaPagoController.text);
-                                                                                                String formattedDate = DateFormat('yyyyMMdd').format(fecha);
-                                                                                                debugPrint(fechaPagoController.text);
-                                                                                                debugPrint(formattedDate);
-                                                                                                debugPrint(numeroAutorizacionController.text);
-                                                                                                debugPrint(formaPagoController.text);
-                                                                                                debugPrint(base64Image.toString());
-                                                                                                makeApiCall(event.pnDocumento.toString(),montoPagarController.text,formaPagoController.text,
-                                                                                                    formattedDate,numeroAutorizacionController.text,base64Image.toString(),"-1");
-
                                                                                               },
-                                                                                              child: Text(
-                                                                                                "Realizar pago",
-                                                                                                style: TextStyle(
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:   Colors.white,
-                                                                                                  fontSize: constraints.maxWidth * 0.03,
-                                                                                                ),
-                                                                                              ),),
-                                                                                          ),
-                                                                                        ],
-                                                                                      )
-                                                                                  )
-                                                                              ),
+                                                                                              decoration: InputDecoration(
+                                                                                                labelText: 'Fecha de pago',
+                                                                                                border: OutlineInputBorder(),
+                                                                                              ),
+                                                                                            ),
+                                                                                            10.height,
+                                                                                            Text("No. de Autorización",
+                                                                                                maxLines: 1,
+                                                                                                overflow: TextOverflow.ellipsis,
+                                                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                    fontWeight: FontWeight.bold,
+                                                                                                    color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                    fontSize: titleFontSize)),
+                                                                                            10.height,
+                                                                                            TextFormField(
+                                                                                              validator: (String? value) {
+                                                                                                if (value == null || value.isEmpty) {
+                                                                                                  return 'Información requerida'; // Error message if empty
+                                                                                                }
+                                                                                                return null; // Return null if the input is valid
+                                                                                              },
+                                                                                              keyboardType: TextInputType.number,
+                                                                                              textInputAction: TextInputAction.next,
+                                                                                              controller: numeroAutorizacionController,
+                                                                                              showCursor: false,
+                                                                                              decoration: const InputDecoration(
+                                                                                                border: OutlineInputBorder(),
 
-                                                                            ],
+                                                                                              ),
+                                                                                              onChanged: (value)
+                                                                                              {
+                                                                                                setStateDialog(() {
+                                                                                                  numeroAutorizacionController.text = value;
+                                                                                                });
+                                                                                              },
+                                                                                            ),
+                                                                                            10.height,
+                                                                                            Text("Fotografia de Pago",
+                                                                                                maxLines: 1,
+                                                                                                overflow: TextOverflow.ellipsis,
+                                                                                                style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                    fontWeight: FontWeight.bold,
+                                                                                                    color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                    fontSize: titleFontSize)),
+                                                                                            10.height,
+                                                                                            Container(
+                                                                                              padding: const EdgeInsets.all(10),
+                                                                                              child: ElevatedButton(
+                                                                                                style: ElevatedButton.styleFrom(
+                                                                                                  backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                  // set the background color
+                                                                                                ),
+                                                                                                onPressed: () async{
+                                                                                                  msgxToast("Cargando imagen...");
+                                                                                                  final regresarIamgenSelect = await ImagePicker().pickImage(
+                                                                                                      source: ImageSource.gallery);
+                                                                                                  setStateDialog(() {
+                                                                                                    if (regresarIamgenSelect == null) return;
+                                                                                                    iamgenSelect = File(regresarIamgenSelect.path);
+                                                                                                  });
+                                                                                                  //_PickGalery();
+                                                                                                  //Navigator.of(context).pop();
+                                                                                                },
+                                                                                                child: Text(
+                                                                                                  "Elegir Fotografía de Galería",
+                                                                                                  style: TextStyle(
+                                                                                                    fontWeight: FontWeight.bold,
+                                                                                                    color: Colors.white,
+                                                                                                    fontSize: constraints.maxWidth * 0.03,
+                                                                                                  ),
+                                                                                                ),),
+                                                                                            ),
+
+                                                                                            iamgenSelect != null ? SizedBox(
+                                                                                              height: constraints.maxWidth*0.4,
+                                                                                              width: constraints.maxWidth*0.4,
+                                                                                              child: Image.file(iamgenSelect!),
+                                                                                            ) : const Text("Puede seleccionar una opcion"),
+                                                                                            10.height,
+                                                                                            Container(
+                                                                                              padding: const EdgeInsets.all(10),
+                                                                                              child: ElevatedButton(
+
+                                                                                                style: ElevatedButton.styleFrom(
+                                                                                                  backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
+                                                                                                ),
+                                                                                                onPressed: () async{
+
+                                                                                                  if (!_formKey1.currentState!.validate()) {
+                                                                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                                                                      const SnackBar(
+                                                                                                        content: Text("Por favor complete todos los campos requeridos."),
+                                                                                                      ),
+                                                                                                    );
+                                                                                                    return;
+                                                                                                  }
+                                                                                                  if(iamgenSelect != null)
+                                                                                                  {
+                                                                                                    File imageFile = File(iamgenSelect!.path);
+                                                                                                    List<int> imageBytes = await imageFile.readAsBytes();
+                                                                                                    setStateDialog(() {
+                                                                                                      base64Image = base64Encode(imageBytes);
+                                                                                                    });
+                                                                                                  }
+
+                                                                                                  //msgxToast("Cargando imagen...");
+                                                                                                  debugPrint("Cargando imagen...");
+                                                                                                  debugPrint(montoPagarController.text);
+                                                                                                  DateTime fecha = DateFormat('dd/MM/yyyy').parse(fechaPagoController.text);
+                                                                                                  String formattedDate = DateFormat('yyyyMMdd').format(fecha);
+                                                                                                  debugPrint(fechaPagoController.text);
+                                                                                                  debugPrint(formattedDate);
+                                                                                                  debugPrint(numeroAutorizacionController.text);
+                                                                                                  debugPrint(formaPagoController.text);
+                                                                                                  debugPrint(base64Image.toString());
+                                                                                                  makeApiCall(event.pnDocumento.toString(),montoPagarController.text,formaPagoController.text,
+                                                                                                      formattedDate,numeroAutorizacionController.text,base64Image.toString(),"-1");
+
+                                                                                                },
+                                                                                                child: Text(
+                                                                                                  "Realizar pago",
+                                                                                                  style: TextStyle(
+                                                                                                    fontWeight: FontWeight.bold,
+                                                                                                    color:   Colors.white,
+                                                                                                    fontSize: constraints.maxWidth * 0.03,
+                                                                                                  ),
+                                                                                                ),),
+                                                                                            ),
+                                                                                          ],
+                                                                                        )
+                                                                                    )
+                                                                                ),
+
+                                                                              ],
+                                                                            ),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                      actions: <Widget>[
-                                                                        TextButton(
-                                                                          style: TextButton.styleFrom(
-                                                                            textStyle: Theme.of(context).textTheme.labelLarge,
+                                                                        actions: <Widget>[
+                                                                          TextButton(
+                                                                            style: TextButton.styleFrom(
+                                                                              textStyle: Theme.of(context).textTheme.labelLarge,
+                                                                            ),
+                                                                            child:  Text('Cerrar'),
+                                                                            onPressed: () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
                                                                           ),
-                                                                          child:  Text('Cerrar'),
-                                                                          onPressed: () {
-                                                                            Navigator.of(context).pop();
-                                                                          },
-                                                                        ),
-                                                                      ],
-                                                                    );
-                                                                  }
+                                                                        ],
+                                                                      );
+                                                                    }
                                                                 );
                                                               },
                                                             );
@@ -1984,11 +2064,11 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             ),
 
                             17.height,
-                              Card(
+                            Card(
                               elevation: 3,
                               margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
                               color: Colors.green,
-                              child: SizedBox(
+                              child: inquilino == "1" ? Center(): SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 height: MediaQuery.of(context).size.height * 0.12,
                                 child: Column(
@@ -2020,13 +2100,13 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               ),
                             ) ,
                             17.height,
-                             Text("Información Importante",style: theme.textTheme.headlineSmall?.copyWith(
+                            Text("Información Importante",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
                             17.height,
-                              FutureBuilder(future: _futureInfo,
+                            FutureBuilder(future: _futureInfo,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const Center(child: CircularProgressIndicator());
@@ -2058,74 +2138,74 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height*0.2,
                                   child: LayoutBuilder(
-                                  builder: (context, constraints) {
+                                      builder: (context, constraints) {
 
-                                    return ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      padding: EdgeInsets.zero,
-                                      physics: const ClampingScrollPhysics(),
-                                      itemCount: events.length,
-                                      itemBuilder: (context, index) {
-                                        final event = events[index];
-                                        return Container(
-                                            width: constraints.maxWidth*0.8,
-                                            height: constraints.maxHeight*0.4,
-                                            child: Card(
-                                                color: Color.fromRGBO(6,78,116,1),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(8),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      event["pn_tipo_contacto"].toString() == "1"? Icon(
-                                                        FontAwesomeIcons.phone,
-                                                        size: constraints.maxWidth * 0.1,
-                                                        color:  cardColorsB[index],
-                                                      ):Icon(Icons.mail_outline,
-                                                        size: constraints.maxWidth * 0.1,
-                                                        color:  cardColorsB[index],
-                                                      ),
-                                                      10.width,
-                                                      Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        return ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          padding: EdgeInsets.zero,
+                                          physics: const ClampingScrollPhysics(),
+                                          itemCount: events.length,
+                                          itemBuilder: (context, index) {
+                                            final event = events[index];
+                                            return Container(
+                                                width: constraints.maxWidth*0.8,
+                                                height: constraints.maxHeight*0.4,
+                                                child: Card(
+                                                    color: Color.fromRGBO(6,78,116,1),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                         children: [
-                                                          Text(event["pv_descripcion"].toString(),style: TextStyle(
-                                                            fontSize: constraints.maxWidth * 0.035,
-                                                            color: Colors.white,
+                                                          event["pn_tipo_contacto"].toString() == "1"? Icon(
+                                                            FontAwesomeIcons.phone,
+                                                            size: constraints.maxWidth * 0.1,
+                                                            color:  cardColorsB[index],
+                                                          ):Icon(Icons.mail_outline,
+                                                            size: constraints.maxWidth * 0.1,
+                                                            color:  cardColorsB[index],
                                                           ),
-                                                          ),
+                                                          10.width,
+                                                          Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                                            children: [
+                                                              Text(event["pv_descripcion"].toString(),style: TextStyle(
+                                                                fontSize: constraints.maxWidth * 0.035,
+                                                                color: Colors.white,
+                                                              ),
+                                                              ),
 
-                                                          Text(event["pv_detalle"].toString(),style: TextStyle(
-                                                            fontSize: constraints.maxWidth * 0.035,
-                                                            color: Colors.white,
-                                                          ),)
+                                                              Text(event["pv_detalle"].toString(),style: TextStyle(
+                                                                fontSize: constraints.maxWidth * 0.035,
+                                                                color: Colors.white,
+                                                              ),)
+                                                            ],
+                                                          ),
                                                         ],
                                                       ),
-                                                    ],
-                                                  ),
+                                                    )
                                                 )
-                                            )
+                                            );
+                                          },
                                         );
-                                      },
-                                    );
-                                  }
+                                      }
                                   ),
                                 );
                               },
                             ),
                             17.height,
-                             Text("Noticias y Avisos",style: theme.textTheme.headlineSmall?.copyWith(
+                            Text("Noticias y Avisos",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
 
                             17.height,
-                              FutureBuilder(
+                            FutureBuilder(
                               future: _futureNoticias,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2325,13 +2405,13 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               },
                             ) ,
                             17.height,
-                              Text("Objetos Perdidos",style: theme.textTheme.headlineSmall?.copyWith(
+                            Text("Objetos Perdidos",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )) ,
                             17.height,
-                              FutureBuilder(
+                            FutureBuilder(
                               future: _futurePerdidos,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2478,14 +2558,14 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 );
                               },
                             ) ,
-                          17.height,
-                             Text("Rentas y Ventas",style: theme.textTheme.headlineSmall?.copyWith(
+                            17.height,
+                            Text("Rentas y Ventas",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )),
                             17.height,
-                             FutureBuilder<List<RentaVentaD5>>(
+                            FutureBuilder<List<RentaVentaD5>>(
                               future:_futureRentas,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2539,47 +2619,47 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                         _currentIndex[index] = _currentIndex[index] ?? 0;
 
                                         return Card(
-                                            color: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(12.0),
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            event.pvRentaTipoDescripcion ?? "",
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .titleMedium
-                                                                ?.copyWith(
-                                                              fontSize: scale(0.045), // dinámico
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey[700],
-                                                            ),
+                                          color: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          event.pvRentaTipoDescripcion ?? "",
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .titleMedium
+                                                              ?.copyWith(
+                                                            fontSize: scale(0.045), // dinámico
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.grey[700],
                                                           ),
-                                                          Text(
-                                                            "${event.pvMonedaSimbolo} ${formatMoneyWithoutSymbol(event.pmValor!)}",
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .titleMedium
-                                                                ?.copyWith(
-                                                              fontSize: scale(0.045),
-                                                              fontWeight: FontWeight.bold,
-                                                              color: const Color.fromRGBO(167, 167, 132, 1),
-                                                            ),
+                                                        ),
+                                                        Text(
+                                                          "${event.pvMonedaSimbolo} ${formatMoneyWithoutSymbol(event.pmValor!)}",
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .titleMedium
+                                                              ?.copyWith(
+                                                            fontSize: scale(0.045),
+                                                            fontWeight: FontWeight.bold,
+                                                            color: const Color.fromRGBO(167, 167, 132, 1),
                                                           ),
-                                                        ],
-                                                      ),
-                                                      StatefulBuilder(
-                                                          builder: (context, setLocalState) {
-                                                            return  SizedBox(
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    StatefulBuilder(
+                                                        builder: (context, setLocalState) {
+                                                          return  SizedBox(
                                                             width: constraints.maxWidth * 0.40,
                                                             height: constraints.maxWidth * 0.30,
                                                             child: images.isNotEmpty
@@ -2659,132 +2739,132 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               ],
                                                             )
                                                                 : const Center(child: Text("Sin fotos")),
-                                                            );
+                                                          );
                                                         }
-                                                      ),
-                                                    ],
-                                                  ),
-
-                                                  Card(
-                                                    elevation: 3,
-                                                    color: const Color.fromRGBO(6, 78, 116, 1),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(10),
                                                     ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.all(10),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                        children: [
-                                                          // Columna Izquierda
-                                                          Column(
-                                                            mainAxisAlignment: MainAxisAlignment.start,
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              Text("FECHA DE PUBLICACIÓN",
-                                                                  style: Theme.of(context)
-                                                                      .textTheme
-                                                                      .bodyMedium
-                                                                      ?.copyWith(
-                                                                    fontSize: scale(0.03),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: Colors.white,
-                                                                  )),
-                                                              Text("DATOS DE CONTACTO",
-                                                                  style: Theme.of(context)
-                                                                      .textTheme
-                                                                      .bodyMedium
-                                                                      ?.copyWith(
-                                                                    fontSize: scale(0.03),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: Colors.white,
-                                                                  )),
-                                                            ],
-                                                          ),
-                                                          Column(
-                                                            mainAxisAlignment: MainAxisAlignment.end,
-                                                            crossAxisAlignment: CrossAxisAlignment.end,
-                                                            children: [
-                                                              Text(
-                                                                DateFormat('dd MMMM yyyy', "es_ES")
-                                                                    .format(DateTime.parse(event.pfFecha.toString())),
+                                                  ],
+                                                ),
+
+                                                Card(
+                                                  elevation: 3,
+                                                  color: const Color.fromRGBO(6, 78, 116, 1),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(10),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        // Columna Izquierda
+                                                        Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("FECHA DE PUBLICACIÓN",
                                                                 style: Theme.of(context)
                                                                     .textTheme
                                                                     .bodyMedium
                                                                     ?.copyWith(
-                                                                  fontSize: scale(0.025),
+                                                                  fontSize: scale(0.03),
                                                                   fontWeight: FontWeight.bold,
                                                                   color: Colors.white,
-                                                                ),
-                                                                maxLines: 1,
-                                                                overflow: TextOverflow.ellipsis,
-                                                              ),
-                                                              Text(event.pvContacto ?? "",
-                                                                  style: Theme.of(context)
-                                                                      .textTheme
-                                                                      .bodyMedium
-                                                                      ?.copyWith(
-                                                                    fontSize: scale(0.025),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: Colors.white,
-                                                                  ),
-                                                                maxLines: 1,
-                                                                overflow: TextOverflow.ellipsis,),
-                                                            ],
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Card(
-                                                    elevation: 3,
-                                                    color: Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.all(10),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                        children: [
-                                                          // Columna Izquierda
-                                                          Column(
-                                                            mainAxisAlignment: MainAxisAlignment.start,
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              Text("DETALLE",
-                                                                  style: Theme.of(context)
-                                                                      .textTheme
-                                                                      .bodyMedium
-                                                                      ?.copyWith(
-                                                                    fontSize: scale(0.03),
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: Colors.grey[700],
-                                                                  )),
-                                                              Text(event.pvDetalleRenta ?? "",
+                                                                )),
+                                                            Text("DATOS DE CONTACTO",
                                                                 style: Theme.of(context)
                                                                     .textTheme
                                                                     .bodyMedium
                                                                     ?.copyWith(
-                                                                  fontSize: scale(0.025),
+                                                                  fontSize: scale(0.03),
                                                                   fontWeight: FontWeight.bold,
-                                                                  color: const Color.fromRGBO(167, 167, 132, 1),
-                                                                ),
-                                                                maxLines: 3,
-
-                                                                overflow: TextOverflow.ellipsis,
+                                                                  color: Colors.white,
+                                                                )),
+                                                          ],
+                                                        ),
+                                                        Column(
+                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                                          children: [
+                                                            Text(
+                                                              DateFormat('dd MMMM yyyy', "es_ES")
+                                                                  .format(DateTime.parse(event.pfFecha.toString())),
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.copyWith(
+                                                                fontSize: scale(0.025),
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
                                                               ),
-                                                            ],
-                                                          ),
-
-                                                        ],
-                                                      ),
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                            Text(event.pvContacto ?? "",
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.copyWith(
+                                                                fontSize: scale(0.025),
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.white,
+                                                              ),
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.ellipsis,),
+                                                          ],
+                                                        )
+                                                      ],
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                                Card(
+                                                  elevation: 3,
+                                                  color: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(10),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        // Columna Izquierda
+                                                        Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("DETALLE",
+                                                                style: Theme.of(context)
+                                                                    .textTheme
+                                                                    .bodyMedium
+                                                                    ?.copyWith(
+                                                                  fontSize: scale(0.03),
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: Colors.grey[700],
+                                                                )),
+                                                            Text(event.pvDetalleRenta ?? "",
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.copyWith(
+                                                                fontSize: scale(0.025),
+                                                                fontWeight: FontWeight.bold,
+                                                                color: const Color.fromRGBO(167, 167, 132, 1),
+                                                              ),
+                                                              maxLines: 3,
+
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                          ],
+                                                        ),
+
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          );
+                                          ),
+                                        );
                                       },
                                     );
                                   },
@@ -2792,13 +2872,13 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               },
                             ) ,
                             17.height,
-                             Text("Amenidades Reservadas",style: theme.textTheme.headlineSmall?.copyWith(
+                            Text("Amenidades Reservadas",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )) ,
                             17.height,
-                             Center(
+                            Center(
                               child: Container(
                                 width: MediaQuery.of(context).size.width*0.8,
                                 child: Card(
@@ -2903,7 +2983,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                               ),
                             ),*/
 
-                             FutureBuilder<List<ReservasF5>>(
+                            FutureBuilder<List<ReservasF5>>(
                               future: _futureReservas,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2934,838 +3014,839 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                 }
                                 final documentos = snapshot.data!; // API list
                                 return LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      physics: ClampingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: documentos.length,
-                                      itemBuilder: (context, index) {
-                                        final event = documentos[index];
-                                        DateTime? fechaSelectB;
-                                        return Container(
-                                          width: constraints.maxWidth,
+                                    builder: (context, constraints) {
+                                      return ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        physics: ClampingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: documentos.length,
+                                        itemBuilder: (context, index) {
+                                          final event = documentos[index];
+                                          DateTime? fechaSelectB;
+                                          return Container(
+                                            width: constraints.maxWidth,
 
-                                          child: Card(
-                                            elevation: 3,
-                                            color:Colors.white,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      Column(
-                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          SizedBox(
-                                                            width: constraints.maxWidth* 0.4,
-                                                            child: ListTile(
-                                                              title: Text("Propiedad",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
-                                                                fontSize: constraints.maxWidth * 0.05,
-                                                              )
-                                                              ),
-                                                              subtitle: Text(event.pvPropiedadDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(6,78,116,1),
-                                                                fontSize:constraints.maxWidth* 0.035,
-                                                              )
-                                                              ),
-                                                            )
-                                                          ),
-
-                                                          SizedBox(
-                                                            width:constraints.maxWidth*0.4,
-                                                            child: ListTile(
-                                                              title: Text("Amenidad",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(167,167,132,1),
-                                                                fontSize: constraints.maxWidth* 0.05,
-                                                              )
-                                                              ),
-                                                              subtitle: Text(event.pvAmenidadDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:Color.fromRGBO(6,78,116,1),
-                                                                fontSize: constraints.maxWidth * 0.035,
-                                                              ),maxLines: 2,
-                                                              ),
-                                                            )
-                                                          ),
-                                                          SizedBox(
-                                                              width:constraints.maxWidth* 0.4,
-                                                              child: ListTile(
-                                                                title: Text("Costo",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color:Color.fromRGBO(167,167,132,1),
-                                                                  fontSize: constraints.maxWidth * 0.05,
-                                                                )
-                                                                ),
-                                                                subtitle: Text(event.pvMonedaSimbolo! + event.pmValor!.toString(),style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color:Color.fromRGBO(6,78,116,1),
-                                                                  fontSize: constraints.maxWidth * 0.035,
-                                                                )
-                                                                ),
-                                                              )
-                                                          ),
-
-                                                        ],
-                                                      ),
-                                                      Column(
-                                                        mainAxisAlignment: MainAxisAlignment.end,
-                                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                                        children: [
-                                                          SizedBox(
-                                                              width:constraints.maxWidth* 0.4,
-                                                              child: ListTile(
-                                                                title:Text("Fecha",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color:Color.fromRGBO(167,167,132,1),
-                                                                  fontSize: constraints.maxWidth * 0.05,
-                                                                )
-                                                                ),
-                                                                subtitle: Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event.pfFecha!)),style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color:Color.fromRGBO(6,78,116,1),
-                                                                  fontSize: constraints.maxWidth * 0.035,
-                                                                ),maxLines: 2,
-                                                                ),
-                                                              )
-                                                          ),
-                                                          SizedBox(
-                                                            width:constraints.maxWidth* 0.4,
-                                                            child: ListTile(
-                                                              title: Text("Estado",style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,color:Color.fromRGBO(6,78,116,1),
-                                                                fontSize: constraints.maxWidth * 0.05,
-                                                              )
-                                                              ),
-                                                              subtitle: Text(event.pvEstadoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color:event.pvEstadoDescripcion == "No Autorizada" ? Colors.pink[900]:Colors.amber[600],
-                                                                fontSize: constraints.maxWidth * 0.035,
-                                                              )
-                                                              ),
-                                                            )
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      event.pnPermiteAplicarPago == 1 ? IconButton(onPressed:()
-                                                      {
-                                                        DateTime? fechaSelect;
-                                                        //pago de amenidad
-                                                      setState(() {
-                                                        montoPagarControllerB.text = "${event.pmValor!}";
-                                                        fechaPagoController.text = DateFormat('dd/MM/yyyy').format(DateTime.now()).toString();
-                                                        formaPagoController.text =formaPago[0].toString();
-                                                      });
-                                                         showDialog<void>(
-                                                        context: context,
-                                                        builder: (BuildContext context) {
-                                                          return StatefulBuilder(
-                                                              builder: (BuildContext context, StateSetter setStateDialog) {
-                                                                return AlertDialog(
-                                                                  title: const Text('Aplicar Pago'),
-                                                                  content: SingleChildScrollView(
-                                                                    scrollDirection: Axis .vertical,
-                                                                    child: Form(
-                                                                      key: _formKey,
-                                                                      child: Column(
-                                                                        children: [
-                                                                          Title(color: Colors.black, child: Text(
-                                                                            'Detalle de pago Doc ${event.pnDocumento}',
-                                                                          ),),
-                                                                          Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Text(
-                                                                                  "Tipo",
-                                                                                  maxLines: 1,
-                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:Color.fromRGBO(167,167,132,1),
-                                                                                      fontSize: MediaQuery.of(context).size.width * 0.045)),
-
-                                                                            ],
-                                                                          ),
-                                                                          Text(
-                                                                              "Propiedad",
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color:Color.fromRGBO(167,167,132,1),
-                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                          Text(
-                                                                              event.pvPropiedadDescripcion!,
-                                                                              maxLines: 3,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color:Color.fromRGBO(167,167,132,1),
-                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                          Text(
-                                                                              event.pnDocumento.toString()!,
-                                                                              maxLines: 3,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color:Color.fromRGBO(167,167,132,1),
-                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                          Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Text(
-                                                                                  "Amenidad",
-                                                                                  maxLines: 1,
-                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:Color.fromRGBO(167,167,132,1),
-                                                                                      fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                              SizedBox(
-                                                                                width: constraints.maxWidth*0.35,
-                                                                                child: Text(
-                                                                                    event.pvAmenidadDescripcion!,
-                                                                                    maxLines: 4,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                    style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        color:Color.fromRGBO(167,167,132,1),
-                                                                                        fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          Text("Detalle",
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  color:Color.fromRGBO(167,167,132,1),
-                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                          Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                                            children: [
-                                                                              Text(
-                                                                                "Total ${event.pvMonedaSimbolo}${formatMoneyWithoutSymbol(event.pmValor!)}",
-                                                                                style: theme.textTheme.bodyMedium?.copyWith(
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                  fontSize: MediaQuery.of(context).size.width * 0.03,
-                                                                                  color: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          Card(
-                                                                              elevation: 3,
-                                                                              margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-                                                                              color:Colors.white,
-                                                                              child: Padding(
-                                                                                  padding: const EdgeInsets.all(8),
-                                                                                  child: Column(
-                                                                                    children: [
-                                                                                      Text("Monto a pagar (Q)",
-                                                                                          maxLines: 1,
-                                                                                          overflow: TextOverflow.ellipsis,
-                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                              fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                                      10.height,
-                                                                                      TextFormField(
-                                                                                        validator: (String? value) {
-                                                                                          if (value == null || value.isEmpty) {
-                                                                                            return 'Información requerida'; // Error message if empty
-                                                                                          }
-                                                                                          return null; // Return null if the input is valid
-                                                                                        },
-                                                                                        keyboardType: TextInputType.number,
-                                                                                        textInputAction: TextInputAction.next,
-                                                                                        controller: montoPagarControllerB,
-                                                                                        showCursor: false,
-                                                                                        decoration: const InputDecoration(
-                                                                                          border: OutlineInputBorder(),
-                                                                                        ),
-                                                                                        onChanged: (value)
-                                                                                        {
-                                                                                          setStateDialog(() {
-                                                                                            montoPagarControllerB.text = value;
-                                                                                          });
-                                                                                        },
-                                                                                      ),
-                                                                                      10.height,
-                                                                                      Text("Forma de pago ",
-                                                                                          maxLines: 1,
-                                                                                          overflow: TextOverflow.ellipsis,
-                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                              fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                                      10.height,
-                                                                                      DropdownButtonFormField<String>(
-                                                                                        validator: (String? value) {
-                                                                                          if (value == null || value.isEmpty) {
-                                                                                            return 'Información requerida'; // Error message if empty
-                                                                                          }
-                                                                                          return null; // Return null if the input is valid
-                                                                                        },
-                                                                                        isExpanded: true,
-                                                                                        value: formaPago[0].toString(),
-                                                                                        hint: const Text("Seleccione una empresa"),
-                                                                                        decoration: InputDecoration(
-                                                                                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                                                                          border: OutlineInputBorder(
-                                                                                            borderRadius: BorderRadius.circular(12),
-                                                                                            borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
-                                                                                          ),
-                                                                                          focusedBorder: OutlineInputBorder(
-                                                                                            borderRadius: BorderRadius.circular(12),
-                                                                                            borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
-                                                                                          ),
-                                                                                        ),
-                                                                                        style: const TextStyle(
-                                                                                          fontSize: 16,
-                                                                                          fontWeight: FontWeight.w500,
-                                                                                          color: Colors.black87,
-                                                                                        ),
-                                                                                        icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                                                                        items: List.generate(formaPago.length, (index) {
-                                                                                          return DropdownMenuItem<String>(
-                                                                                            value: formaPago[index].toString(),
-                                                                                            child: Text(
-                                                                                              "${formapagoDescirpcion[index]}",
-                                                                                              style: const TextStyle(
-
-                                                                                                color: Colors.black,
-                                                                                              ),
-                                                                                            ),
-                                                                                          );
-                                                                                        }),
-                                                                                        onChanged: (value) {
-                                                                                          setState(() {
-                                                                                            int indexB = formaPago.indexOf(value!);
-                                                                                            debugPrint(indexB.toString());
-                                                                                            debugPrint(formaPago[indexB].toString());
-                                                                                            formaPagoController.text =formaPago[indexB].toString();
-                                                                                            //formaPagoController.text = formapagoDescirpcion[index];
-                                                                                          });
-                                                                                        },
-                                                                                      ),
-                                                                                      10.height,
-                                                                                      Text("Fecha de pago ",
-                                                                                          maxLines: 1,
-                                                                                          overflow: TextOverflow.ellipsis,
-                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                              fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                                      10.height,
-                                                                                      TextFormField(
-                                                                                        validator: (String? value) {
-                                                                                          if (value == null || value.isEmpty) {
-                                                                                            return 'Información requerida'; // Error message if empty
-                                                                                          }
-                                                                                          return null; // Return null if the input is valid
-                                                                                        },
-                                                                                        textInputAction: TextInputAction.next,
-                                                                                        controller: fechaPagoController,
-                                                                                        readOnly: true,
-                                                                                        onTap: () async {
-                                                                                          fechaSelect = await showDatePicker(
-                                                                                            context: context,
-                                                                                            initialDate: DateTime.now(),
-                                                                                            firstDate: DateTime(2000),
-                                                                                            lastDate: DateTime(3000),
-                                                                                            builder: (BuildContext context, Widget? child) {
-                                                                                              return Theme(
-                                                                                                data: Theme.of(context).copyWith(
-                                                                                                  colorScheme: ColorScheme.light(
-                                                                                                    primary: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                  ),
-                                                                                                  textButtonTheme: TextButtonThemeData(
-                                                                                                    style: TextButton.styleFrom(
-                                                                                                      textStyle:theme.textTheme.bodyMedium?.copyWith(
-                                                                                                        fontWeight: FontWeight.bold,
-                                                                                                        fontSize: MediaQuery.of(context).size.width*0.035,
-                                                                                                        color: Color.fromRGBO(6,78,116,1),
-                                                                                                      ),
-                                                                                                      minimumSize: Size(1.5 ,1.5),
-                                                                                                      foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                                child: child!,
-                                                                                              );
-                                                                                            },
-                                                                                          );
-
-                                                                                          if (fechaSelect != null) {
-                                                                                            setState(() {
-                                                                                              // Format as yyyy-MM-dd
-                                                                                              fechaPagoController.text = DateFormat('dd/MM/yyyy').format(fechaSelect!).toString();
-                                                                                            });
-                                                                                          }
-                                                                                        },
-                                                                                        decoration: InputDecoration(
-                                                                                          labelText: 'Fecha de pago',
-                                                                                          border: OutlineInputBorder(),
-                                                                                        ),
-                                                                                      ),
-                                                                                      10.height,
-                                                                                      Text("No. de Autorización",
-                                                                                          maxLines: 1,
-                                                                                          overflow: TextOverflow.ellipsis,
-                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                              fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                                      10.height,
-                                                                                      TextFormField(
-                                                                                        validator: (String? value) {
-                                                                                          if (value == null || value.isEmpty) {
-                                                                                            return 'Información requerida'; // Error message if empty
-                                                                                          }
-                                                                                          return null; // Return null if the input is valid
-                                                                                        },
-                                                                                        keyboardType: TextInputType.number,
-                                                                                        textInputAction: TextInputAction.next,
-                                                                                        controller: numeroAutorizacionController,
-                                                                                        showCursor: false,
-                                                                                        decoration: const InputDecoration(
-                                                                                          border: OutlineInputBorder(),
-
-                                                                                        ),
-                                                                                        onChanged: (value)
-                                                                                        {
-                                                                                          setStateDialog(() {
-                                                                                            numeroAutorizacionController.text = value;
-                                                                                          });
-                                                                                        },
-                                                                                      ),
-                                                                                      10.height,
-                                                                                      Text("Fotografia de Pago",
-                                                                                          maxLines: 1,
-                                                                                          overflow: TextOverflow.ellipsis,
-                                                                                          style: theme.textTheme.headlineSmall?.copyWith(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color: Color.fromRGBO(6, 78, 116, 1),
-                                                                                              fontSize: MediaQuery.of(context).size.width * 0.045)),
-                                                                                      10.height,
-                                                                                      Container(
-                                                                                        padding: const EdgeInsets.all(10),
-                                                                                        child: ElevatedButton(
-                                                                                          style: ElevatedButton.styleFrom(
-                                                                                            backgroundColor: Color.fromRGBO(6, 78, 116, 1),
-                                                                                            // set the background color
-                                                                                          ),
-                                                                                          onPressed: () async{
-                                                                                            msgxToast("Cargando imagen...");
-                                                                                            final regresarIamgenSelect = await ImagePicker().pickImage(
-                                                                                                source: ImageSource.gallery);
-                                                                                            setStateDialog(() {
-                                                                                              if (regresarIamgenSelect == null) return;
-                                                                                              iamgenSelect = File(regresarIamgenSelect.path);
-                                                                                            });
-                                                                                            //_PickGalery();
-                                                                                            //Navigator.of(context).pop();
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            "Elegir Fotografía de Galería",
-                                                                                            style: TextStyle(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color: Colors.white,
-                                                                                              fontSize: constraints.maxWidth * 0.03,
-                                                                                            ),
-                                                                                          ),),
-                                                                                      ),
-
-                                                                                      iamgenSelect != null ? SizedBox(
-                                                                                        height: constraints.maxWidth*0.4,
-                                                                                        width: constraints.maxWidth*0.4,
-                                                                                        child: Image.file(iamgenSelect!),
-                                                                                      ) : const Text("Puede seleccionar una opcion"),
-                                                                                      10.height,
-                                                                                      Container(
-                                                                                        padding: const EdgeInsets.all(10),
-                                                                                        child: ElevatedButton(
-
-                                                                                          style: ElevatedButton.styleFrom(
-                                                                                            backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
-                                                                                          ),
-                                                                                          onPressed: () async{
-
-                                                                                            if (!_formKey.currentState!.validate()) {
-                                                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                                                const SnackBar(
-                                                                                                  content: Text("Por favor complete todos los campos requeridos."),
-                                                                                                ),
-                                                                                              );
-                                                                                              return;
-                                                                                            }
-                                                                                            if(iamgenSelect != null)
-                                                                                            {
-                                                                                              File imageFile = File(iamgenSelect!.path);
-                                                                                              List<int> imageBytes = await imageFile.readAsBytes();
-                                                                                              setStateDialog(() {
-                                                                                                base64Image = base64Encode(imageBytes);
-                                                                                              });
-                                                                                            }
-
-                                                                                            //msgxToast("Cargando imagen...");
-                                                                                            debugPrint("Cargando imagen...");
-                                                                                            debugPrint(event.pnDocumento.toString());
-                                                                                            debugPrint(event.pnReserva.toString());
-                                                                                            debugPrint(formaPagoController.text);
-                                                                                            DateTime fecha = DateFormat('dd/MM/yyyy').parse(fechaPagoController.text);
-                                                                                            String formattedDate = DateFormat('yyyyMMdd').format(fecha);
-                                                                                            debugPrint(fechaPagoController.text);
-                                                                                            debugPrint(formattedDate);
-                                                                                            debugPrint(numeroAutorizacionController.text);
-                                                                                            debugPrint(formaPagoController.text);
-                                                                                            debugPrint(base64Image.toString());
-
-                                                                                            makeApiCall(event.pnDocumento.toString(),montoPagarControllerB.text,
-                                                                                                formaPagoController.text,formattedDate,numeroAutorizacionController.text,
-                                                                                                base64Image.toString(),event.pnReserva.toString());
-                                                                                            iamgenSelect = null;
-                                                                                            base64Image ="" ;
-                                                                                          },
-                                                                                          child: Text(
-                                                                                            "Realizar pago",
-                                                                                            style: TextStyle(
-                                                                                              fontWeight: FontWeight.bold,
-                                                                                              color:   Colors.white,
-                                                                                              fontSize: constraints.maxWidth * 0.03,
-                                                                                            ),
-                                                                                          ),),
-                                                                                      ),
-                                                                                    ],
-                                                                                  )
-                                                                              )
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
+                                            child: Card(
+                                              elevation: 3,
+                                              color:Colors.white,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            SizedBox(
+                                                                width: constraints.maxWidth* 0.4,
+                                                                child: ListTile(
+                                                                  title: Text("Propiedad",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(167,167,132,1),
+                                                                    fontSize: constraints.maxWidth * 0.05,
+                                                                  )
                                                                   ),
-                                                                  actions: <Widget>[
-                                                                    TextButton(
-                                                                      style: TextButton.styleFrom(
-                                                                        textStyle: Theme.of(context).textTheme.labelLarge,
-                                                                      ),
-                                                                      child:  Text('Cerrar'),
-                                                                      onPressed: () {
-                                                                        Navigator.of(context).pop();
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              }
-                                                          );
-                                                        },
-                                                      );
-                                                      },
-                                                        icon: Icon(Icons.wallet,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
-                                                      event.pnPermiteVerCobro == 1 ?  IconButton(onPressed: () async{
+                                                                  subtitle: Text(event.pvPropiedadDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(6,78,116,1),
+                                                                    fontSize:constraints.maxWidth* 0.035,
+                                                                  )
+                                                                  ),
+                                                                )
+                                                            ),
+
+                                                            SizedBox(
+                                                                width:constraints.maxWidth*0.4,
+                                                                child: ListTile(
+                                                                  title: Text("Amenidad",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(167,167,132,1),
+                                                                    fontSize: constraints.maxWidth* 0.05,
+                                                                  )
+                                                                  ),
+                                                                  subtitle: Text(event.pvAmenidadDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(6,78,116,1),
+                                                                    fontSize: constraints.maxWidth * 0.035,
+                                                                  ),maxLines: 2,
+                                                                  ),
+                                                                )
+                                                            ),
+                                                            SizedBox(
+                                                                width:constraints.maxWidth* 0.4,
+                                                                child: ListTile(
+                                                                  title: Text("Costo",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(167,167,132,1),
+                                                                    fontSize: constraints.maxWidth * 0.05,
+                                                                  )
+                                                                  ),
+                                                                  subtitle: Text(event.pvMonedaSimbolo! + event.pmValor!.toString(),style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(6,78,116,1),
+                                                                    fontSize: constraints.maxWidth * 0.035,
+                                                                  )
+                                                                  ),
+                                                                )
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                        Column(
+                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                                          children: [
+                                                            SizedBox(
+                                                                width:constraints.maxWidth* 0.4,
+                                                                child: ListTile(
+                                                                  title:Text("Fecha",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(167,167,132,1),
+                                                                    fontSize: constraints.maxWidth * 0.05,
+                                                                  )
+                                                                  ),
+                                                                  subtitle: Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event.pfFecha!)),style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(6,78,116,1),
+                                                                    fontSize: constraints.maxWidth * 0.035,
+                                                                  ),maxLines: 2,
+                                                                  ),
+                                                                )
+                                                            ),
+                                                            SizedBox(
+                                                                width:constraints.maxWidth* 0.4,
+                                                                child: ListTile(
+                                                                  title: Text("Estado",style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,color:Color.fromRGBO(6,78,116,1),
+                                                                    fontSize: constraints.maxWidth * 0.05,
+                                                                  )
+                                                                  ),
+                                                                  subtitle: Text(event.pvEstadoDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:event.pvEstadoDescripcion == "No Autorizada" ? Colors.pink[900]:Colors.amber[600],
+                                                                    fontSize: constraints.maxWidth * 0.035,
+                                                                  )
+                                                                  ),
+                                                                )
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        event.pnPermiteAplicarPago == 1 ? IconButton(onPressed:()
                                                         {
-                                                          final rawUrl =  event.pvVerCobro!;
-                                                          final uri = Uri.tryParse(rawUrl);
-                                                          final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
-                                                          if (await canLaunchUrl(safeUri)) {
-                                                            await launchUrl(safeUri, mode: LaunchMode.externalApplication);
-                                                          }
-                                                          else
-                                                          {
-                                                            debugPrint("Could not launch $safeUri");
-                                                          }
-                                                        }
-                                                      }, icon: Icon(Icons.print,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
-                                                      event.pnPermiteVerPago == 1 ?  IconButton(onPressed: () async{
-                                                        {
-                                                          final rawUrl =  event.pvVerPago!;
-                                                          final uri = Uri.tryParse(rawUrl);
-                                                          final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
-                                                          if (await canLaunchUrl(safeUri)) {
-                                                            await launchUrl(safeUri, mode: LaunchMode.externalApplication);
-                                                          }
-                                                          else
-                                                          {
-                                                            debugPrint("Could not launch $safeUri");
-                                                          }
-                                                        }
-                                                      }, icon: Icon(Icons.remove_red_eye,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
-                                                     ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      event.pnPermiteAplicarPago == 1 ? Text("Aplicar pago",
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
-                                                            color: const Color.fromRGBO(6, 78, 116, 1),
-                                                            fontSize: constraints.maxWidth * 0.05,
-                                                          )):Center(),
-
-                                                      event.pnPermiteVerCobro == 1 ? Text("Ver cobro",
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
-                                                            color: const Color.fromRGBO(6, 78, 116, 1),
-                                                            fontSize: constraints.maxWidth * 0.05,
-                                                          )):Center(),
-
-                                                      event.pnPermiteVerPago == 1 ? Text("Ver Pago",
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
-                                                            color: const Color.fromRGBO(6, 78, 116, 1),
-                                                            fontSize: constraints.maxWidth * 0.05,
-                                                          )):Center(),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                    event.pnPermiteAutorizar == 1 ?  IconButton(onPressed:()
-                                                     async {
-                                                       AutorizarClass(event.pnReserva.toString()).amenidadesReservadas7B();
-                                                       setState(() async{
-                                                         reloadreserva();
-                                                         Navigator.of(context).pop();
-                                                       });
-                                                      },
-                                                      icon: Icon(Icons.check_box_outlined,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
-
-                                                      event.pnPermiteRechazar == 1 ?  IconButton(onPressed:()
-                                                      async
-                                                      {
-                                                            showDialog<void>(
+                                                          DateTime? fechaSelect;
+                                                          //pago de amenidad
+                                                          setState(() {
+                                                            montoPagarControllerB.text = "${event.pmValor!}";
+                                                            fechaPagoController.text = DateFormat('dd/MM/yyyy').format(DateTime.now()).toString();
+                                                            formaPagoController.text =formaPago[0].toString();
+                                                          });
+                                                          showDialog<void>(
                                                             context: context,
                                                             builder: (BuildContext context) {
-                                                            return StatefulBuilder(
-                                                            builder: (
-                                                            BuildContext context,
-                                                            StateSetter setStateDialog) {
-                                                              return AlertDialog(
-                                                                title: const Text(
-                                                                    'Observaciones'),
-                                                                content: SingleChildScrollView(
-                                                                  scrollDirection: Axis .vertical,
-                                                                  child: Form(
-                                                                    key: _formKeyB,
-                                                                    child: Column(
-                                                                      children: [
-                                                                        TextFormField(
-                                                                          validator: (String? value) {
-                                                                            if (value == null || value.isEmpty) {
-                                                                              return 'Información requerida'; // Error message if empty
-                                                                            }
-                                                                            return null; // Return null if the input is valid
-                                                                          },
-                                                                          controller: observacionesRechazoController,
-                                                                          onChanged: (value) {
-                                                                            observacionesRechazoController.text = value;
+                                                              return StatefulBuilder(
+                                                                  builder: (BuildContext context, StateSetter setStateDialog) {
+                                                                    return AlertDialog(
+                                                                      title: const Text('Aplicar Pago'),
+                                                                      content: SingleChildScrollView(
+                                                                        scrollDirection: Axis .vertical,
+                                                                        child: Form(
+                                                                          key: _formKey,
+                                                                          child: Column(
+                                                                            children: [
+                                                                              Title(color: Colors.black, child: Text(
+                                                                                'Detalle de pago Doc ${event.pnDocumento}',
+                                                                              ),),
+                                                                              Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  Text(
+                                                                                      "Tipo",
+                                                                                      maxLines: 1,
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          color:Color.fromRGBO(167,167,132,1),
+                                                                                          fontSize: MediaQuery.of(context).size.width * 0.045)),
+
+                                                                                ],
+                                                                              ),
+                                                                              Text(
+                                                                                  "Propiedad",
+                                                                                  maxLines: 1,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color:Color.fromRGBO(167,167,132,1),
+                                                                                      fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                              Text(
+                                                                                  event.pvPropiedadDescripcion!,
+                                                                                  maxLines: 3,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color:Color.fromRGBO(167,167,132,1),
+                                                                                      fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                              Text(
+                                                                                  event.pnDocumento.toString()!,
+                                                                                  maxLines: 3,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color:Color.fromRGBO(167,167,132,1),
+                                                                                      fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                              Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  Text(
+                                                                                      "Amenidad",
+                                                                                      maxLines: 1,
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                      style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          color:Color.fromRGBO(167,167,132,1),
+                                                                                          fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                                  SizedBox(
+                                                                                    width: constraints.maxWidth*0.35,
+                                                                                    child: Text(
+                                                                                        event.pvAmenidadDescripcion!,
+                                                                                        maxLines: 4,
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                        style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color:Color.fromRGBO(167,167,132,1),
+                                                                                            fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Text("Detalle",
+                                                                                  maxLines: 1,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color:Color.fromRGBO(167,167,132,1),
+                                                                                      fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                              Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    "Total ${event.pvMonedaSimbolo}${formatMoneyWithoutSymbol(event.pmValor!)}",
+                                                                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      fontSize: MediaQuery.of(context).size.width * 0.03,
+                                                                                      color: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Card(
+                                                                                  elevation: 3,
+                                                                                  margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+                                                                                  color:Colors.white,
+                                                                                  child: Padding(
+                                                                                      padding: const EdgeInsets.all(8),
+                                                                                      child: Column(
+                                                                                        children: [
+                                                                                          Text("Monto a pagar (Q)",
+                                                                                              maxLines: 1,
+                                                                                              overflow: TextOverflow.ellipsis,
+                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                  fontWeight: FontWeight.bold,
+                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                                          10.height,
+                                                                                          TextFormField(
+                                                                                            validator: (String? value) {
+                                                                                              if (value == null || value.isEmpty) {
+                                                                                                return 'Información requerida'; // Error message if empty
+                                                                                              }
+                                                                                              return null; // Return null if the input is valid
+                                                                                            },
+                                                                                            keyboardType: TextInputType.number,
+                                                                                            textInputAction: TextInputAction.next,
+                                                                                            controller: montoPagarControllerB,
+                                                                                            showCursor: false,
+                                                                                            decoration: const InputDecoration(
+                                                                                              border: OutlineInputBorder(),
+                                                                                            ),
+                                                                                            onChanged: (value)
+                                                                                            {
+                                                                                              setStateDialog(() {
+                                                                                                montoPagarControllerB.text = value;
+                                                                                              });
+                                                                                            },
+                                                                                          ),
+                                                                                          10.height,
+                                                                                          Text("Forma de pago ",
+                                                                                              maxLines: 1,
+                                                                                              overflow: TextOverflow.ellipsis,
+                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                  fontWeight: FontWeight.bold,
+                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                                          10.height,
+                                                                                          DropdownButtonFormField<String>(
+                                                                                            validator: (String? value) {
+                                                                                              if (value == null || value.isEmpty) {
+                                                                                                return 'Información requerida'; // Error message if empty
+                                                                                              }
+                                                                                              return null; // Return null if the input is valid
+                                                                                            },
+                                                                                            isExpanded: true,
+                                                                                            value: formaPago[0].toString(),
+                                                                                            hint: const Text("Seleccione una empresa"),
+                                                                                            decoration: InputDecoration(
+                                                                                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                                                                              border: OutlineInputBorder(
+                                                                                                borderRadius: BorderRadius.circular(12),
+                                                                                                borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
+                                                                                              ),
+                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                borderRadius: BorderRadius.circular(12),
+                                                                                                borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
+                                                                                              ),
+                                                                                            ),
+                                                                                            style: const TextStyle(
+                                                                                              fontSize: 16,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                              color: Colors.black87,
+                                                                                            ),
+                                                                                            icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
+                                                                                            items: List.generate(formaPago.length, (index) {
+                                                                                              return DropdownMenuItem<String>(
+                                                                                                value: formaPago[index].toString(),
+                                                                                                child: Text(
+                                                                                                  "${formapagoDescirpcion[index]}",
+                                                                                                  style: const TextStyle(
+
+                                                                                                    color: Colors.black,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              );
+                                                                                            }),
+                                                                                            onChanged: (value) {
+                                                                                              setState(() {
+                                                                                                int indexB = formaPago.indexOf(value!);
+                                                                                                debugPrint(indexB.toString());
+                                                                                                debugPrint(formaPago[indexB].toString());
+                                                                                                formaPagoController.text =formaPago[indexB].toString();
+                                                                                                //formaPagoController.text = formapagoDescirpcion[index];
+                                                                                              });
+                                                                                            },
+                                                                                          ),
+                                                                                          10.height,
+                                                                                          Text("Fecha de pago ",
+                                                                                              maxLines: 1,
+                                                                                              overflow: TextOverflow.ellipsis,
+                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                  fontWeight: FontWeight.bold,
+                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                                          10.height,
+                                                                                          TextFormField(
+                                                                                            validator: (String? value) {
+                                                                                              if (value == null || value.isEmpty) {
+                                                                                                return 'Información requerida'; // Error message if empty
+                                                                                              }
+                                                                                              return null; // Return null if the input is valid
+                                                                                            },
+                                                                                            textInputAction: TextInputAction.next,
+                                                                                            controller: fechaPagoController,
+                                                                                            readOnly: true,
+                                                                                            onTap: () async {
+                                                                                              fechaSelect = await showDatePicker(
+                                                                                                context: context,
+                                                                                                initialDate: DateTime.now(),
+                                                                                                firstDate: DateTime(2000),
+                                                                                                lastDate: DateTime(3000),
+                                                                                                builder: (BuildContext context, Widget? child) {
+                                                                                                  return Theme(
+                                                                                                    data: Theme.of(context).copyWith(
+                                                                                                      colorScheme: ColorScheme.light(
+                                                                                                        primary: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                                      ),
+                                                                                                      textButtonTheme: TextButtonThemeData(
+                                                                                                        style: TextButton.styleFrom(
+                                                                                                          textStyle:theme.textTheme.bodyMedium?.copyWith(
+                                                                                                            fontWeight: FontWeight.bold,
+                                                                                                            fontSize: MediaQuery.of(context).size.width*0.035,
+                                                                                                            color: Color.fromRGBO(6,78,116,1),
+                                                                                                          ),
+                                                                                                          minimumSize: Size(1.5 ,1.5),
+                                                                                                          foregroundColor: const Color.fromRGBO(6, 78, 116, 1),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    child: child!,
+                                                                                                  );
+                                                                                                },
+                                                                                              );
+
+                                                                                              if (fechaSelect != null) {
+                                                                                                setState(() {
+                                                                                                  // Format as yyyy-MM-dd
+                                                                                                  fechaPagoController.text = DateFormat('dd/MM/yyyy').format(fechaSelect!).toString();
+                                                                                                });
+                                                                                              }
+                                                                                            },
+                                                                                            decoration: InputDecoration(
+                                                                                              labelText: 'Fecha de pago',
+                                                                                              border: OutlineInputBorder(),
+                                                                                            ),
+                                                                                          ),
+                                                                                          10.height,
+                                                                                          Text("No. de Autorización",
+                                                                                              maxLines: 1,
+                                                                                              overflow: TextOverflow.ellipsis,
+                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                  fontWeight: FontWeight.bold,
+                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                                          10.height,
+                                                                                          TextFormField(
+                                                                                            validator: (String? value) {
+                                                                                              if (value == null || value.isEmpty) {
+                                                                                                return 'Información requerida'; // Error message if empty
+                                                                                              }
+                                                                                              return null; // Return null if the input is valid
+                                                                                            },
+                                                                                            keyboardType: TextInputType.number,
+                                                                                            textInputAction: TextInputAction.next,
+                                                                                            controller: numeroAutorizacionController,
+                                                                                            showCursor: false,
+                                                                                            decoration: const InputDecoration(
+                                                                                              border: OutlineInputBorder(),
+
+                                                                                            ),
+                                                                                            onChanged: (value)
+                                                                                            {
+                                                                                              setStateDialog(() {
+                                                                                                numeroAutorizacionController.text = value;
+                                                                                              });
+                                                                                            },
+                                                                                          ),
+                                                                                          10.height,
+                                                                                          Text("Fotografia de Pago",
+                                                                                              maxLines: 1,
+                                                                                              overflow: TextOverflow.ellipsis,
+                                                                                              style: theme.textTheme.headlineSmall?.copyWith(
+                                                                                                  fontWeight: FontWeight.bold,
+                                                                                                  color: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                  fontSize: MediaQuery.of(context).size.width * 0.045)),
+                                                                                          10.height,
+                                                                                          Container(
+                                                                                            padding: const EdgeInsets.all(10),
+                                                                                            child: ElevatedButton(
+                                                                                              style: ElevatedButton.styleFrom(
+                                                                                                backgroundColor: Color.fromRGBO(6, 78, 116, 1),
+                                                                                                // set the background color
+                                                                                              ),
+                                                                                              onPressed: () async{
+                                                                                                msgxToast("Cargando imagen...");
+                                                                                                final regresarIamgenSelect = await ImagePicker().pickImage(
+                                                                                                    source: ImageSource.gallery);
+                                                                                                setStateDialog(() {
+                                                                                                  if (regresarIamgenSelect == null) return;
+                                                                                                  iamgenSelect = File(regresarIamgenSelect.path);
+                                                                                                });
+                                                                                                //_PickGalery();
+                                                                                                //Navigator.of(context).pop();
+                                                                                              },
+                                                                                              child: Text(
+                                                                                                "Elegir Fotografía de Galería",
+                                                                                                style: TextStyle(
+                                                                                                  fontWeight: FontWeight.bold,
+                                                                                                  color: Colors.white,
+                                                                                                  fontSize: constraints.maxWidth * 0.03,
+                                                                                                ),
+                                                                                              ),),
+                                                                                          ),
+
+                                                                                          iamgenSelect != null ? SizedBox(
+                                                                                            height: constraints.maxWidth*0.4,
+                                                                                            width: constraints.maxWidth*0.4,
+                                                                                            child: Image.file(iamgenSelect!),
+                                                                                          ) : const Text("Puede seleccionar una opcion"),
+                                                                                          10.height,
+                                                                                          Container(
+                                                                                            padding: const EdgeInsets.all(10),
+                                                                                            child: ElevatedButton(
+
+                                                                                              style: ElevatedButton.styleFrom(
+                                                                                                backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
+                                                                                              ),
+                                                                                              onPressed: () async{
+
+                                                                                                if (!_formKey.currentState!.validate()) {
+                                                                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                                                                    const SnackBar(
+                                                                                                      content: Text("Por favor complete todos los campos requeridos."),
+                                                                                                    ),
+                                                                                                  );
+                                                                                                  return;
+                                                                                                }
+                                                                                                if(iamgenSelect != null)
+                                                                                                {
+                                                                                                  File imageFile = File(iamgenSelect!.path);
+                                                                                                  List<int> imageBytes = await imageFile.readAsBytes();
+                                                                                                  setStateDialog(() {
+                                                                                                    base64Image = base64Encode(imageBytes);
+                                                                                                  });
+                                                                                                }
+
+                                                                                                //msgxToast("Cargando imagen...");
+                                                                                                debugPrint("Cargando imagen...");
+                                                                                                debugPrint(event.pnDocumento.toString());
+                                                                                                debugPrint(event.pnReserva.toString());
+                                                                                                debugPrint(formaPagoController.text);
+                                                                                                DateTime fecha = DateFormat('dd/MM/yyyy').parse(fechaPagoController.text);
+                                                                                                String formattedDate = DateFormat('yyyyMMdd').format(fecha);
+                                                                                                debugPrint(fechaPagoController.text);
+                                                                                                debugPrint(formattedDate);
+                                                                                                debugPrint(numeroAutorizacionController.text);
+                                                                                                debugPrint(formaPagoController.text);
+                                                                                                debugPrint(base64Image.toString());
+
+                                                                                                makeApiCall(event.pnDocumento.toString(),montoPagarControllerB.text,
+                                                                                                    formaPagoController.text,formattedDate,numeroAutorizacionController.text,
+                                                                                                    base64Image.toString(),event.pnReserva.toString());
+                                                                                                iamgenSelect = null;
+                                                                                                base64Image ="" ;
+                                                                                              },
+                                                                                              child: Text(
+                                                                                                "Realizar pago",
+                                                                                                style: TextStyle(
+                                                                                                  fontWeight: FontWeight.bold,
+                                                                                                  color:   Colors.white,
+                                                                                                  fontSize: constraints.maxWidth * 0.03,
+                                                                                                ),
+                                                                                              ),),
+                                                                                          ),
+                                                                                        ],
+                                                                                      )
+                                                                                  )
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        TextButton(
+                                                                          style: TextButton.styleFrom(
+                                                                            textStyle: Theme.of(context).textTheme.labelLarge,
+                                                                          ),
+                                                                          child:  Text('Cerrar'),
+                                                                          onPressed: () {
+                                                                            Navigator.of(context).pop();
                                                                           },
                                                                         ),
-
                                                                       ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                actions: <Widget>[
-                                                                  TextButton(
-                                                                    style: TextButton.styleFrom(
-                                                                      textStyle:theme.textTheme.bodyMedium?.copyWith(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: MediaQuery.of(context).size.width*0.065,
-                                                                        backgroundColor: Color.fromRGBO(6,78,116,1),
-                                                                      ),
-                                                                    ),
-                                                                    onPressed: () async{
-                                                                      if (!_formKeyB.currentState!.validate()) {
-                                                                        ScaffoldMessenger.of(context).showSnackBar(
-                                                                          const SnackBar(
-                                                                            content: Text("Por favor complete todos los campos requeridos."),
+                                                                    );
+                                                                  }
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                          icon: Icon(Icons.wallet,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
+                                                        event.pnPermiteVerCobro == 1 ?  IconButton(onPressed: () async{
+                                                          {
+                                                            final rawUrl =  event.pvVerCobro!;
+                                                            final uri = Uri.tryParse(rawUrl);
+                                                            final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
+                                                            if (await canLaunchUrl(safeUri)) {
+                                                              await launchUrl(safeUri, mode: LaunchMode.externalApplication);
+                                                            }
+                                                            else
+                                                            {
+                                                              debugPrint("Could not launch $safeUri");
+                                                            }
+                                                          }
+                                                        }, icon: Icon(Icons.print,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
+                                                        event.pnPermiteVerPago == 1 ?  IconButton(onPressed: () async{
+                                                          {
+                                                            final rawUrl =  event.pvVerPago!;
+                                                            final uri = Uri.tryParse(rawUrl);
+                                                            final safeUri = uri ?? Uri.parse(Uri.encodeFull(rawUrl));
+                                                            if (await canLaunchUrl(safeUri)) {
+                                                              await launchUrl(safeUri, mode: LaunchMode.externalApplication);
+                                                            }
+                                                            else
+                                                            {
+                                                              debugPrint("Could not launch $safeUri");
+                                                            }
+                                                          }
+                                                        }, icon: Icon(Icons.remove_red_eye,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        event.pnPermiteAplicarPago == 1 ? Text("Aplicar pago",
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: const Color.fromRGBO(6, 78, 116, 1),
+                                                              fontSize: constraints.maxWidth * 0.05,
+                                                            )):Center(),
+
+                                                        event.pnPermiteVerCobro == 1 ? Text("Ver cobro",
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: const Color.fromRGBO(6, 78, 116, 1),
+                                                              fontSize: constraints.maxWidth * 0.05,
+                                                            )):Center(),
+
+                                                        event.pnPermiteVerPago == 1 ? Text("Ver Pago",
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: const Color.fromRGBO(6, 78, 116, 1),
+                                                              fontSize: constraints.maxWidth * 0.05,
+                                                            )):Center(),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        event.pnPermiteAutorizar == 1 ?  IconButton(onPressed:()
+                                                         {
+                                                          AutorizarClass(event.pnReserva.toString()).amenidadesReservadas7B();
+                                                          setState(() {
+                                                            reloadreserva();
+
+                                                            //Navigator.of(context).pop();
+                                                          });
+                                                        },
+                                                          icon: Icon(Icons.check_box_outlined,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
+
+                                                        event.pnPermiteRechazar == 1 ?  IconButton(onPressed:()
+                                                        async
+                                                        {
+                                                          showDialog<void>(
+                                                            context: context,
+                                                            builder: (BuildContext context) {
+                                                              return StatefulBuilder(
+                                                                  builder: (
+                                                                      BuildContext context,
+                                                                      StateSetter setStateDialog) {
+                                                                    return AlertDialog(
+                                                                      title: const Text(
+                                                                          'Observaciones'),
+                                                                      content: SingleChildScrollView(
+                                                                        scrollDirection: Axis .vertical,
+                                                                        child: Form(
+                                                                          key: _formKeyB,
+                                                                          child: Column(
+                                                                            children: [
+                                                                              TextFormField(
+                                                                                validator: (String? value) {
+                                                                                  if (value == null || value.isEmpty) {
+                                                                                    return 'Información requerida'; // Error message if empty
+                                                                                  }
+                                                                                  return null; // Return null if the input is valid
+                                                                                },
+                                                                                controller: observacionesRechazoController,
+                                                                                onChanged: (value) {
+                                                                                  observacionesRechazoController.text = value;
+                                                                                },
+                                                                              ),
+
+                                                                            ],
                                                                           ),
-                                                                        );
-                                                                        return;
-                                                                      }
-                                                                      debugPrint("Info de reserva2");
-                                                                      debugPrint(event.pnDocumento.toString());
-                                                                      debugPrint(event.pnReserva.toString());
-                                                                      debugPrint(observacionesRechazoController.text);
-                                                                      RechazarClass(event.pnReserva.toString(),observacionesRechazoController.text).amenidadesReservadas8B();
-                                                                      setState(() {
-                                                                        observacionesRechazoController.text = "";
-                                                                        Navigator.of(context).pop();
-                                                                      });
-                                                                      setState(() {
-                                                                        reloadreserva();
-                                                                      });
-                                                                      },
-                                                                    child: Text(
-                                                                        'Rechazar'),
-                                                                  ),
-                                                               ],
-                                                                );
-                                                              }
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                        icon: Icon(Icons.dangerous_outlined,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      event.pnPermiteAutorizar == 1 ?  Text("Autorizar",
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
-                                                            color: const Color.fromRGBO(6, 78, 116, 1),
-                                                            fontSize: constraints.maxWidth * 0.05,
-                                                          )):Center(),
+                                                                        ),
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        TextButton(
+                                                                          style: TextButton.styleFrom(
+                                                                            textStyle:theme.textTheme.bodyMedium?.copyWith(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              fontSize: MediaQuery.of(context).size.width*0.065,
+                                                                              backgroundColor: Color.fromRGBO(6,78,116,1),
+                                                                            ),
+                                                                          ),
+                                                                          onPressed: () async{
+                                                                            if (!_formKeyB.currentState!.validate()) {
+                                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                                const SnackBar(
+                                                                                  content: Text("Por favor complete todos los campos requeridos."),
+                                                                                ),
+                                                                              );
+                                                                              return;
+                                                                            }
+                                                                            debugPrint("Info de reserva2");
+                                                                            debugPrint(event.pnDocumento.toString());
+                                                                            debugPrint(event.pnReserva.toString());
+                                                                            debugPrint(observacionesRechazoController.text);
+                                                                            RechazarClass(event.pnReserva.toString(),observacionesRechazoController.text).amenidadesReservadas8B();
+                                                                            setState(() {
+                                                                              observacionesRechazoController.text = "";
+                                                                              Navigator.of(context).pop();
+                                                                            });
+                                                                            setState(() {
+                                                                              reloadreserva();
+                                                                            });
+                                                                          },
+                                                                          child: Text(
+                                                                              'Rechazar'),
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  }
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                          icon: Icon(Icons.dangerous_outlined,color: const Color.fromRGBO(6, 78, 116, 1), size: constraints.maxWidth * 0.08),):Center(),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        event.pnPermiteAutorizar == 1 ?  Text("Autorizar",
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: const Color.fromRGBO(6, 78, 116, 1),
+                                                              fontSize: constraints.maxWidth * 0.05,
+                                                            )):Center(),
 
-                                                      event.pnPermiteRechazar == 1 ?  Text("Rechazar",
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.bold,
-                                                            color: const Color.fromRGBO(6, 78, 116, 1),
-                                                            fontSize: constraints.maxWidth * 0.05,
-                                                          )):Center(),
-                                                    ],
-                                                  ),
-                                                ],
+                                                        event.pnPermiteRechazar == 1 ?  Text("Rechazar",
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: const Color.fromRGBO(6, 78, 116, 1),
+                                                              fontSize: constraints.maxWidth * 0.05,
+                                                            )):Center(),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+
                                               ),
-
                                             ),
-                                          ),
 
-                                        );
-                                      },
-                                    );
-                                  }
+                                          );
+                                        },
+                                      );
+                                    }
                                 );
                               },
                             ) ,
                             17.height,
                             //commonRowText("Comunicación con Administrador", viewAll, theme, () {}),
-                             Text("Comunicación con Administrador",style: theme.textTheme.headlineSmall?.copyWith(
+                            Text("Comunicación con Administrador",style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color:Colors.black,
                               fontSize: MediaQuery.of(context).size.width*0.035,
                             )) ,
                             17.height,
                             tickets? Center(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width*0.8,
-                              child: Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width*0.8,
+                                child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          IconButton(onPressed:()
-                                          {
+                                          Column(
+                                            children: [
+                                              IconButton(onPressed:()
+                                              {
 
-                                          },
-                                             icon: Icon(BoxIcons.bx_list_check,color:Color.fromRGBO(167,167,132,1),size: MediaQuery.of(context).size.width*0.04,)),
-                                            Text("Ingresados",style: theme.textTheme.headlineSmall?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize:MediaQuery.of(context).size.width*0.04,
-                                            color:Color.fromRGBO(167,167,132,1))),
+                                              },
+                                                  icon: Icon(BoxIcons.bx_list_check,color:Color.fromRGBO(167,167,132,1),size: MediaQuery.of(context).size.width*0.04,)),
+                                              Text("Ingresados",style: theme.textTheme.headlineSmall?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:MediaQuery.of(context).size.width*0.04,
+                                                  color:Color.fromRGBO(167,167,132,1))),
+                                            ],
+                                          ),
+                                          Column(
+                                            children: [
+                                              IconButton(onPressed:()
+                                              {
+
+                                              },
+                                                  icon: Icon(BoxIcons.bxs_pencil,color:Color.fromRGBO(167,167,132,1),size: MediaQuery.of(context).size.width*0.04,)),
+
+                                              Text("Ingresados",style: theme.textTheme.headlineSmall?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: MediaQuery.of(context).size.width*0.04,
+                                                  color:Color.fromRGBO(167,167,132,1))),
+                                            ],
+                                          ),
+                                          Column(
+                                            children: [
+                                              IconButton(onPressed:()
+                                              {
+
+                                              },
+                                                  icon: Icon(BoxIcons.bx_check_circle,color:Color.fromRGBO(167,167,132,1),size: MediaQuery.of(context).size.width*0.04)),
+
+                                              Text("Ingresados",style: theme.textTheme.headlineSmall?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: MediaQuery.of(context).size.width*0.04,
+                                                  color:Color.fromRGBO(167,167,132,1))),
+                                            ],
+                                          )
                                         ],
-                                      ),
-                                      Column(
-                                        children: [
-                                          IconButton(onPressed:()
-                                          {
-
-                                          },
-                                              icon: Icon(BoxIcons.bxs_pencil,color:Color.fromRGBO(167,167,132,1),size: MediaQuery.of(context).size.width*0.04,)),
-
-                                          Text("Ingresados",style: theme.textTheme.headlineSmall?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context).size.width*0.04,
-                                              color:Color.fromRGBO(167,167,132,1))),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: [
-                                          IconButton(onPressed:()
-                                          {
-
-                                          },
-                                              icon: Icon(BoxIcons.bx_check_circle,color:Color.fromRGBO(167,167,132,1),size: MediaQuery.of(context).size.width*0.04)),
-
-                                          Text("Ingresados",style: theme.textTheme.headlineSmall?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context).size.width*0.04,
-                                              color:Color.fromRGBO(167,167,132,1))),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ),
-                            ),
-                          ):Center(),
-                            17.height,
-                             FutureBuilder<List<TickestG5>>(
-                            future: _futureTickets,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Title(color: Color.fromRGBO(6,78,116,1),
-                                      child: Text("No hay tickets pendientes",style: theme.textTheme.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width*0.035,
-                                        color: Color.fromRGBO(6,78,116,1),
-                                      ),
-                                      ),
-                                    ));
-                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return  Center(
-                                    child: Title(color: Color.fromRGBO(6,78,116,1),
-                                      child: Text("No hay tickets pendientes",style: theme.textTheme.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.width*0.035,
-                                        color: Color.fromRGBO(6,78,116,1),
-                                      ),
                                       ),
                                     )
-                                );
-                              }
-                              final documentos = snapshot.data!; // API list
-                              return LayoutBuilder(
-                                  builder: (context, constraints) {
-                                  return ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: documentos.length,
-                                    itemBuilder: (context, index) {
-                                      final event = documentos[index];
-                                      final screenWidth = MediaQuery.of(context).size.width;
-                                      final screenHeight = MediaQuery.of(context).size.height;
-
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: screenHeight * 0.008,
-                                          horizontal: screenWidth * 0.04,
+                                ),
+                              ),
+                            ):Center(),
+                            17.height,
+                            FutureBuilder<List<TickestG5>>(
+                              future: _futureTickets,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const Center(child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay tickets pendientes",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
                                         ),
-                                        child: Card(
-                                                color: Color.fromRGBO(237, 237, 237,1),
+                                        ),
+                                      ));
+                                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                  return  Center(
+                                      child: Title(color: Color.fromRGBO(6,78,116,1),
+                                        child: Text("No hay tickets pendientes",style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context).size.width*0.035,
+                                          color: Color.fromRGBO(6,78,116,1),
+                                        ),
+                                        ),
+                                      )
+                                  );
+                                }
+                                final documentos = snapshot.data!; // API list
+                                return LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: documentos.length,
+                                        itemBuilder: (context, index) {
+                                          final event = documentos[index];
+                                          final screenWidth = MediaQuery.of(context).size.width;
+                                          final screenHeight = MediaQuery.of(context).size.height;
+
+                                          return Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: screenHeight * 0.008,
+                                              horizontal: screenWidth * 0.04,
+                                            ),
+                                            child: Card(
+                                              color: Color.fromRGBO(237, 237, 237,1),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(8),
                                               ),
@@ -3814,9 +3895,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               SizedBox(
                                                                 width: constraints.maxWidth*0.40,
                                                                 child: Text(event.pvDescripcion!,style: theme.textTheme.headlineSmall?.copyWith(
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color:Color.fromRGBO(167,167,132,1),
-                                                                  fontSize: constraints.maxWidth*0.045),maxLines: 2,textAlign: TextAlign.center,),
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color:Color.fromRGBO(167,167,132,1),
+                                                                    fontSize: constraints.maxWidth*0.045),maxLines: 2,textAlign: TextAlign.center,),
                                                               ),
                                                               SizedBox(
                                                                 width: constraints.maxWidth*0.40,
@@ -3832,7 +3913,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                   color:Color.fromRGBO(167,167,132,1),
                                                                   fontSize: constraints.maxWidth*0.045,),maxLines: 2,textAlign: TextAlign.center,),
                                                               ),
-                                                              ],
+                                                            ],
                                                           )
                                                         ],
                                                       ),
@@ -3853,14 +3934,14 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                 fontSize:constraints.maxWidth*0.04,)),
                                                               Text(
                                                                     () {
-                                                                      final raw = event.pvTiempoCreacion;
-                                                                      if (raw == null || raw == 0) return 'Sin atender';
-                                                                      Duration duration = Duration(seconds: raw);
-                                                                      int days = duration.inDays;
-                                                                      int hours = duration.inHours % 24;
-                                                                      int minutes = duration.inMinutes % 60;
-                                                                      return "${days}d ${hours}h ${minutes}m";
-                                                                    }(),
+                                                                  final raw = event.pvTiempoCreacion;
+                                                                  if (raw == null || raw == 0) return 'Sin atender';
+                                                                  Duration duration = Duration(seconds: raw);
+                                                                  int days = duration.inDays;
+                                                                  int hours = duration.inHours % 24;
+                                                                  int minutes = duration.inMinutes % 60;
+                                                                  return "${days}d ${hours}h ${minutes}m";
+                                                                }(),
                                                                 style: theme.textTheme.headlineSmall?.copyWith(
                                                                   fontWeight: FontWeight.bold,
                                                                   color:Colors.grey[500],
@@ -3882,9 +3963,9 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                                   final raw = event.pvTiempoAtencion;
                                                                   if (raw == null || raw.isEmpty) return 'Sin atender';
                                                                   Duration duration = Duration(seconds: int.parse(raw));
-                                                                      int days = duration.inDays;
-                                                                      int hours = duration.inHours % 24;
-                                                                      int minutes = duration.inMinutes % 60;
+                                                                  int days = duration.inDays;
+                                                                  int hours = duration.inHours % 24;
+                                                                  int minutes = duration.inMinutes % 60;
                                                                   return "${days}d ${hours}h ${minutes}m";
                                                                 }(),
                                                                 style: theme.textTheme.headlineSmall?.copyWith(
@@ -3994,13 +4075,13 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                 ),
                                               ),
                                             ),
-                                        );
-                                    },
-                                  );
-                                }
-                              );
-                            },
-                          ),
+                                          );
+                                        },
+                                      );
+                                    }
+                                );
+                              },
+                            ),
                             17.height,
                             tickets? Center(
                               child: Container(
@@ -4225,8 +4306,8 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                   children: [
                                                     event.isNotEmpty
                                                         ?GestureDetector(
-                                                          onTap: () => showImageDialog(context, event["pv_imagen_qrb64"].toString()),
-                                                          child: SizedBox(
+                                                      onTap: () => showImageDialog(context, event["pv_imagen_qrb64"].toString()),
+                                                      child: SizedBox(
                                                           width: constraints.maxWidth*0.3,
                                                           height: constraints.maxWidth*0.7,
                                                           child: ClipRRect(
@@ -4237,7 +4318,7 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                                                               width: double.infinity,
                                                             ),
                                                           )),
-                                                        )
+                                                    )
                                                         : const Center(child: Text("No Image")),
 
                                                   ],
@@ -4417,15 +4498,15 @@ class _AdmHomeScreenState extends State<AdmHomeScreen> {
                             ),
                             17.height,
 
-                      ],
-                    ),
-                  )
-                ]
-              )
+                          ],
+                        ),
+                      )
+                    ]
+                )
             )
-        )
+         )
+      )
     );
-
   }
 
   Future<void> makeApiCall(String numeroDocumento,String montoPago,String formaPago,String fechaPago,String numeroAutorizacion,String imagen,String reserva)

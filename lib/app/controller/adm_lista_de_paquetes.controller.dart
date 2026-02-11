@@ -50,16 +50,27 @@ class ServiciosListadoDePaquetes
   ServiciosListadoDePaquetes(this.clientez,this.periodo,this.recolectada,this.propiedad);
 
   Future<List<PaqueteG6>> paquetesG6() async {
-    debugPrint("**********G6***********");
+    debugPrint("**********G16***********");
     const String errorMensaje = "Falla de conexión";
 
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
+    String? inquilino = prefs.getString("Inquilino");
+
     String? empresa = empresaID;
-    String? cliente = prefs.getString("cliente");
+    String? cliente = "";
+
+    if(inquilino == "1")
+    {
+      cliente = cliente = prefs.getString("cliente");
+    }
+    else
+    {
+      cliente = clientez;
+    }
 
     debugPrint(token);
-    debugPrint("Empresa_Paquete");
+    debugPrint("Empresa_Paquete 222");
     debugPrint(empresa);
     debugPrint(cliente);
 
@@ -72,7 +83,7 @@ class ServiciosListadoDePaquetes
 
       var url = Uri.parse(
       //"https://apidesa.komuvita.com/portal/paqueteria/paquete_listado");
-      "$baseUrl/portal/portal/paqueteria/paquete_listado");
+      "$baseUrl/portal/paqueteria/paquete_listado");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -80,7 +91,7 @@ class ServiciosListadoDePaquetes
         },
         "parametros": {
           "pn_empresa": empresaID,
-          "pv_cliente": clientez,
+          "pv_cliente": cliente,
           "pv_propiedad": propiedad,
           "pn_periodo": periodo,
           "pn_recolectado":recolectada
@@ -93,9 +104,17 @@ class ServiciosListadoDePaquetes
         headers: header,
       );
 
-      final json = jsonDecode(response.body);
+      debugPrint("Documentos_Paquetes_1");
+      debugPrint(url.toString());
+      debugPrint(body.toString());
+      debugPrint(response.body.toString());
 
-      debugPrint("Documentos_Paquetes");
+      final json = jsonDecode(response.body);
+      //debugPrint(json.toString());
+
+      debugPrint(response.statusCode.toString());
+
+
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
@@ -135,8 +154,9 @@ class ServiciosListadoDePaquetes
         }
         }
       }
-
-    } catch (e) {
+    }
+    catch (e)
+    {
       if(e.toString() == "Exception: El token ha expirado")
       {
         msgxToast(e.toString());
@@ -145,6 +165,7 @@ class ServiciosListadoDePaquetes
         Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
+      msgxToast(e.toString());
       return[];
     }
     throw Exception("Error en conexión");
@@ -173,11 +194,22 @@ class ServiciosListadoDePaquetesEdicion
 
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
+    String? inquilino = prefs.getString("Inquilino");
+
     String? empresa = empresaID;
-    String? cliente = prefs.getString("cliente");
+    String? cliente = "";
+
+    if(inquilino == "1")
+    {
+      cliente = cliente = prefs.getString("cliente");
+    }
+    else
+    {
+      cliente = clientez;
+    }
 
     debugPrint(token);
-    debugPrint("Empresa_Paquete");
+    debugPrint("Empresa_Paquete 111");
     debugPrint(empresa);
     debugPrint(cliente);
 
@@ -198,7 +230,7 @@ class ServiciosListadoDePaquetesEdicion
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/paqueteria/paquete_edicion");
-      "$baseUrl/portal/portal/paqueteria/paquete_edicion");
+      "$baseUrl/portal/paqueteria/paquete_edicion");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -208,7 +240,7 @@ class ServiciosListadoDePaquetesEdicion
           "pn_empresa": empresaID,
           "pn_paquete": paquetes,
           "pf_fecha": fecha,
-          "pv_cliente": clientez,
+          "pv_cliente": cliente,
           "pv_propiedad": propiedad,
           "pv_propiedad_nombre": propiedadNombre,
           "pv_descripcion":descripcion,
@@ -227,6 +259,8 @@ class ServiciosListadoDePaquetesEdicion
       devLog.log(listaFotografias.toString());
       debugPrint("Documentos_Paquetes_Editados");
 
+      //devLog.log(body.toString());
+      //debugPrint(body.toString());
       devLog.log(body.toString());
       debugPrint(response.body.toString());
 
@@ -250,7 +284,8 @@ class ServiciosListadoDePaquetesEdicion
           
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           return List<Map<String, dynamic>>.from(json["datos"]);
-        } else {
+        }
+        else {
           debugPrint(json["resultado"]["pv_error_descripcion"].toString());
           msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           //throw Exception(json["resultado"]["pv_error_descripcion"].toString());
@@ -294,8 +329,19 @@ class ServiciosListadoDePaquetesRecepcion
 
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
+    String? inquilino = prefs.getString("Inquilino");
+
     String? empresa = empresaID;
-    String? cliente = prefs.getString("cliente");
+    String? cliente = "";
+
+    if(inquilino == "1")
+    {
+      cliente = cliente = prefs.getString("cliente");
+    }
+    else
+    {
+      cliente = clientez;
+    }
 
     debugPrint(token);
     debugPrint("Empresa_Paquete_Creacion");
@@ -318,7 +364,7 @@ class ServiciosListadoDePaquetesRecepcion
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/paqueteria/paquete_recepcion");
-      "$baseUrl/portal/portal/paqueteria/paquete_creacion");
+      "$baseUrl/portal/paqueteria/paquete_recepcion");
 
       devLog.log(imagenes.toString());
 
@@ -330,7 +376,7 @@ class ServiciosListadoDePaquetesRecepcion
         },
         "parametros": {
           "pn_empresa": empresaID,
-          "pv_cliente": clientez,
+          "pv_cliente": cliente,
           "pf_fecha": fecha,
           "pv_propiedad": propiedad,
           "pv_propiedad_nombre": propiedadNombre,
@@ -340,11 +386,12 @@ class ServiciosListadoDePaquetesRecepcion
       };
 
       debugPrint("Documentos_Paquetes_creacion");
+      debugPrint(url.toString());
+      debugPrint(body.toString());
       //debugPrint(listaFotografias.toString());
 
       devLog.log(listaFotografias.toString());
-       //debugPrint(body.toString());
-       devLog.log(body.toString());
+
       http.Response response = await http.post(
         url,
         body: jsonEncode(body),
@@ -353,8 +400,6 @@ class ServiciosListadoDePaquetesRecepcion
 
       final json = jsonDecode(response.body);
 
-      debugPrint("Documentos_Paquetes_creacion");
-      debugPrint(body.toString());
       debugPrint(response.body.toString());
 
       if (response.statusCode == 200)
@@ -410,7 +455,7 @@ class ServiciosListadoDePaquetesRecoletar
   ServiciosListadoDePaquetesRecoletar(this.paquetes,this.fecha,this.observaciones);
 
   Future<List<Map<String, dynamic>>> paquetesG9() async {
-    debugPrint("**********G6***********");
+    debugPrint("**********G9***********");
     const String errorMensaje = "Falla de conexión";
 
     final prefs = await SharedPreferences.getInstance();
@@ -419,7 +464,7 @@ class ServiciosListadoDePaquetesRecoletar
     String? cliente = prefs.getString("cliente");
 
     debugPrint(token);
-    debugPrint("Empresa_Paquete");
+    debugPrint("Empresa_Paquete 333");
     debugPrint(empresa);
     debugPrint(cliente);
 
@@ -432,7 +477,7 @@ class ServiciosListadoDePaquetesRecoletar
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/paqueteria/paquete_recolectar");
-      "$baseUrl/portal/portal/paqueteria/paquete_recolectar");
+      "$baseUrl/portal/paqueteria/paquete_recolectar");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -452,11 +497,13 @@ class ServiciosListadoDePaquetesRecoletar
         headers: header,
       );
 
-      final json = jsonDecode(response.body);
-
       debugPrint("Documentos_Paquetes_Recolectar");
+      debugPrint(url.toString());
       debugPrint(body.toString());
       debugPrint(response.body.toString());
+      final json = jsonDecode(response.body);
+
+
 
       if (response.statusCode == 200)
       {

@@ -77,20 +77,28 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
 
    Future<List<CuentasH7>> ? _futureCuentasH7;
 
-
+  String admincheck = "";
+  String juntaDirect = "";
+  String inquilino = "";
   String? selectedValueA;
   String? selectedValueB;
   String? selectedValueC;
+  String periodoElegido = "2";
+  String propiedadElegido = "-1";
+  String propiedadElegidoDescripcion = " ";
+  String TipoElegido = "-1";
+  String EstadoTicketElegido = "-1";
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     getUserInfo();
     setState(() {
+
       theme = admEstadoDeCuentaController.themeController.isDarkMode
           ? AdmTheme.admDarkTheme
           : AdmTheme.admLightTheme;
-      propiedadCuentaID = propiedadesInternasIdsSetB[0];
+      propiedadCuentaID = propiedadesInternasIdsSet1[0];
       periodoCuentaID = periodeDeCuentaID[0].toString();
 
     });
@@ -103,6 +111,10 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userName = prefs.getString("NombreUser")!;
+      admincheck = prefs.getString("Admin")!;
+      juntaDirect = prefs.getString("JuntaDirectiva")!;
+      inquilino = prefs.getString("Inquilino") ?? "0";
+
       /*
       instrucionesPago = prefs.getString("intruciones de pago")!;
       debugPrint("Intruciones");
@@ -185,8 +197,9 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
     );
   }
 
-  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
-    if (isAdmin) {
+  IconData _getIconForIndex(int index, String isAdmin, String jundaDir,String inquilino)
+  {
+    if (jundaDir == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -195,18 +208,20 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return FontAwesomeIcons.gear;
+        case 8: return Icons.chat;
+        case 9: return Icons.person;
+        case 10: return FontAwesomeIcons.boxesPacking;
+        case 11: return Icons.lock_reset;
         default: return Icons.logout;
       }
-    } else if (jundaDir) {
+    } else if (jundaDir =="2") {
       switch (index) {
-        case 0: return FontAwesomeIcons.boxesPacking;
-        case 1: return FontAwesomeIcons.person;
+        case 0: return FontAwesomeIcons.person;
+        case 1:  return FontAwesomeIcons.boxesPacking;
         default: return Icons.logout;
       }
-    } else {
+    } else if (inquilino == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -215,10 +230,49 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
         default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
+      }
+    }
+    else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
+        default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
       }
     }
   }
@@ -342,7 +396,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                         itemBuilder: (context, index) {
                           final menuTitle = helpAndSupport[index];
                           final isLast = index == helpAndSupport.length - 1;
-                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+                          final iconData = _getIconForIndex(index, admincheck, juntaDirect,inquilino);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
@@ -355,11 +409,11 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                 }
 
                                 // 👇 Handle "Paquetes pendientes"
-                                if (menuTitle == "Paquetes pendientes") {
-                                  Navigator.pop(context);
+                                /*if (menuTitle == "Paquetes pendientes") {
+                                  Navigator.pop(context); // close drawer first
                                   Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
                                   return;
-                                }
+                                }*/
 
                                 // 👇 Normal navigation
                                 Navigator.pop(context);
@@ -482,52 +536,61 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                           },
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width*0.45,
-                                        child: DropdownButtonFormField<String>(
-                                          isExpanded: true,
-                                          value: clientesIdsSetB[0].toString(),
-                                          hint: const Text("Seleccione una empresa"),
-                                          decoration: InputDecoration(
-                                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(12),
-                                              borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(12),
-                                              borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
-                                            ),
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black87,
-                                          ),
-                                          icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
-                                          items: List.generate(clientesIdsSetB.length, (index) {
-                                            return DropdownMenuItem<String>(
-                                              value: clientesIdsSetB[index],
-                                              child: Text("${propiedadesInternaNombresSetB[index]} ${propiedadesDireccionNombresSetB[index]}",
-                                                style: const TextStyle(
-                                                  fontSize:  20,
-                                                  color: Colors.black,
+                                      Column(
+                                        children: [
+                                          SizedBox(
+                                            width: MediaQuery.of(context).size.width*0.45,
+                                            child: DropdownButtonFormField<String>(
+                                              isExpanded: true,
+                                              value: clientesIdsSet1.isNotEmpty ? clientesIdsSet1[0] : null,
+                                              hint: const Text("Seleccione un periodo"),
+                                              decoration: InputDecoration(
+                                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 1),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderSide: const BorderSide(color: Color.fromRGBO(6,78,116,1), width: 2),
                                                 ),
                                               ),
-                                            );
-                                          }),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              int index = clientesIdsSetB.indexOf(value!);
-                                              debugPrint("setcuenta");
-                                              debugPrint(index.toString());
-                                              propiedadCuentaID = propiedadesInternasIdsSetB[index].toString();
-                                              //clienteIDset = value;
-                                              debugPrint(propiedadCuentaID);
-                                            });
-                                          },
-                                        ),
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black87,
+                                              ),
+                                              icon: const Icon(Icons.arrow_drop_down, color: Color.fromRGBO(6,78,116,1)),
+                                              items: List.generate(clientesIdsSet1.length, (index) {
+                                                return DropdownMenuItem<String>(
+                                                  value: clientesIdsSet1[index],
+                                                  child: Text(
+                                                      "${propiedadesInternaNombresSet1[index]} (${propiedadesDireccionNombresSet1[index]})",
+                                                    style: const TextStyle(fontSize: 20, color: Colors.black),
+                                                  ),
+                                                );
+                                              }),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  // Get index of selected value
+                                                  int selectedIndex = clientesIdsSet1.indexOf(value!);
+
+                                                  // Optional: print and use it
+                                                  debugPrint('Selected index: $selectedIndex');
+                                                  debugPrint('Selected value: ${propiedadesInternasIdsSet1[selectedIndex]}');
+                                                  debugPrint('Selected value: $value');
+                                                  debugPrint('Selected name: ${propiedadesInternaNombresSet1[selectedIndex]}');
+
+                                                  propiedadElegido = value;
+                                                  propiedadCuentaID = propiedadesInternasIdsSet1[selectedIndex];
+                                                  propiedadElegidoDescripcion = propiedadesInternaNombresSet1[selectedIndex];
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
+
                                     ],
                                   ),
                                   17.height,
@@ -561,7 +624,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                           onPressed: () async{
                                             final prefs = await SharedPreferences.getInstance();
                                             setState(() {
-                                              _futureCuentasH7 = ServicioListadoCuenta(clienteIDset,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
+                                              _futureCuentasH7 = ServicioListadoCuenta(propiedadElegido,propiedadCuentaID,periodoCuentaID).estadoDeCuentaH7();
                                             });
                                             },
                                           child: Text(
@@ -617,7 +680,7 @@ class _AdmEstadoDeCuentaScreenState extends State<AdmEstadoDeCuentaScreen> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        Column(
+                                        documentos[0].pvEstadoCuentaUrl == "" ? Center(): Column(
                                           children: [
                                             IconButton(onPressed:() async{
                                               // 🔹 Add your refresh or custom logic here

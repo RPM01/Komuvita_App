@@ -95,6 +95,7 @@ class visitasLista
       final json = jsonDecode(response.body);
 
       debugPrint("Listado de Visitas_Recibido!!!");
+      debugPrint(url.toString());
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
@@ -138,24 +139,7 @@ class visitasLista
       }
 
     } catch (e) {
-      debugPrint(e.toString());
-      if(e.toString() == "Exception: El token ha expirado")
-      {
-        msgxToast(e.toString());
-        debugPrint("Si funciona verificar el mensaje");
-
-        Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
-      }
-      showDialog(
-        context: Get.context!,
-        builder: (context) {
-          return SimpleDialog(
-            title: const Text(errorMensaje),
-            contentPadding: const EdgeInsets.all(20),
-            children: [Text(e.toString())],
-          );
-        },
-      );
+      return[];
     }
     throw Exception("Error en conexión");
   }
@@ -196,7 +180,7 @@ class VisitasRecibir
 
       var url = Uri.parse(
           //"https://apidesa.komuvita.com/portal/visitas/visita_recibir");
-      "${baseUrl}/portal/portal/visitas/visita_recibir");
+      "${baseUrl}/portal/visitas/visita_recibir");
 
       Map<String, dynamic> body = {
         "autenticacion": {
@@ -220,7 +204,7 @@ class VisitasRecibir
 
       final json = jsonDecode(response.body);
 
-      debugPrint("Documentos_Paquetes_Editados");
+      debugPrint("DocumentosVisitas");
       devLog.log(body.toString());
       debugPrint(response.body.toString());
 
@@ -280,18 +264,34 @@ class visitasListaB
 {
   String propiedad = "";
   String clientez = "";
+  String periodo = "";
+  String codigo = "";
+  String recibida = "";
 
 
-  visitasListaB(this.propiedad, this.clientez);
+  visitasListaB(this.propiedad, this.clientez,this.periodo,this.codigo,this.recibida);
 
   Future<List<Map<String, dynamic>>>visitas5()async
   {
     debugPrint("**********M5***********");
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
+
     String? token = prefs.getString("Token");
+    String? inquilino = prefs.getString("Inquilino");
+
     String? empresa = empresaID;
-    String? cliente = prefs.getString("cliente");
+    String? cliente = "";
+
+    if(inquilino == "1")
+      {
+        cliente = cliente = prefs.getString("cliente");
+      }
+    else
+      {
+        cliente = clientez;
+      }
+
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint("Info Visitas");
@@ -316,8 +316,11 @@ class visitasListaB
         "parametros":
         {
           "pn_empresa": empresaID,
-          "pv_cliente": clienteIDset,
+          "pv_cliente": cliente,
           "pv_propiedad": propiedad,
+          "pn_periodo": periodo,
+          "pn_recibida": recibida,
+          "pv_codigo": codigo
         }
       };
 
@@ -325,9 +328,8 @@ class visitasListaB
       final json = jsonDecode(response.body);
       //debugPrint("Objetos Perdidos");
       debugPrint(body.toString());
-      debugPrint(response.body.toString());
-      debugPrint("Informacion Visitas");
-      debugPrint(json["datos"][0]["pv_imagen_qrb64"].toString());
+      debugPrint(url.toString());
+      debugPrint("Informacion Visitas2");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
       if(response.statusCode == 200)
@@ -371,6 +373,8 @@ class visitasListaB
     throw Exception("Error en conexión");
   }
 }
+
+
 class crearVisitas
 {
   String propiedad = "";
@@ -501,6 +505,7 @@ class EditarVisita
   String motivoVisita = "";
   String nombreVisita = "";
   String visitaID = "";
+  String visitaCodigo = "";
   String visitaTelefono = "";
   String visitaTipoEntrada = "";
   String visitaPlaca = "";
@@ -509,7 +514,7 @@ class EditarVisita
 
   EditarVisita(this.propiedad,this.propiedadNombre,this.clientez,this.clientezNombre,this.fecha,
       this.hora,this.motivoVisita,this.nombreVisita,this.visitaID,this.visitaTelefono,this.visitaTipoEntrada,
-      this.visitaPlaca,this.observaciones);
+      this.visitaPlaca,this.observaciones,this.visitaCodigo);
 
   Future<List<Map<String, dynamic>>>visitas9()async
   {
@@ -517,8 +522,19 @@ class EditarVisita
     String errorMensaje = "Falla de conexión";
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("Token");
+    String? inquilino = prefs.getString("Inquilino");
+
     String? empresa = empresaID;
-    String? cliente = prefs.getString("cliente");
+    String? cliente = "";
+
+    if(inquilino == "1")
+    {
+      cliente = cliente = prefs.getString("cliente");
+    }
+    else
+    {
+      cliente = clientez;
+    }
     debugPrint(token);
     debugPrint("Empresa");
     debugPrint("Info Visitas");
@@ -545,7 +561,8 @@ class EditarVisita
         "parametros":
         {
         "pn_empresa": empresaID,
-        "pv_cliente": clientez,
+        "pn_visita": visitaCodigo,
+        "pv_cliente": cliente,
         "pv_cliente_nombre": clientezNombre,
         "pv_propiedad": propiedad,
         "pv_propiedad_nombre": propiedadNombre,
@@ -560,6 +577,11 @@ class EditarVisita
         "pv_observaciones": observaciones
         }
       };
+
+      debugPrint("Editada de nueva visita !!!");
+      debugPrint(url.toString());
+      devLog.log(body.toString());
+      debugPrint("Editada de nueva visita !!!");
 
       http.Response response = await http.post(
           url,body: jsonEncode(body),headers:header);
@@ -577,9 +599,13 @@ class EditarVisita
         if(json["resultado"]["pv_error_descripcion"] == "El token ha expirado")
         {
           debugPrint("Si funciona verificar el mensaje");
+          msgxToast(json["resultado"]["pv_error_descripcion"].toString());
           Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
         }
-        if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+        if (json["resultado"]["pn_error"] == 0) {
+          msgxToast("Visita Editada exitosamente");
+          debugPrint(json["resultado"]["pv_error_descripcion"].toString()
+          );
         // ✅ Check if datos exists and is not null
         if (json["datos"] == null || (json["datos"] as List).isEmpty) {
           // Return an empty list instead of throwing
@@ -608,6 +634,7 @@ class EditarVisita
         Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
       debugPrint(e.toString());
+      msgxToast(e.toString());
       return [];
     }
     throw Exception("Error en conexión");

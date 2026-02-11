@@ -156,14 +156,14 @@ class Seguimiento {
   final String pfFecha;
   final String pvUsuario;
   final String pvComentario;
-  final List<Fotografia> plFotografias;
+  final List<Fotografia2> plFotografiasB;
   final int pnSeguimiento;
 
   Seguimiento({
     required this.pfFecha,
     required this.pvUsuario,
     required this.pvComentario,
-    required this.plFotografias,
+    required this.plFotografiasB,
     required this.pnSeguimiento,
   });
 
@@ -171,8 +171,8 @@ class Seguimiento {
     pfFecha: json['pf_fecha'] ?? '',
     pvUsuario: json['pv_usuario'] ?? '',
     pvComentario: json['pv_comentario'] ?? '',
-    plFotografias: (json['pl_fotografias'] as List? ?? [])
-        .map((e) => Fotografia.fromJson(e))
+    plFotografiasB: (json['pl_fotografias'] as List? ?? [])
+        .map((e) => Fotografia2.fromJson(e))
         .toList(),
     pnSeguimiento: json['pn_seguimiento'] ?? 0,
   );
@@ -181,7 +181,27 @@ class Seguimiento {
     'pf_fecha': pfFecha,
     'pv_usuario': pvUsuario,
     'pv_comentario': pvComentario,
-    'pl_fotografias': plFotografias.map((e) => e.toJson()).toList(),
+    'pl_fotografias': plFotografiasB.map((e) => e.toJson()).toList(),
     'pn_seguimiento': pnSeguimiento,
+  };
+}
+
+class Fotografia2 {
+  final int pnFotografia2;
+  final String pvFotografiaB642;
+
+  Fotografia2({
+    required this.pnFotografia2,
+    required this.pvFotografiaB642,
+  });
+
+  factory Fotografia2.fromJson(Map<String, dynamic> json) => Fotografia2(
+    pnFotografia2: json['pn_fotografia'] ?? 0,
+    pvFotografiaB642: json['pv_fotografiab64'] ?? '',
+  );
+
+  Map<String, dynamic> toJson() => {
+    'pn_fotografia': pnFotografia2,
+    'pv_fotografiab64': pvFotografiaB642,
   };
 }

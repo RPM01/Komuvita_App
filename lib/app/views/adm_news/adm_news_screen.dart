@@ -91,10 +91,15 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
 
  List<bool> comentariosVisibles = [];
   List<String> comentarioBoton =[];
+  String admincheck = "";
+  String juntaDirect = "";
+  String inquilino = "";
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    _futureNoticias = getNewsC5(tipoOpcion.toString(),importanteOpcion.toString(),criterionNoticiasController.text,periodoCuentaID).importanNoticias5();
+
     getUserInfo();
 
     setState(() {
@@ -111,6 +116,11 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userName = prefs.getString("NombreUser")!;
+      admincheck = prefs.getString("Admin")!;
+      juntaDirect = prefs.getString("JuntaDirectiva")!;
+      inquilino = prefs.getString("Inquilino") ?? "0";
+      _futureNoticias = getNewsC5(tipoOpcion.toString(),importanteOpcion.toString(),criterionNoticiasController.text,periodoCuentaID).importanNoticias5();
+
       /*
       instrucionesPago = prefs.getString("intruciones de pago")!;
       debugPrint("Intruciones");
@@ -118,7 +128,6 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
       pago = instrucionesPago.split('|');
       debugPrint(pago.toString());
        */
-      _futureNoticias = getNewsC5(tipoOpcion.toString(),importanteOpcion.toString(),criterionNoticiasController.text,periodoCuentaID).importanNoticias5();
 
     });
   }
@@ -152,8 +161,9 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
     );
   }
 
-  IconData _getIconForIndex(int index, bool isAdmin, bool jundaDir) {
-    if (isAdmin) {
+  IconData _getIconForIndex(int index, String isAdmin, String jundaDir,String inquilino)
+  {
+    if (jundaDir == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -162,18 +172,20 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return FontAwesomeIcons.gear;
+        case 8: return Icons.chat;
+        case 9: return Icons.person;
+        case 10: return FontAwesomeIcons.boxesPacking;
+        case 11: return Icons.lock_reset;
         default: return Icons.logout;
       }
-    } else if (jundaDir) {
+    } else if (jundaDir =="2") {
       switch (index) {
-        case 0: return FontAwesomeIcons.boxesPacking;
-        case 1: return FontAwesomeIcons.person;
+        case 0: return FontAwesomeIcons.person;
+        case 1:  return FontAwesomeIcons.boxesPacking;
         default: return Icons.logout;
       }
-    } else {
+    } else if (inquilino == "1") {
       switch (index) {
         case 0: return Icons.house;
         case 1: return FontAwesomeIcons.clipboardList;
@@ -182,10 +194,49 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
         case 4: return FontAwesomeIcons.boxesStacked;
         case 5: return FontAwesomeIcons.calendarCheck;
         case 6: return FontAwesomeIcons.phoneFlip;
-        case 7: return FontAwesomeIcons.boxesPacking;
-        case 8: return Icons.person;
-        case 9: return Icons.lock_reset;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
         default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
+      }
+    }
+    else {
+      switch (index) {
+        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+      //case 8: return Icons.lock_reset;
+        default: return Icons.logout;
+
+      /*        case 0: return Icons.house;
+        case 1: return FontAwesomeIcons.clipboardList;
+        case 2: return FontAwesomeIcons.newspaper;
+        case 3: return FontAwesomeIcons.doorOpen;
+        case 4: return FontAwesomeIcons.boxesStacked;
+        case 5: return FontAwesomeIcons.calendarCheck;
+        case 6: return FontAwesomeIcons.phoneFlip;
+        case 7: return  Icons.person;
+        case 8: return FontAwesomeIcons.boxesPacking;
+        case 9: return Icons.lock_reset;
+        default: return Icons.logout;*/
       }
     }
   }
@@ -332,7 +383,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                         itemBuilder: (context, index) {
                           final menuTitle = helpAndSupport[index];
                           final isLast = index == helpAndSupport.length - 1;
-                          final iconData = _getIconForIndex(index, isAdmin, jundaDir);
+                          final iconData = _getIconForIndex(index, admincheck, juntaDirect,inquilino);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 15),
@@ -345,11 +396,11 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                 }
 
                                 // 👇 Handle "Paquetes pendientes"
-                                if (menuTitle == "Paquetes pendientes") {
+                                /*if (menuTitle == "Paquetes pendientes") {
                                   Navigator.pop(context); // close drawer first
                                   Get.toNamed(MyRoute.home, arguments: {'fromDrawer': true});
                                   return;
-                                }
+                                }*/
 
                                 // 👇 Normal navigation
                                 Navigator.pop(context);
@@ -409,6 +460,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
         tag: 'adm_estadoCuenta',
         // theme: theme,
         builder: (newsController) => SingleChildScrollView(
+            scrollDirection: Axis.vertical,
             child: Column(
                 children: [
                   Padding(
@@ -739,26 +791,15 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
 
                                 debugPrint("Evento");
                                 debugPrint(events.toString());
-                                return SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height > 400 ? MediaQuery.of(context).size.height*0.45:MediaQuery.of(context).size.height*0.10,
-                                    child: LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          final cardWidth = constraints.maxWidth * 0.9;
-                                          final cardHeight = constraints.maxHeight * 0.65;
-                                          final titleFontSize = constraints.maxWidth * 0.035;
-                                          final subtitleFontSize = constraints.maxWidth * 0.03;
-                                          double noticiaSize = constraints.maxHeight;
-
                                           return ListView.builder(
-                                            physics: const ClampingScrollPhysics(),
                                             shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
                                             padding: EdgeInsets.zero,
                                             itemCount: events.length,
                                             itemBuilder: (context, index) {
                                               final event = events[index];
                                               final fotos = event["pl_fotografias"] as List?;
-                                              List<int> cantidadComentarios = [];
+                                              List<int> cantidadComentarios2 = [];
                                               final carouselKey = GlobalKey<CarouselSliderState>();
 
                                                /*final images = event["plFotografias"]
@@ -768,25 +809,29 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                */
                                               _controllers.putIfAbsent(index, () => CarouselSliderController());
                                               _currentIndex[index] = _currentIndex[index] ?? 0;
+
+                                              final comentarios = event["pl_comentarios"] as List?;
+                                              final int cantidadComentarios = comentarios?.length ?? 0;
+
                                               for (int i = 0; i < events.length; i++)
                                                 {
-                                                  cantidadComentarios.add(0);
+                                                  cantidadComentarios2.add(0);
                                                   comentarioNoticiasController.add(TextEditingController(text:""));
                                                   comentariosVisibles.add(false);
 
                                                   if(event["pl_comentarios"] != null )
                                                   {
-                                                    cantidadComentarios[i] = event["pl_comentarios"].length;
+                                                    cantidadComentarios2[i] = event["pl_comentarios"].length;
                                                     debugPrint("$i ${event ["pl_comentarios"].length}");
                                                   }
                                                   else
                                                   {
-                                                    cantidadComentarios[i] = 0;
+                                                    cantidadComentarios2[i] = 0;
                                                   }
                                                 }
                                               for (int i = 0; i < events.length; i++)
                                                 {
-                                                  comentarioBoton.add("Ver comentarios (${cantidadComentarios[i]})");
+                                                  comentarioBoton.add("Ver comentarios (${cantidadComentarios2[i]})");
                                                 }
 
                                               final images = (event["pl_fotografias"] as List<dynamic>?)
@@ -807,14 +852,14 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                         Text(event["pv_descripcion"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
                                                           fontWeight: FontWeight.bold,
                                                           color:Color.fromRGBO(167,167,132,1),
-                                                          fontSize: constraints.maxWidth * 0.055,
+                                                          fontSize: MediaQuery.of(context).size.width * 0.055,
                                                         )),
                                                         Row(
                                                           children: [
                                                             Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(event["pf_fecha"].toString())),style: theme.textTheme.headlineSmall?.copyWith(
                                                               fontWeight: FontWeight.bold,
                                                               color:Color.fromRGBO(167,167,132,1),//color: Colors.grey[600],
-                                                              fontSize: constraints.maxWidth * 0.035,)),
+                                                              fontSize: MediaQuery.of(context).size.width * 0.035,)),
                                                           ],
                                                         ),
                                                         if (fotos == null || fotos.isEmpty)
@@ -946,17 +991,11 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                      ),
                                                                     Center(
                                                                       child: SizedBox(
-                                                                        width: constraints.maxWidth,
+                                                                        width: MediaQuery.of(context).size.width,
                                                                         child: TextFormField(
                                                                           keyboardType: TextInputType.multiline,
-                                                                          maxLines: null,
-                                                                           controller: comentarioNoticiasController[index],
-                                                                          onChanged: (value)
-                                                                          {
-                                                                            setState(() {
-                                                                              comentarioNoticiasController[index].text = value;
-                                                                            });
-                                                                          },
+                                                                          maxLines: 3,
+                                                                          controller: comentarioNoticiasController[index],
                                                                         ),
                                                                       ),
                                                                     ),
@@ -969,8 +1008,8 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                           children: [
                                                             SizedBox(
-                                                              width: constraints.maxWidth *0.45,
-                                                              height: constraints.maxHeight *0.10,
+                                                              width: MediaQuery.of(context).size.width *0.38,
+                                                              //height: MediaQuery.of(context).size.height *0.18,
                                                               child: ElevatedButton(
                                                                   style: ElevatedButton.styleFrom(
                                                                     backgroundColor: Color.fromRGBO(6, 78, 116, 1), // set the background color
@@ -983,21 +1022,34 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                       setState(() {comentarioNoticiasController[index].text = "";}
                                                                       );
                                                                       msgxToast("El comentario fue enviado para su aprobación");
-                                                              }
+                                                                      msgxToast("Cargando Noticias");
+                                                                       Future.delayed(const Duration(milliseconds: 600), ()
+                                                                        {
+                                                                          setState(() {
+                                                                            _futureNoticias = getNewsC5(tipoOpcion.toString(),importanteOpcion.toString(),criterionNoticiasController.text,periodoCuentaID).importanNoticias5();
+                                                                            getUserInfo();
+                                                                          });
+                                                                        });
+                                                                       }
+                                                                   else
+                                                                   {
+                                                                   msgxToast("Escriba un comentario");
+                                                                   }
                                                             },
                                                                   child:  Text(
                                                                     "Ingresar comentario",
                                                                     style: TextStyle(
                                                                       fontWeight: FontWeight.bold,
                                                                       color: Colors.white,
-                                                                      fontSize:  MediaQuery.of(context).size.height > 400 ? constraints.maxWidth * 0.04: constraints.maxWidth * 0.015,
+                                                                      fontSize:  MediaQuery.of(context).size.height > 400 ? MediaQuery.of(context).size.width * 0.042: MediaQuery.of(context).size.width * 0.015,
                                                                     ),
                                                                     maxLines:3,
                                                                   ),
                                                               )
-                                                            ),SizedBox(
-                                                                width: constraints.maxWidth *0.45,
-                                                                height: constraints.maxHeight *0.10,
+                                                            ),
+                                                            SizedBox(
+                                                                width: MediaQuery.of(context).size.width *0.38,
+                                                                //height: MediaQuery.of(context).size.height *0.10,
                                                                 child: ElevatedButton(
                                                                   style: ElevatedButton.styleFrom(
                                                                     backgroundColor: Color.fromRGBO(6, 78, 116, 1),
@@ -1013,16 +1065,18 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                       else
                                                                         {
                                                                           comentariosVisibles[index] = false;
-                                                                          comentarioBoton[index] = "Ver comentarios (${cantidadComentarios[index]})";
+                                                                          comentarioBoton[index] = "Ver comentarios (${cantidadComentarios2[index]})";
                                                                         }
                                                                     });
                                                                   },
                                                                   child: Text(
-                                                                    comentarioBoton[index],
+                                                                    comentariosVisibles[index]
+                                                                        ? "Ocultar comentarios"
+                                                                        : "Ver comentarios ($cantidadComentarios)",
                                                                     style: TextStyle(
                                                                       fontWeight: FontWeight.bold,
                                                                       color: Colors.white,
-                                                                      fontSize:  MediaQuery.of(context).size.height > 400 ? constraints.maxWidth * 0.04: constraints.maxWidth * 0.015,
+                                                                      fontSize:  MediaQuery.of(context).size.height > 400 ? MediaQuery.of(context).size.width * 0.04: MediaQuery.of(context).size.width * 0.015,
                                                                     ),
                                                                     maxLines: 3,
                                                                   ),
@@ -1044,7 +1098,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                 )
                                                               ),
                                                               SizedBox(
-                                                                width: constraints.maxWidth * 0.8,
+                                                                width: MediaQuery.of(context).size.width * 0.8,
                                                                 child: event["pl_comentarios"] == null || (event["pl_comentarios"] as List).isEmpty
                                                                     ? const Center(child: Text("Sin comentarios"))
                                                                     : SingleChildScrollView(
@@ -1062,7 +1116,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                             Text(comentario["pv_autor"].toString(),style: theme.textTheme.headlineSmall?.copyWith(
                                                                               fontWeight: FontWeight.bold,
                                                                               color:Color.fromRGBO(6, 78, 116, 1),
-                                                                              fontSize: constraints.maxWidth * 0.055,
+                                                                              fontSize: MediaQuery.of(context).size.width * 0.055,
                                                                             ),maxLines: 4,),
                                                                           /*
                                                                             Text(DateFormat('dd MMMM yyyy', "es_ES").format(DateTime.parse(comentario["pf_fecha"].toString())),style: theme.textTheme.headlineSmall?.copyWith(
@@ -1081,7 +1135,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                                                                             style: theme.textTheme.headlineSmall?.copyWith(
                                                                               fontWeight: FontWeight.bold,
                                                                               color: const Color.fromRGBO(167, 167, 132, 1),
-                                                                              fontSize: constraints.maxWidth * 0.035,
+                                                                              fontSize: MediaQuery.of(context).size.width * 0.035,
                                                                             ),
                                                                             maxLines: 5,
                                                                             overflow: TextOverflow.ellipsis,),
@@ -1102,9 +1156,6 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
 
                                             },
                                           );
-                                        }
-                                    )
-                                );
                               },
                             ),
                             50.height,
@@ -1113,9 +1164,7 @@ class _AdmNoticiasScreenState extends State<AdmNoticiasScreen>
                   )
                 ]
             )
-        )
-    )
-    );
+        )));
   }
 }
 

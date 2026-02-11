@@ -81,7 +81,7 @@ class setNewsComentC7{
 
       http.Response response = await http.post(url,body: jsonEncode(body),headers:header);
       final json = jsonDecode(response.body);
-      debugPrint("Noticias");
+      debugPrint("Noticias_Comentario");
       debugPrint(body.toString());
       debugPrint(response.body.toString());
 
@@ -202,7 +202,8 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
         debugPrint("Si funciona verificar el mensaje");
         Get.offNamedUntil(MyRoute.loginScreen, (route) => route.isFirst);
       }
-      if (json["resultado"]["pn_error"] == 0) {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
+      if (json["resultado"]["pn_error"] == 0)
+      {debugPrint(json["resultado"]["pv_error_descripcion"].toString());
       // ✅ Check if datos exists and is not null
       if (json["datos"] == null || (json["datos"] as List).isEmpty) {
         // Return an empty list instead of throwing
@@ -226,6 +227,11 @@ getNewsC5(this.noticiaTipo, this.importante,this.criterio,this.periodo);
         // throw Exception(json["resultado"]["pv_error_descripcion"].toString());
       }
       }
+     else if (json["resultado"]["pn_error"] == 1 && json["resultado"]["pv_error_descripcion"].toString() =="Exception: El token ha expirado")
+       {
+         //msgxToast("Exception: El token ha expirado");
+         msgxToast(json["resultado"]["pv_error_descripcion"].toString());
+       }
     }
   }
   catch(e)
